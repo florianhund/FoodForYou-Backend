@@ -1,0 +1,35 @@
+{
+  "env": {
+    "browser": true,
+    "commonjs": true,
+    "es2021": true
+  },
+  "parser": "@typescript-eslint/parser",
+  "extends": [
+    "plugin:@typescript-eslint/recommended",
+    "eslint-config-airbnb-base",
+    "plugin:node/recommended",
+    "plugin:prettier/recommended"
+  ],
+  "rules": {
+    "prettier/prettier": "warn",
+    "@typescript-eslint/no-explicit-any": "off",
+    "no-console": "off",
+    "no-useless-constructor": "off",
+    "no-underscore-dangle": "off",
+    "no-empty-function": ["off", { "allow": "constructors" }],
+    "camelcase": "warn",
+    "no-shadow": "off",
+    "class-methods-use-this": "off",
+    "eqeqeq": "warn",
+    "no-plusplus": "off",
+    "import/no-unresolved": "off",
+    "import/extensions": "off",
+    "import/no-extraneous-dependencies": "off",
+    "node/no-unpublished-require": "off",
+    "node/no-unpublished-import": "off",
+    "node/no-unsupported-features/es-syntax": "off",
+    "node/no-missing-import": "off",
+    "no-process-exit": "off"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "name": "foodforyou",
+  "version": "1.0.0",
+  "description": "Food Delivery App",
+  "main": "./src/index.ts",
+  "scripts": {
+    "start": "ts-node ./src/index.ts",
+    "dev": "nodemon ./src/index.ts",
+    "build": "tsc -p .",
+    "prettier-format": "prettier --config .prettierrc . --write",
+    "lint": "eslint . --ext .ts"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run prettier-format && npm run lint"
+    }
+  },
+  "keywords": [],
+  "author": "Florian Hundegger",
+  "license": "ISC",
+  "dependencies": {
+    "express": "4.17.3",
+    "mongoose": "6.2.7"
+  },
+  "devDependencies": {
+    "@types/express": "4.17.13",
+    "@types/node": "17.0.21",
+    "@typescript-eslint/eslint-plugin": "5.15.0",
+    "@typescript-eslint/parser": "5.15.0",
+    "dotenv": "16.0.0",
+    "eslint": "8.11.0",
+    "eslint-config-airbnb-base": "15.0.0",
+    "eslint-config-prettier": "8.5.0",
+    "eslint-plugin-import": "2.25.4",
+    "eslint-plugin-node": "11.1.0",
+    "eslint-plugin-prettier": "4.0.0",
+    "husky": "7.0.4",
+    "nodemon": "2.0.15",
+    "prettier": "2.6.0",
+    "ts-node": "10.7.0",
+    "typescript": "4.6.2"
+  }
+}
