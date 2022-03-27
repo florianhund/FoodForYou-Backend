@@ -1,13 +1,11 @@
-/* eslint-disable no-unused-vars */
-
-interface log {
+interface ILog {
   message: string;
   time: string;
-  type: string;
+  type: 'info' | 'error' | 'debug';
 }
 
 export default class Logger {
-  public logs: log[] = [];
+  public logs: ILog[] = [];
 
   public module: string;
 
@@ -22,15 +20,15 @@ export default class Logger {
     return this.logs.length;
   }
 
-  public log(message: string, type?: string): void {
-    const time = new Date().toISOString().split('T')[1];
+  public log(message: string, type?: 'info' | 'error' | 'debug'): void {
+    const time: string = new Date().toISOString().split('T')[1];
     this.saveLog({ message, time, type: type || 'debug' });
     console.log(
       ` \n ${this.module}: [${type || 'debug'}] [${time}] ${message}`
     );
   }
 
-  private saveLog(data: log): void {
+  private saveLog(data: ILog): void {
     this.logs.push(data);
   }
 }

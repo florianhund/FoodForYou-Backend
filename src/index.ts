@@ -1,4 +1,5 @@
 import { ConnectOptions } from 'mongoose';
+import express from 'express';
 
 import { PORT, DATABASE_URL } from './config/constants';
 import Database from './config/Database';
@@ -9,9 +10,11 @@ const database: Database = new Database(DATABASE_URL, {
   useNewUrlParser: true
 } as ConnectOptions);
 
-database.initialize().then(() => {
-  server.loadGlobalVariables([]);
-  server.loadGlobalMiddleware([]);
+const middleware = [express.urlencoded({ extended: false }), express.json()];
+
+database.init().then(() => {
+  server.loadGlobalSettings([]);
+  server.loadGlobalMiddleware(middleware);
   server.loadControllers();
   server.run();
 });

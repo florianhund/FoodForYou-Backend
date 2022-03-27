@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-
 import mongoose, { ConnectOptions } from 'mongoose';
 import Logger from './Logger';
 
@@ -11,7 +9,7 @@ export default class Database {
     public options: ConnectOptions
   ) {}
 
-  public async initialize(): Promise<void> {
+  public async init(): Promise<void> {
     try {
       await mongoose.connect(this._connectionUrl, this.options);
       logger.log('Connected to Mongoose!', 'info');
