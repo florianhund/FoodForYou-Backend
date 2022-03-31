@@ -20,6 +20,7 @@
     "no-underscore-dangle": "off",
     "no-empty-function": ["off", { "allow": "constructors" }],
     "camelcase": "warn",
+    "consistent-return": "off",
     "no-shadow": "off",
     "class-methods-use-this": "off",
     "no-unused-vars": "off",

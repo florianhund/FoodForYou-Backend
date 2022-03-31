@@ -14,11 +14,15 @@ export default class Server {
 
   private constructor(private readonly _port: number) {}
 
-  public static instantiate(port: number) {
+  public static instantiate(port: number): Server {
     if (!Server._server) {
       Server._server = new Server(port);
     }
     return Server._server;
+  }
+
+  get app(): Application {
+    return this._app;
   }
 
   run(): http.Server {

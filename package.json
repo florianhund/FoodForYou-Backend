@@ -1,12 +1,12 @@
 {
-  "name": "foodforyou",
+  "name": "foodforyou-api",
   "version": "1.0.0",
-  "description": "Food Delivery App",
+  "description": "Food Delivery API",
   "main": "./src/index.ts",
   "scripts": {
     "start": "ts-node ./src/index.ts",
     "dev": "nodemon ./src/index.ts",
-    "test": "jest",
+    "test": "jest --verbose",
     "build": "tsc -p .",
     "prettier-format": "prettier --config .prettierrc . --write",
     "lint": "eslint . --ext .ts"
@@ -16,11 +16,30 @@
       "pre-commit": "npm run prettier-format && npm run lint"
     }
   },
+  "nodemonConfig": {
+    "watch": [
+      "src"
+    ],
+    "ext": "ts",
+    "exec": "ts-node src/index.ts"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.ts?$": "ts-jest"
+    },
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "testPathIgnorePatterns": [
+      "<rootDir>/dist",
+      "<rootDir>/node_modules"
+    ]
+  },
   "keywords": [],
   "author": "Florian Hundegger",
   "license": "ISC",
   "dependencies": {
     "express": "4.17.3",
+    "express-validator": "6.14.0",
     "mongoose": "6.2.7"
   },
   "devDependencies": {

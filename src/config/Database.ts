@@ -18,4 +18,8 @@ export default class Database {
       process.exit(1);
     }
   }
+
+  public static closeAllConnections(): void {
+    mongoose.disconnect();
+  }
 }

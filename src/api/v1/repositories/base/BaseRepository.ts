@@ -29,7 +29,7 @@ export default class BaseRepository<T extends mongoose.Document>
     data: mongoose.UpdateQuery<T>
   ): Promise<T | null> {
     // data: { price: 5, name: pizza }
-    return this._model.findByIdAndUpdate(id, data);
+    return this._model.findByIdAndUpdate(id, data, { new: true });
   }
 
   public async delete(id: mongoose.Types.ObjectId): Promise<T | null> {

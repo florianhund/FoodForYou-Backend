@@ -2,15 +2,21 @@ import { Request, Response, NextFunction } from 'express';
 import { Types, UpdateQuery } from 'mongoose';
 import { httpMethods } from './types/index';
 
+export interface ILog {
+  message: any;
+  time: string;
+  type: 'info' | 'error' | 'debug';
+}
+
 export interface IRoute {
   path: string;
   method: httpMethods;
-  localMiddleware: ((
+  handler: (req: Request, res: Response) => void | Promise<Response>;
+  localMiddleware?: ((
     req: Request,
     res: Response,
     next: NextFunction
   ) => void)[];
-  handler: (req: Request, res: Response) => void | Promise<void>;
 }
 
 // database
