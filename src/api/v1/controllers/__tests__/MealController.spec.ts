@@ -14,8 +14,9 @@ const db = new Database(DATABASE_URL, {
 const server: Server = Server.instantiate(3000);
 let app: Application;
 
-const fakeId = '123456789123123456789123';
+const fakeId = '123456789123456789123456';
 const realId = new Types.ObjectId();
+
 const meal = {
   _id: realId,
   name: 'pizza',

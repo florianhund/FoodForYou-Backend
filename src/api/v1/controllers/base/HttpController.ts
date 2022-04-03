@@ -1,5 +1,6 @@
-import { Response, Router } from 'express';
+import { Request, Response, NextFunction, Router } from 'express';
 import { IRoute } from '../../interfaces';
+import ValidationError from '../../utils/ValidationError';
 
 export default abstract class HttpController {
   public abstract path: string;
@@ -15,26 +16,25 @@ export default abstract class HttpController {
           this.router.use(route.path, mw);
         });
       }
-      this.router[route.method](route.path, route.handler);
+      this.router[route.method](
+        route.path,
+        route.validator ||
+          ((req: Request, res: Response, next: NextFunction) => next()),
+        route.handler
+      );
     });
     return this.router;
   }
 
-  protected sendSuccess(
-    res: Response,
-    data: unknown,
-    status?: number
-  ): Response {
+  protected sendSuccess(res: Response, data: any, status?: number): Response {
+    if (status === 201 || status === 204) return res.status(status).send();
     return res.status(status || 200).json({ data });
   }
 
   protected sendError(
     res: Response,
-    status?: number,
-    message?: string
+    err: ValidationError = new ValidationError()
   ): Response {
-    return res
-      .status(status || 500)
-      .json({ message: message || 'Internal Server Error' });
+    return res.status(err.code).json({ message: err.message });
   }
 }

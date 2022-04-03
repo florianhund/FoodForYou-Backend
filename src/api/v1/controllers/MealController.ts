@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
-import { body, validationResult } from 'express-validator';
+import { checkSchema } from 'express-validator';
 
 import HttpController from './base/HttpController';
 import { MealService } from '../services';
 import { httpMethods } from '../interfaces/types';
-import { IMeal } from '../interfaces/models';
 import { validate } from '../middlewares';
+import { MealSchema } from '../validators';
 
 const mealsrv = new MealService();
 
@@ -21,7 +21,8 @@ export default class MealController extends HttpController {
     {
       path: '/:id',
       method: httpMethods.GET,
-      handler: this.getMealById
+      handler: this.getMealById,
+      validator: validate(checkSchema(MealSchema.id))
     },
     {
       path: '/query',
@@ -31,30 +32,35 @@ export default class MealController extends HttpController {
     {
       path: '/',
       method: httpMethods.POST,
-      handler: this.createMeal
+      handler: this.createMeal,
+      validator: validate(checkSchema(MealSchema.create))
     },
     {
       path: '/:id',
       method: httpMethods.PATCH,
-      handler: this.updateMeal
+      handler: this.updateMeal,
+      validator: validate(
+        checkSchema({ ...MealSchema.id, ...MealSchema.update })
+      )
     },
     {
       path: '/:id',
       method: httpMethods.DELETE,
-      handler: this.deleteMeal
+      handler: this.deleteMeal,
+      validator: validate(checkSchema(MealSchema.id))
     }
   ];
 
   async getAllMeals(req: Request, res: Response): Promise<Response> {
-    const [meals] = await mealsrv.getAll();
-    if (!meals) return super.sendError(res);
+    const [meals, error] = await mealsrv.getAll();
+    if (!meals) return super.sendError(res, error);
     return super.sendSuccess(res, meals);
   }
 
   async getMealById(req: Request, res: Response): Promise<Response> {
     const { id } = req.params;
-    const [meal] = await mealsrv.getById(id);
-    if (!meal) return super.sendError(res, 404, 'Invalid Id');
+    const [meal, error] = await mealsrv.getById(id);
+    if (!meal) return super.sendError(res, error);
     return super.sendSuccess(res, meal);
   }
 
@@ -64,26 +70,23 @@ export default class MealController extends HttpController {
   }
 
   async createMeal(req: Request, res: Response): Promise<Response> {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) console.log('error');
-    const [meal] = await mealsrv.create(req.body);
-    if (!meal) return super.sendError(res, 400, 'Invalid Input');
-    return super.sendSuccess(res, meal);
+    const [meal, error] = await mealsrv.create(req.body);
+    if (!meal) return super.sendError(res, error);
+    res.setHeader('Location', `/meals/${meal._id}`);
+    return super.sendSuccess(res, {}, 201);
   }
 
   async updateMeal(req: Request, res: Response): Promise<Response> {
     const { id } = req.params;
-    const [meal, err] = await mealsrv.update(id, req.body);
-    if (!err) return super.sendSuccess(res, meal);
-    if (err.message === 'Invalid Input')
-      return super.sendError(res, 400, 'Invalid Input');
-    return super.sendError(res, 404, 'Invalid Id');
+    const [meal, error] = await mealsrv.update(id, req.body);
+    if (!meal) return super.sendError(res, error);
+    return super.sendSuccess(res, {}, 204);
   }
 
   async deleteMeal(req: Request, res: Response): Promise<Response> {
     const { id } = req.params;
-    const [meal] = await mealsrv.delete(id);
-    if (!meal) return super.sendError(res, 404, 'Invalid Id');
-    return super.sendSuccess(res, meal);
+    const [meal, error] = await mealsrv.delete(id);
+    if (!meal) return super.sendError(res, error);
+    return super.sendSuccess(res, {}, 204);
   }
 }

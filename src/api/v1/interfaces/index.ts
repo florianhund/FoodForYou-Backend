@@ -11,12 +11,17 @@ export interface ILog {
 export interface IRoute {
   path: string;
   method: httpMethods;
-  handler: (req: Request, res: Response) => void | Promise<Response>;
+  handler: (req: Request, res: Response) => Response | Promise<Response>;
+  validator?: (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => Promise<void | Response>;
   localMiddleware?: ((
     req: Request,
     res: Response,
     next: NextFunction
-  ) => void)[];
+  ) => void | Promise<void>)[];
 }
 
 // database

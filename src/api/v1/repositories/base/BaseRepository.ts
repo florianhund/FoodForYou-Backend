@@ -28,7 +28,6 @@ export default class BaseRepository<T extends mongoose.Document>
     id: mongoose.Types.ObjectId,
     data: mongoose.UpdateQuery<T>
   ): Promise<T | null> {
-    // data: { price: 5, name: pizza }
     return this._model.findByIdAndUpdate(id, data, { new: true });
   }
 
@@ -36,7 +35,7 @@ export default class BaseRepository<T extends mongoose.Document>
     return this._model.findByIdAndRemove(id);
   }
 
-  protected createIdFromString(id: string): mongoose.Types.ObjectId {
+  public createIdFromString(id: string): mongoose.Types.ObjectId {
     return new mongoose.Types.ObjectId(id);
   }
 }
