@@ -6,16 +6,20 @@ FoodForYou API is an open source food-delivery system API which allows users to 
 
 ### Project Support Features
 
-- find / create meals
-- find / create restaurants
-- find / create orders
+- find / create / update meals
+- find / create / update restaurants
+- find / create / update orders
 - full user authentication
+
+### Prerequisites
+
+You need to have NodeJS (v14.17.6 or higher) installed on your system in order to install and run the application.
 
 ### Installation Guide
 
 - clone this repository [here](https://github.com/florianhund/FoodForYou)
 
-- navigate in the repository
+- navigate into the repository
 
 - install all dependencies
 
@@ -25,7 +29,9 @@ cd FoodForYou
 npm i
 ```
 
-- Create an .env file in your project root folder and add your variables. See .env.example for assistance.
+- Create a .env file in your project root folder and add your variables. See .env.example for assistance.
+<br> 
+Set NODE_ENV to DEVELOPMENT if you are not running the application in production mode.
 
 ### Usage
 
@@ -34,6 +40,12 @@ Run the following command in the root directory to start the application.
 npm start
 ```
 The server port will be the port specified in .env file.
+
+### Documentation
+
+The following route provides information about all API-Endpoints, models, servers and the whole project itselves. You should access this route via any browser.
+<br>
+GET /api-docs
 
 ### Technologies Used
 
