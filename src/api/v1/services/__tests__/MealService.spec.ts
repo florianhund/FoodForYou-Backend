@@ -43,9 +43,52 @@ afterEach(async () => {
   await Meal.deleteMany({});
 });
 
-describe('get all meals', () => {
-  it('should return arr', async () => {
-    const [meals] = await mealsrv.getAll();
+describe('get meals', () => {
+  it('should return arr if query is {}', async () => {
+    const [meals] = await mealsrv.get({});
+    expect(meals).toBeTruthy();
     expect(Array.isArray(meals)).toBeTruthy();
+  });
+
+  it('should return arr if query is no empty object', async () => {
+    const [meals] = await mealsrv.get({
+      name: 'pizza',
+      max_price: 5
+    });
+    expect(meals).toBeTruthy();
+    expect(Array.isArray(meals)).toBeTruthy();
+  });
+
+  it('should return arr if query is wrong object', async () => {
+    const [meals] = await mealsrv.get({
+      name: 'burger',
+      test: 'test'
+    });
+    expect(meals).toBeTruthy();
+    expect(Array.isArray(meals)).toBeTruthy();
+  });
+});
+
+describe('get meal by id', () => {
+  it('', async () => {
+    console.log('test');
+  });
+});
+
+describe('create meal', () => {
+  it('', async () => {
+    console.log('test');
+  });
+});
+
+describe('update meal', () => {
+  it('', async () => {
+    console.log('test');
+  });
+});
+
+describe('delete meals', () => {
+  it('', async () => {
+    console.log('test');
   });
 });

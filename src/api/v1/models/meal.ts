@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import { Schema, model } from 'mongoose';
 
 import { IMeal } from '../interfaces/models';
@@ -7,7 +6,10 @@ import { Allergenics } from '../interfaces/types';
 const meal = new Schema<IMeal>(
   {
     name: { type: String, required: true },
-    description: String,
+    description: {
+      type: String,
+      default: ''
+    },
     price: { type: Number, required: true },
     allergenics: [
       {
@@ -15,8 +17,8 @@ const meal = new Schema<IMeal>(
         enum: Allergenics
       }
     ]
-  },
-  { strictQuery: false }
+  }
+  // ,{ strictQuery: false }
 );
 
 export default model<IMeal>('Meal', meal);

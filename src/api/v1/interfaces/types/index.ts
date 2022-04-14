@@ -28,3 +28,5 @@ export enum Allergenics {
 export type PromiseHandler<T> = Promise<
   [T | null, ValidationError | undefined]
 >;
+
+export type MongooseOrder = [string, -1 | 1];

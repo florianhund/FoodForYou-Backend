@@ -16,24 +16,20 @@ export default class MealController extends HttpController {
     {
       path: '/',
       method: httpMethods.GET,
-      handler: this.getAllMeals
-    },
-    {
-      path: '/:id',
-      method: httpMethods.GET,
-      handler: this.getMealById,
-      validator: validate(checkSchema(MealSchema.id))
-    },
-    {
-      path: '/query',
-      method: httpMethods.POST,
-      handler: this.getMeal
+      handler: this.getMeals,
+      validator: validate(checkSchema(MealSchema.get))
     },
     {
       path: '/',
       method: httpMethods.POST,
       handler: this.createMeal,
       validator: validate(checkSchema(MealSchema.create))
+    },
+    {
+      path: '/:id',
+      method: httpMethods.GET,
+      handler: this.getMealById,
+      validator: validate(checkSchema(MealSchema.id))
     },
     {
       path: '/:id',
@@ -51,8 +47,22 @@ export default class MealController extends HttpController {
     }
   ];
 
-  async getAllMeals(req: Request, res: Response): Promise<Response> {
-    const [meals, error] = await mealsrv.getAll();
+  async getMeals(req: Request, res: Response): Promise<Response> {
+    const {
+      name,
+      min_price: minPrice,
+      max_price: maxPrice,
+      without_allergenics: allergenics
+    } = req.query;
+
+    const [meals, error] =
+      !!name || !!minPrice || !!maxPrice || !!allergenics
+        ? await mealsrv.get(
+            { name, minPrice, maxPrice, allergenics },
+            req.query.sort_by
+          )
+        : await mealsrv.getAll(req.query.sort_by);
+
     if (!meals) return super.sendError(res, error);
     return super.sendSuccess(res, meals);
   }
@@ -62,11 +72,6 @@ export default class MealController extends HttpController {
     const [meal, error] = await mealsrv.getById(id);
     if (!meal) return super.sendError(res, error);
     return super.sendSuccess(res, meal);
-  }
-
-  async getMeal(req: Request, res: Response): Promise<Response> {
-    const [meals] = await mealsrv.get(req.body);
-    return super.sendSuccess(res, meals);
   }
 
   async createMeal(req: Request, res: Response): Promise<Response> {

@@ -31,20 +31,23 @@ export default class Server {
     });
   }
 
-  public loadGlobalMiddleware(middleware: RequestHandler[]): void {
+  public loadGlobalMiddleware(middleware: RequestHandler[]): Server {
     middleware.forEach(mw => {
       this._app.use(mw);
     });
+    return this;
   }
 
-  public loadGlobalSettings(variables: { [name: string]: string }[]): void {
+  public loadGlobalSettings(variables: { [name: string]: string }[]): Server {
     variables.forEach(object => {
       const [key]: string[] = Object.keys(object);
       this._app.set(key, object[0]);
     });
+    return this;
   }
 
-  public loadControllers(): void {
+  public loadControllers(): Server {
     this._app.use('/api/v1', router);
+    return this;
   }
 }

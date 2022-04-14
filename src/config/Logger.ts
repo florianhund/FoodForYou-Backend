@@ -21,7 +21,7 @@ export default class Logger {
   }
 
   public log(message: any, type?: 'info' | 'error' | 'debug'): void {
-    const time: string = new Date().toISOString().split('T')[1];
+    const time = new Date().toISOString().split('T')[1];
     this.saveLog({ message, time, type: type || 'debug' });
     process.stdout.write(` \n ${this.module}: [${type || 'debug'}] [${time}] `);
     console.log(message);

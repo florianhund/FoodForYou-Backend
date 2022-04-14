@@ -43,12 +43,29 @@ afterEach(async () => {
 });
 
 describe('GET /meals', () => {
-  it('should return 200 & array', async () => {
+  it('should return 200 & array if query object is empty', async () => {
     const response = await request(app).get('/api/v1/meals');
 
     expect(response.statusCode).toBe(200);
     expect(response.headers['content-type']).toMatch(/application\/json/g);
     expect(Array.isArray(response.body.data)).toBeTruthy();
+  });
+
+  it('should return 200 & array if query object is not empty', async () => {
+    const response = await request(app).get('/api/v1/meals?name=pizza');
+
+    expect(response.statusCode).toBe(200);
+    expect(response.headers['content-type']).toMatch(/application\/json/g);
+    expect(Array.isArray(response.body.data)).toBeTruthy();
+  });
+
+  it('should return 400 if query[without_allergenics] is no allergenic', async () => {
+    const response = await request(app).get(
+      '/api/v1/meals?without_allergenics=Z'
+    );
+
+    expect(response.statusCode).toBe(400);
+    expect(response.headers['content-type']).toMatch(/application\/json/g);
   });
 });
 
@@ -67,37 +84,17 @@ describe('GET /meals/:id', () => {
     expect(response.statusCode).toBe(404);
     expect(response.headers['content-type']).toMatch(/application\/json/g);
   });
-});
 
-describe('POST /meals/query', () => {
-  it('should return 200 & array with data', async () => {
-    const response = await request(app)
-      .post('/api/v1/meals/query')
-      .set('Content-Type', 'Application/json')
-      .send({
-        _id: realId
-      });
+  it('should return 400 if id is not 24 chars long', async () => {
+    const response = await request(app).get('/api/v1/meals/123');
 
-    expect(response.statusCode).toBe(200);
+    expect(response.statusCode).toBe(400);
     expect(response.headers['content-type']).toMatch(/application\/json/g);
-    expect(Array.isArray(response.body.data)).toBeTruthy();
-    expect(response.body.data[0]._id).toBe(realId.toString());
-  });
-
-  it('should return 200 & empty array if no data found', async () => {
-    const response = await request(app)
-      .post('/api/v1/meals/query')
-      .set('Content-Type', 'Application/json')
-      .send({ test: 'hello' });
-
-    expect(response.statusCode).toBe(200);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
-    expect(response.body.data.length).toBe(0);
   });
 });
 
 describe('POST /meals', () => {
-  it('should create post & return 200', async () => {
+  it('should create post & return 201', async () => {
     const data = {
       name: 'pizza',
       price: 8
@@ -108,10 +105,8 @@ describe('POST /meals', () => {
       .set('Content-Type', 'Application/json')
       .send(data);
 
-    expect(response.statusCode).toBe(200);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
-    expect(response.body.data.name).toBe(data.name);
-    expect(response.body.data.price).toBe(data.price);
+    expect(response.statusCode).toBe(201);
+    expect(response.headers.location).toBeTruthy();
   });
 
   it('should return 400 with invalid input', async () => {
@@ -130,7 +125,7 @@ describe('POST /meals', () => {
 });
 
 describe('PATCH /meals/:id', () => {
-  it('should return 200 and update data with valid id', async () => {
+  it('should return 204 and update data with valid id', async () => {
     const data = {
       price: 6
     };
@@ -139,15 +134,25 @@ describe('PATCH /meals/:id', () => {
       .set('Content-Type', 'Application/json')
       .send(data);
 
-    expect(response.statusCode).toBe(200);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
-    expect(response.body.data._id).toBe(realId.toString());
-    expect(response.body.data.price).toBe(data.price);
+    expect(response.statusCode).toBe(204);
+  });
+
+  it('should return 204 if additional data', async () => {
+    const data = {
+      test: 'burger'
+    };
+    const response = await request(app)
+      .patch(`/api/v1/meals/${realId}`)
+      .set('Content-Type', 'Application/json')
+      .send(data);
+
+    expect(response.statusCode).toBe(204);
   });
 
   it('should return 404 if invalid id', async () => {
     const data = {
-      name: 'lasagne'
+      name: 'lasagne',
+      price: 2
     };
     const response = await request(app)
       .patch(`/api/v1/meals/${fakeId}`)
@@ -158,16 +163,18 @@ describe('PATCH /meals/:id', () => {
     expect(response.headers['content-type']).toMatch(/application\/json/g);
   });
 
-  it('should return 200 if additional data', async () => {
+  it('should return 400 if wrong input data', async () => {
     const data = {
-      test: 'burger'
+      name: 'burger',
+      price: 1000
     };
+
     const response = await request(app)
-      .patch(`/api/v1/meals/${realId}`)
+      .patch(`/api/v1/meals/123`)
       .set('Content-Type', 'Application/json')
       .send(data);
 
-    expect(response.statusCode).toBe(200);
+    expect(response.statusCode).toBe(400);
     expect(response.headers['content-type']).toMatch(/application\/json/g);
   });
 });
@@ -176,15 +183,20 @@ describe('DELETE /meals/:id', () => {
   it('should return 200 if valid id', async () => {
     const response = await request(app).delete(`/api/v1/meals/${realId}`);
 
-    expect(response.statusCode).toBe(200);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
-    expect(response.body.data._id).toBe(realId.toString());
+    expect(response.statusCode).toBe(204);
   });
 
   it('should return 404 if invalid id', async () => {
     const response = await request(app).delete(`/api/v1/meals/${fakeId}`);
 
     expect(response.statusCode).toBe(404);
+    expect(response.headers['content-type']).toMatch(/application\/json/g);
+  });
+
+  it('should return 400 if id is not 24 chars', async () => {
+    const response = await request(app).delete('/api/v1/meals/123');
+
+    expect(response.statusCode).toBe(400);
     expect(response.headers['content-type']).toMatch(/application\/json/g);
   });
 });

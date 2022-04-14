@@ -1,26 +1,18 @@
-import { UpdateQuery, FilterQuery } from 'mongoose';
+import { UpdateQuery } from 'mongoose';
 
+import { MealFilterQuery, MealQuery } from '../interfaces';
 import { IMeal } from '../interfaces/models';
-import { PromiseHandler } from '../interfaces/types';
+import { PromiseHandler, MongooseOrder } from '../interfaces/types';
 import { MealRepository } from '../repositories';
 import ValidationError from '../utils/ValidationError';
 
 export default class MealService {
   private readonly _repo = new MealRepository();
 
-  async getAll(): PromiseHandler<IMeal[]> {
-    try {
-      const meals: IMeal[] = await this._repo.findAll();
-      return [meals, undefined];
-    } catch (err) {
-      return [null, new ValidationError()];
-    }
-  }
-
-  async getById(id: string): PromiseHandler<IMeal> {
+  public async getById(id: string): PromiseHandler<IMeal> {
     const objectId = this._repo.createIdFromString(id);
     try {
-      const meal: IMeal | null = await this._repo.findById(objectId);
+      const meal = await this._repo.findById(objectId);
       if (!meal) return [null, new ValidationError('Invalid Id', 404)];
       return [meal, undefined];
     } catch (err) {
@@ -29,28 +21,52 @@ export default class MealService {
     }
   }
 
-  async get(query: FilterQuery<IMeal>): PromiseHandler<IMeal[]> {
+  public async getAll(sortQuery?: any): PromiseHandler<IMeal[]> {
     try {
-      const meals: IMeal[] = await this._repo.find(query);
+      const meals = await this._repo.findAll(this.getSortQuery(sortQuery));
       return [meals, undefined];
     } catch (err) {
       return [null, new ValidationError()];
     }
   }
 
-  async create(data: IMeal): PromiseHandler<IMeal> {
+  public async get(
+    { name, minPrice, maxPrice, allergenics }: any,
+    sortQuery?: any
+  ): PromiseHandler<IMeal[]> {
+    const filterQuery = {
+      price: { $gte: +minPrice || 0, $lte: +maxPrice || 50 },
+      name: new RegExp(name, 'i'),
+      allergenics: { $not: { $all: allergenics ? allergenics.split(',') : [] } }
+    };
+
     try {
-      const meal: IMeal = await this._repo.create(data);
+      const meals = await this._repo.find(
+        filterQuery,
+        this.getSortQuery(sortQuery)
+      );
+      return [meals, undefined];
+    } catch (err) {
+      return [null, new ValidationError()];
+    }
+  }
+
+  public async create(data: IMeal): PromiseHandler<IMeal> {
+    try {
+      const meal = await this._repo.create(data);
       return [meal, undefined];
     } catch (err) {
       return [null, new ValidationError()];
     }
   }
 
-  async update(id: string, data: UpdateQuery<IMeal>): PromiseHandler<IMeal> {
+  public async update(
+    id: string,
+    data: UpdateQuery<IMeal>
+  ): PromiseHandler<IMeal> {
     const objectId = this._repo.createIdFromString(id);
     try {
-      const meal: IMeal | null = await this._repo.update(objectId, data);
+      const meal = await this._repo.update(objectId, data);
       if (!meal) return [null, new ValidationError('Invalid id', 404)];
       return [meal, undefined];
     } catch (err) {
@@ -58,14 +74,29 @@ export default class MealService {
     }
   }
 
-  async delete(id: string): PromiseHandler<IMeal> {
+  public async delete(id: string): PromiseHandler<IMeal> {
     const objectId = this._repo.createIdFromString(id);
     try {
-      const meal: IMeal | null = await this._repo.delete(objectId);
+      const meal = await this._repo.delete(objectId);
       if (!meal) return [null, new ValidationError('Invalid Id', 404)];
       return [meal, undefined];
     } catch (err) {
       return [null, new ValidationError()];
     }
+  }
+
+  private getSortQuery(sort: string | undefined): MongooseOrder[] {
+    const sortArray: MongooseOrder[] = [];
+
+    if (!sort) return sortArray;
+
+    const sorts = sort.split(',');
+    sorts.forEach((sort, i) => {
+      const dir = sort[0] === '-' ? -1 : 1;
+      const field = dir === 1 ? sort : sort.slice(1);
+      sortArray[i] = [field, dir];
+    });
+
+    return sortArray;
   }
 }

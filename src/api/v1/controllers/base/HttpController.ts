@@ -9,7 +9,7 @@ export default abstract class HttpController {
 
   private router = Router();
 
-  public setRoutes(): Router {
+  public setRoutes() {
     this.routes.forEach(route => {
       if (route.localMiddleware) {
         route.localMiddleware.forEach(mw => {

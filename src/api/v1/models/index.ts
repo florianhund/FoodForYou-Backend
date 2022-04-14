@@ -1,4 +1,5 @@
 import MealModel from './meal';
+import RestaurantModel from './restaurant';
 
-// eslint-disable-next-line import/prefer-default-export
 export const Meal = MealModel;
+export const Restaurant = RestaurantModel;

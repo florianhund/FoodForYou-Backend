@@ -1,4 +1,5 @@
 import { Schema } from 'express-validator';
+import { Allergenics } from '../interfaces/types';
 
 const idSchema: Schema = {
   id: {
@@ -21,9 +22,10 @@ const createSchema: Schema = {
   price: {
     notEmpty: true,
     isFloat: {
-      options: { min: 0, max: 50.0 }
+      options: { min: 0, max: 50.0 },
+      errorMessage: 'Price has to be a floating point number between 0 and 50.0'
     },
-    errorMessage: 'Price has to be a floating point number between 0 and 50.0',
+    errorMessage: 'Price cannot be empty',
     toInt: true
   },
   description: {
@@ -31,9 +33,9 @@ const createSchema: Schema = {
       options: { checkFalsy: true }
     },
     isLength: {
-      options: { min: 10, max: 40 }
+      options: { min: 10, max: 60 }
     },
-    errorMessage: 'Description must be between 10 and 40 characters'
+    errorMessage: 'Description must be between 10 and 60 characters'
   },
   allergenics: {
     optional: {
@@ -43,7 +45,12 @@ const createSchema: Schema = {
     errorMessage: 'Allergenics must be an array of characters'
   },
   'allergenics.*': {
-    notEmpty: true
+    notEmpty: true,
+    isIn: {
+      options: [Allergenics],
+      errorMessage: 'Invalid Allergenic'
+    },
+    errorMessage: 'Allergenic cannot be empty'
   }
 };
 
@@ -86,15 +93,35 @@ const updateSchema: Schema = {
   },
   'allergenics.*': {
     notEmpty: true,
-    isLength: {
-      options: { min: 1, max: 1 }
+    isIn: {
+      options: [Allergenics],
+      errorMessage: 'Invalid Allergenic'
     },
-    errorMessage: 'Allergenic has to be 1 character long'
+    errorMessage: 'Allergenic cannot be empty'
+  }
+};
+
+const getSchema: Schema = {
+  without_allergenics: {
+    optional: {
+      options: { checkFalsy: true }
+    },
+    custom: {
+      options: value => {
+        value.split(',').forEach((allergenic: string) => {
+          if (!Object.keys(Allergenics).includes(allergenic)) {
+            throw new Error('At least one given String is no ALlergenic!');
+          }
+        });
+        return true;
+      }
+    }
   }
 };
 
 export default {
   create: createSchema,
   id: idSchema,
-  update: updateSchema
+  update: updateSchema,
+  get: getSchema
 };

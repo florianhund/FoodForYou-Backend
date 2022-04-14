@@ -13,7 +13,5 @@ const database: Database = new Database(DATABASE_URL, {
 const middleware = [express.urlencoded({ extended: false }), express.json()];
 
 database.init().then(() => {
-  server.loadGlobalMiddleware(middleware);
-  server.loadControllers();
-  server.run();
+  server.loadGlobalMiddleware(middleware).loadControllers().run();
 });

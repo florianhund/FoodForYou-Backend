@@ -1,11 +1,17 @@
-import { Router } from 'express';
+import { Request, Response, Router } from 'express';
 
-import MealController from '../controllers/MealController';
+import { MealController, RestaurantController } from '../controllers';
 
 const mealController = new MealController();
+const restaurantController = new RestaurantController();
 
-const router: Router = Router();
+const router = Router();
 
 router.use(mealController.path, mealController.setRoutes());
+router.use(restaurantController.path, restaurantController.setRoutes());
+
+router.get('*', (req: Request, res: Response) => {
+  res.status(404).send();
+});
 
 export default router;

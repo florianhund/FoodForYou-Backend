@@ -3,6 +3,8 @@ import { Meal } from '../models';
 import { IMeal } from '../interfaces/models';
 
 export default class MealRepository extends BaseRepository<IMeal> {
+  filterQuery = {};
+
   constructor() {
     super(Meal);
   }
