@@ -34,6 +34,10 @@ beforeAll(() => {
   app = server.app;
 });
 
+afterAll(() => {
+  Database.closeAllConnections();
+});
+
 beforeEach(async () => {
   await new Meal(meal).save();
 });

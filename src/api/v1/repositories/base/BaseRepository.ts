@@ -8,8 +8,14 @@ export default class BaseRepository<T extends mongoose.Document>
 {
   constructor(private readonly _model: mongoose.Model<T>) {}
 
-  public async findAll(order?: MongooseOrder[]): Promise<T[]> {
-    return this._model.find({}).sort(order || {});
+  public async findAll(
+    order?: MongooseOrder[],
+    fields?: string[]
+  ): Promise<T[]> {
+    return this._model
+      .find({})
+      .sort(order || [])
+      .select(fields || []);
   }
 
   public async findById(id: mongoose.Types.ObjectId): Promise<T | null> {
@@ -18,9 +24,13 @@ export default class BaseRepository<T extends mongoose.Document>
 
   public async find(
     query: mongoose.FilterQuery<T>,
-    order?: MongooseOrder[]
+    order?: MongooseOrder[],
+    fields?: string[]
   ): Promise<T[]> {
-    return this._model.find(query).sort(order || {});
+    return this._model
+      .find(query)
+      .sort(order || [])
+      .select(fields || []);
   }
 
   public async create(data: T): Promise<T> {
@@ -38,7 +48,7 @@ export default class BaseRepository<T extends mongoose.Document>
     return this._model.findByIdAndRemove(id);
   }
 
-  public createIdFromString(id: string) {
+  public static createIdFromString(id: string) {
     return new mongoose.Types.ObjectId(id);
   }
 }

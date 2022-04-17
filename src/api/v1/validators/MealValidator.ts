@@ -1,5 +1,6 @@
 import { Schema } from 'express-validator';
 import { Allergenics } from '../interfaces/types';
+import { IMeal } from '../interfaces/models';
 
 const idSchema: Schema = {
   id: {
@@ -102,6 +103,20 @@ const updateSchema: Schema = {
 };
 
 const getSchema: Schema = {
+  min_price: {
+    optional: {
+      options: { checkFalsy: true }
+    },
+    isFloat: true,
+    errorMessage: 'min_price has to be a floating point number'
+  },
+  max_price: {
+    optional: {
+      options: { checkFalsy: true }
+    },
+    isFloat: true,
+    errorMessage: 'max_price has to be a floating point number'
+  },
   without_allergenics: {
     optional: {
       options: { checkFalsy: true }

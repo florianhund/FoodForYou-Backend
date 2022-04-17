@@ -37,10 +37,19 @@ export interface IWrite<T> {
 }
 
 export interface MealQuery {
-  name: string;
-  minPrice: string;
-  maxPrice: string;
-  allergenics: string;
+  name?: string;
+  min_price?: number;
+  max_price?: number;
+  without_allergenics?: string;
+  sort_by?: string;
+  fields?: string;
+}
+
+export interface MealSearchQuery {
+  name?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  allergenics?: string;
 }
 
 export interface MealFilterQuery {

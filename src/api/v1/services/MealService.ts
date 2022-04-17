@@ -1,6 +1,6 @@
 import { UpdateQuery } from 'mongoose';
+import { MealFilterQuery, MealSearchQuery } from '../interfaces';
 
-import { MealFilterQuery, MealQuery } from '../interfaces';
 import { IMeal } from '../interfaces/models';
 import { PromiseHandler, MongooseOrder } from '../interfaces/types';
 import { MealRepository } from '../repositories';
@@ -10,7 +10,7 @@ export default class MealService {
   private readonly _repo = new MealRepository();
 
   public async getById(id: string): PromiseHandler<IMeal> {
-    const objectId = this._repo.createIdFromString(id);
+    const objectId = MealRepository.createIdFromString(id);
     try {
       const meal = await this._repo.findById(objectId);
       if (!meal) return [null, new ValidationError('Invalid Id', 404)];
@@ -21,9 +21,15 @@ export default class MealService {
     }
   }
 
-  public async getAll(sortQuery?: any): PromiseHandler<IMeal[]> {
+  public async getAll(
+    sortQuery?: string,
+    fields?: string
+  ): PromiseHandler<IMeal[]> {
     try {
-      const meals = await this._repo.findAll(this.getSortQuery(sortQuery));
+      const meals = await this._repo.findAll(
+        this.getSortQuery(sortQuery),
+        fields?.split(',')
+      );
       return [meals, undefined];
     } catch (err) {
       return [null, new ValidationError()];
@@ -31,19 +37,24 @@ export default class MealService {
   }
 
   public async get(
-    { name, minPrice, maxPrice, allergenics }: any,
-    sortQuery?: any
+    { name, minPrice, maxPrice, allergenics }: MealSearchQuery,
+    sortQuery?: string,
+    fields?: string
   ): PromiseHandler<IMeal[]> {
-    const filterQuery = {
-      price: { $gte: +minPrice || 0, $lte: +maxPrice || 50 },
-      name: new RegExp(name, 'i'),
-      allergenics: { $not: { $all: allergenics ? allergenics.split(',') : [] } }
+    const filterQuery: MealFilterQuery = {
+      price: {
+        $gte: minPrice || 0,
+        $lte: maxPrice || 50
+      },
+      name: new RegExp(name || '', 'i'),
+      allergenics: { $not: { $all: allergenics?.split(',') || [] } }
     };
 
     try {
       const meals = await this._repo.find(
         filterQuery,
-        this.getSortQuery(sortQuery)
+        this.getSortQuery(sortQuery),
+        fields?.split(',')
       );
       return [meals, undefined];
     } catch (err) {
@@ -64,7 +75,7 @@ export default class MealService {
     id: string,
     data: UpdateQuery<IMeal>
   ): PromiseHandler<IMeal> {
-    const objectId = this._repo.createIdFromString(id);
+    const objectId = MealRepository.createIdFromString(id);
     try {
       const meal = await this._repo.update(objectId, data);
       if (!meal) return [null, new ValidationError('Invalid id', 404)];
@@ -75,7 +86,7 @@ export default class MealService {
   }
 
   public async delete(id: string): PromiseHandler<IMeal> {
-    const objectId = this._repo.createIdFromString(id);
+    const objectId = MealRepository.createIdFromString(id);
     try {
       const meal = await this._repo.delete(objectId);
       if (!meal) return [null, new ValidationError('Invalid Id', 404)];

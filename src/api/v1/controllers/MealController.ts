@@ -6,6 +6,7 @@ import { MealService } from '../services';
 import { httpMethods } from '../interfaces/types';
 import { validate } from '../middlewares';
 import { MealSchema } from '../validators';
+import { MealQuery } from '../interfaces';
 
 const mealsrv = new MealService();
 
@@ -52,16 +53,19 @@ export default class MealController extends HttpController {
       name,
       min_price: minPrice,
       max_price: maxPrice,
-      without_allergenics: allergenics
-    } = req.query;
+      without_allergenics: allergenics,
+      sort_by: sort,
+      fields
+    } = req.query as unknown as MealQuery;
 
     const [meals, error] =
       !!name || !!minPrice || !!maxPrice || !!allergenics
         ? await mealsrv.get(
             { name, minPrice, maxPrice, allergenics },
-            req.query.sort_by
+            sort,
+            fields
           )
-        : await mealsrv.getAll(req.query.sort_by);
+        : await mealsrv.getAll(sort, fields);
 
     if (!meals) return super.sendError(res, error);
     return super.sendSuccess(res, meals);

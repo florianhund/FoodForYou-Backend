@@ -1,8 +1,10 @@
 import http from 'http';
 import express, { Application, RequestHandler } from 'express';
+import * as swaggerUi from 'swagger-ui-express';
 
-import router from './api/v1/routes';
+import router, { defaultHandler } from './api/v1/routes';
 import Logger from './config/Logger';
+import docs from './config/docs';
 
 const logger = new Logger(__filename);
 
@@ -48,6 +50,8 @@ export default class Server {
 
   public loadControllers(): Server {
     this._app.use('/api/v1', router);
+    this._app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(docs));
+    this._app.use('*', defaultHandler);
     return this;
   }
 }

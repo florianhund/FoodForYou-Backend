@@ -13,7 +13,7 @@ FoodForYou API is an open source food-delivery system API which allows users to 
 
 ### Prerequisites
 
-You need to have NodeJS (v14.17.6 or higher) installed on your system in order to install and run the application.
+You need to have **NodeJS** (v14.17.6 or higher) installed on your system in order to install and run the application.
 
 ### Installation Guide
 
@@ -30,26 +30,28 @@ npm i
 ```
 
 - Create a .env file in your project root folder and add your variables. See .env.example for assistance.
-<br> 
-Set NODE_ENV to DEVELOPMENT if you are not running the application in production mode.
+  <br>
+  Set NODE_ENV to DEVELOPMENT if you are not running the application in production mode.
 
 ### Usage
 
 Run the following command in the root directory to start the application.
+
 ```bash
 npm start
 ```
+
 The server port will be the port specified in .env file.
 
 ### Documentation
 
-The following route provides information about all API-Endpoints, models, servers and the whole project itselves. You should access this route via any browser.
+The following route provides information about all **API-Endpoints, models, servers** and the whole project itselves. You should access this route via your preferred browser.
 <br>
 GET /api-docs
 
 ### Technologies Used
 
-- [NodeJS](https://nodejs.org) This is a cross-platform runtime environment built on Chrome's V8 JavaScript engine used in running JavaScript codes on the server. It allows for installation and managing of dependencies and communication with databases. 
+- [NodeJS](https://nodejs.org) This is a cross-platform runtime environment built on Chrome's V8 JavaScript engine used in running JavaScript codes on the server. It allows for installation and managing of dependencies and communication with databases.
 
 - [ExpressJS](https://expressjs.com) This is a NodeJS web application framework.
 
@@ -67,4 +69,4 @@ GET /api-docs
 
 ### License
 
-This project is available for use under the ISC License.
+This project is available for use under the **ISC License**.

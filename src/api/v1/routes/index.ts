@@ -10,8 +10,8 @@ const router = Router();
 router.use(mealController.path, mealController.setRoutes());
 router.use(restaurantController.path, restaurantController.setRoutes());
 
-router.get('*', (req: Request, res: Response) => {
+export const defaultHandler = (req: Request, res: Response) => {
   res.status(404).send();
-});
+};
 
 export default router;

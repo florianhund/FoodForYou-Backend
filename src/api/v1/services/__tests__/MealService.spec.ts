@@ -6,6 +6,7 @@ import Server from '../../../../Server';
 import Database from '../../../../config/Database';
 import { DATABASE_URL } from '../../../../config/constants';
 import { Meal } from '../../models';
+import { IMeal } from '../../interfaces/models';
 
 const db = new Database(DATABASE_URL, {
   useNewUrlParser: true
@@ -18,7 +19,7 @@ const mealsrv = new MealService();
 
 const fakeId = '123456789123123456789123';
 const realId = new Types.ObjectId();
-const meal = {
+const testMeal = {
   _id: realId,
   name: 'pizza',
   price: 8,
@@ -35,8 +36,12 @@ beforeAll(() => {
   app = server.app;
 });
 
+afterAll(() => {
+  Database.closeAllConnections();
+});
+
 beforeEach(async () => {
-  await new Meal(meal).save();
+  await new Meal(testMeal).save();
 });
 
 afterEach(async () => {
@@ -45,7 +50,7 @@ afterEach(async () => {
 
 describe('get meals', () => {
   it('should return arr if query is {}', async () => {
-    const [meals] = await mealsrv.get({});
+    const [meals] = await mealsrv.getAll();
     expect(meals).toBeTruthy();
     expect(Array.isArray(meals)).toBeTruthy();
   });
@@ -53,42 +58,69 @@ describe('get meals', () => {
   it('should return arr if query is no empty object', async () => {
     const [meals] = await mealsrv.get({
       name: 'pizza',
-      max_price: 5
+      maxPrice: 5
     });
-    expect(meals).toBeTruthy();
-    expect(Array.isArray(meals)).toBeTruthy();
-  });
 
-  it('should return arr if query is wrong object', async () => {
-    const [meals] = await mealsrv.get({
-      name: 'burger',
-      test: 'test'
-    });
     expect(meals).toBeTruthy();
     expect(Array.isArray(meals)).toBeTruthy();
   });
 });
 
 describe('get meal by id', () => {
-  it('', async () => {
-    console.log('test');
+  it('should return null if id is empty & 404 error', async () => {
+    const [meals, error] = await mealsrv.getById(fakeId);
+    expect(meals).toBeFalsy();
+    expect(error).toBeTruthy();
+    expect(error?.code).toBe(404);
+  });
+
+  it('should return data if id is valid', async () => {
+    const [meal] = await mealsrv.getById(`${realId}`);
+    expect(meal).toBeTruthy();
+    expect(meal?.name).toBe(testMeal.name);
   });
 });
 
 describe('create meal', () => {
-  it('', async () => {
-    console.log('test');
+  it('should create meal', async () => {
+    const id = new Types.ObjectId();
+    const [meal] = await mealsrv.create({
+      _id: id,
+      name: 'spaghetti',
+      price: 9
+    } as IMeal);
+    expect(meal).toBeTruthy();
+    expect(meal?.price).toBe(9);
   });
 });
 
 describe('update meal', () => {
-  it('', async () => {
-    console.log('test');
+  it('should update meal if id is valid', async () => {
+    const [meal] = await mealsrv.update(`${realId}`, {
+      price: 20
+    });
+    expect(meal).toBeTruthy();
+    expect(meal?.price).toBe(20);
+  });
+  it('should return 404 error if id is invalid', async () => {
+    const [meal, error] = await mealsrv.update(fakeId, {});
+    expect(meal).toBeFalsy();
+    expect(error).toBeTruthy();
+    expect(error?.code).toBe(404);
   });
 });
 
 describe('delete meals', () => {
-  it('', async () => {
-    console.log('test');
+  it('should delete and return meal if id is valid', async () => {
+    const [meal] = await mealsrv.delete(`${realId}`);
+    expect(meal).toBeTruthy();
+    expect(meal?.name).toBe(testMeal.name);
+  });
+
+  it('should return 404 error if invalid id', async () => {
+    const [meal, error] = await mealsrv.delete(fakeId);
+    expect(meal).toBeFalsy();
+    expect(error).toBeTruthy();
+    expect(error?.code).toBe(404);
   });
 });
