@@ -36,7 +36,7 @@
   },
   "keywords": [],
   "author": "Florian Hundegger",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "express": "4.17.3",
     "express-validator": "6.14.0",

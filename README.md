@@ -74,4 +74,4 @@ GET /api-docs
 
 ### License
 
-This project is available for use under the **ISC License**.
+This project is available for use under the **MIT License**.
