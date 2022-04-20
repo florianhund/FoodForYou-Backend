@@ -2,7 +2,7 @@
 
 ### Introduction
 
-FoodForYou API is an open source food-delivery system API which allows users to find and create meals and restaurants, create orders and includes a full user login system.
+FoodForYou API is an open source **food-delivery system API** which allows users to find and create meals and restaurants, create orders and includes a full user login system.
 
 ### Project Support Features
 
@@ -10,6 +10,7 @@ FoodForYou API is an open source food-delivery system API which allows users to 
 - find / create / update restaurants
 - find / create / update orders
 - full user authentication
+- admin overwiev
 
 ### Prerequisites
 
@@ -29,7 +30,7 @@ cd FoodForYou
 npm i
 ```
 
-- Create a .env file in your project root folder and add your variables. See .env.example for assistance.
+- Create a **.env file in your project root folder** and add your variables. See .env.example for assistance.
   <br>
   Set NODE_ENV to DEVELOPMENT if you are not running the application in production mode.
 
@@ -51,17 +52,21 @@ GET /api-docs
 
 ### Technologies Used
 
-- [NodeJS](https://nodejs.org) This is a cross-platform runtime environment built on Chrome's V8 JavaScript engine used in running JavaScript codes on the server. It allows for installation and managing of dependencies and communication with databases.
+- [NodeJS](https://nodejs.org) This is a **cross-platform runtime environment** built on Chrome's V8 JavaScript engine used in running JavaScript codes on the server. It allows for installation and managing of dependencies and communication with databases.
 
-- [ExpressJS](https://expressjs.com) This is a NodeJS web application framework.
+- [ExpressJS](https://expressjs.com) This is a **NodeJS web application framework**.
 
-- [MongoDB](https://mongodb.com) This is a free open source NoSQL Document database with scalability and flexibility where data is stored in JSON-like documents.
+- [MongoDB](https://mongodb.com) This is a free open source **NoSQL Document database** with scalability and flexibility where data is stored in JSON-like documents.
 
-- [Mongoose ODM](https://mongoosejs.com) This makes it easy to write MongoDB validation by providing a straight forward, schema-based solution to model to application data.
+- [Mongoose ODM](https://mongoosejs.com) This makes it easy to write **MongoDB** validation by providing a straight forward, schema-based solution to model to application data.
 
-- [Typescript](https://typescriptlang.org) This is a strongly typed programming language that builds on JavaScript, giving you better tooling at any scale.
+- [Typescript](https://typescriptlang.org) This is a **strongly typed programming language** that builds on JavaScript, giving you better tooling at any scale.
 
-- [Express-Validator](https://express-validator.github.io) This is a set of express.js middlewares that wraps validator.js validator and sanitizer functions.
+- [Express-Validator](https://express-validator.github.io) This is a set of **express.js middlewares** that wraps validator.js validator and sanitizer functions.
+
+- [Swagger-Ui-Express](https://swagger.io/) This is an Interface Description Language for **describing RESTful APIs**. It is used to design, build and document RESTful web services.
+
+- [Jest](https://jestjs.io/) This is a delightful JavaScript / Typescript **Testing Framework**.
 
 ### Authors
 
