@@ -37,7 +37,7 @@ export default class MealService {
   }
 
   public async get(
-    { name, minPrice, maxPrice, allergenics }: MealSearchQuery,
+    { name, minPrice, maxPrice, allergenics, tags }: MealSearchQuery,
     sortQuery?: string,
     fields?: string
   ): PromiseHandler<IMeal[]> {
@@ -47,7 +47,8 @@ export default class MealService {
         $lte: maxPrice || 50
       },
       name: new RegExp(name || '', 'i'),
-      allergenics: { $not: { $all: allergenics?.split(',') || [] } }
+      allergenics: { $not: { $all: allergenics?.split(',') || [] } },
+      tags: { $all: tags?.split(',') || [] }
     };
 
     try {

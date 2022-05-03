@@ -16,7 +16,8 @@ const meal = new Schema<IMeal>(
         type: String,
         enum: Allergenics
       }
-    ]
+    ],
+    tags: [String]
   }
   // ,{ strictQuery: false }
 );

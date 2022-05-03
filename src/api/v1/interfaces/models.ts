@@ -6,5 +6,5 @@ export interface IMeal extends Document {
   price: number;
   description?: string;
   allergenics?: Allergenics[];
-  // tags?: string[];
+  tags?: string[];
 }

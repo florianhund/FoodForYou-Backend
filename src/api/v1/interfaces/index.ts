@@ -42,6 +42,7 @@ export interface MealQuery {
   max_price?: number;
   without_allergenics?: string;
   sort_by?: string;
+  tags?: string;
   fields?: string;
 }
 
@@ -50,6 +51,7 @@ export interface MealSearchQuery {
   minPrice?: number;
   maxPrice?: number;
   allergenics?: string;
+  tags?: string;
 }
 
 export interface MealFilterQuery {
@@ -62,5 +64,8 @@ export interface MealFilterQuery {
     $not: {
       $all: string[];
     };
+  };
+  tags: {
+    $all: string[];
   };
 }

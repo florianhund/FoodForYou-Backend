@@ -55,13 +55,14 @@ export default class MealController extends HttpController {
       max_price: maxPrice,
       without_allergenics: allergenics,
       sort_by: sort,
+      tags,
       fields
     } = req.query as unknown as MealQuery;
 
     const [meals, error] =
-      !!name || !!minPrice || !!maxPrice || !!allergenics
+      !!name || !!minPrice || !!maxPrice || !!allergenics || !!tags
         ? await mealsrv.get(
-            { name, minPrice, maxPrice, allergenics },
+            { name, minPrice, maxPrice, allergenics, tags },
             sort,
             fields
           )

@@ -51,6 +51,13 @@ const createSchema: Schema = {
       errorMessage: 'Invalid Allergenic'
     },
     errorMessage: 'Allergenic cannot be empty'
+  },
+  tags: {
+    optional: {
+      options: { checkFalsy: true }
+    },
+    isArray: true,
+    errorMessage: 'Tags must be an array of Strings'
   }
 };
 
@@ -98,6 +105,13 @@ const updateSchema: Schema = {
       errorMessage: 'Invalid Allergenic'
     },
     errorMessage: 'Allergenic cannot be empty'
+  },
+  tags: {
+    optional: {
+      options: { checkFalsy: true }
+    },
+    isArray: true,
+    errorMessage: 'Tags must be an array of Strings'
   }
 };
 
