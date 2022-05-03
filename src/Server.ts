@@ -12,7 +12,7 @@ export default class Server {
   // eslint-disable-next-line no-use-before-define
   private static _server: Server;
 
-  private readonly _app: Application = express();
+  private _app: Application = express();
 
   private constructor(private readonly _port: number) {}
 
@@ -27,7 +27,7 @@ export default class Server {
     return this._app;
   }
 
-  run(): http.Server {
+  public run(): http.Server {
     return this._app.listen(this._port, () => {
       logger.log(`Server running on port ${this._port}!`, 'info');
     });

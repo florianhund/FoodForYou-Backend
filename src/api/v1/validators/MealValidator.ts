@@ -1,6 +1,5 @@
 import { Schema } from 'express-validator';
 import { Allergenics } from '../interfaces/types';
-import { IMeal } from '../interfaces/models';
 
 const idSchema: Schema = {
   id: {

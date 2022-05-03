@@ -1,5 +1,4 @@
 import MealRepositoryModule from './MealRepository';
-import RestaurantRepositoryModule from './RestaurantRepository';
 
+// eslint-disable-next-line import/prefer-default-export
 export const MealRepository = MealRepositoryModule;
-export const RestaurantRepository = RestaurantRepositoryModule;

@@ -6,11 +6,5 @@ export interface IMeal extends Document {
   price: number;
   description?: string;
   allergenics?: Allergenics[];
-}
-
-export interface IRestaurant extends Document {
-  name: string;
-  rating: number;
-  description: string;
-  location: string;
+  // tags?: string[];
 }

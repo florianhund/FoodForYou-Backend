@@ -9,10 +9,10 @@ import ValidationError from '../utils/ValidationError';
 export default class MealService {
   private readonly _repo = new MealRepository();
 
-  public async getById(id: string): PromiseHandler<IMeal> {
+  public async getById(id: string, fields?: string): PromiseHandler<IMeal> {
     const objectId = MealRepository.createIdFromString(id);
     try {
-      const meal = await this._repo.findById(objectId);
+      const meal = await this._repo.findById(objectId, fields?.split(','));
       if (!meal) return [null, new ValidationError('Invalid Id', 404)];
       return [meal, undefined];
     } catch (err) {

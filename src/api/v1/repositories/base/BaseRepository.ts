@@ -18,8 +18,11 @@ export default class BaseRepository<T extends mongoose.Document>
       .select(fields || []);
   }
 
-  public async findById(id: mongoose.Types.ObjectId): Promise<T | null> {
-    return this._model.findById(id);
+  public async findById(
+    id: mongoose.Types.ObjectId,
+    fields?: string[]
+  ): Promise<T | null> {
+    return this._model.findById(id).select(fields);
   }
 
   public async find(

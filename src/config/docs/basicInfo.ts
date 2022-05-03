@@ -3,10 +3,15 @@ export default {
   info: {
     title: 'FoodForYou',
     description: 'Food Delivery App',
-    version: '1.0.0',
+    version: '0.1.0',
     contact: {
       name: 'Florian Hundegger',
-      email: 'flo.hundegger@gmail.com'
+      email: 'flo.hundegger@gmail.com',
+      url: 'https://github.com/florianhund'
+    },
+    license: {
+      name: 'MIT',
+      url: 'https://opensource.org/licenses/MIT'
     }
   }
 };

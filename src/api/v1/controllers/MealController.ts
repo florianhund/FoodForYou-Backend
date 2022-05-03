@@ -73,7 +73,8 @@ export default class MealController extends HttpController {
 
   async getMealById(req: Request, res: Response): Promise<Response> {
     const { id } = req.params;
-    const [meal, error] = await mealsrv.getById(id);
+    const { fields } = req.query as MealQuery;
+    const [meal, error] = await mealsrv.getById(id, fields);
     if (!meal) return super.sendError(res, error);
     return super.sendSuccess(res, meal);
   }

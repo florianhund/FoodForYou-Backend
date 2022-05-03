@@ -1,16 +1,17 @@
-# Project Setup
+# FoodForYou
 
 ### Introduction
 
-FoodForYou API is an open source **food-delivery system API** which allows users to find and create meals and restaurants, create orders and includes a full user login system.
+FoodForYou API is an open source **food-delivery system API** which allows users to find and create meals, create orders and includes a full user login system.
+<br>
+Current Version: 0.1.0
 
 ### Project Support Features
 
-- find / create / update meals
-- find / create / update restaurants
-- find / create / update orders
-- full user authentication
-- admin overwiev
+- find / create / update / delete meals
+- find / create / update / delete orders
+- full user authentication system
+- admin functionality
 
 ### Prerequisites
 
@@ -46,7 +47,7 @@ The server port will be the port specified in .env file.
 
 ### Documentation
 
-The following route provides information about all **API-Endpoints, models, servers** and the whole project itselves. You should access this route via your preferred browser.
+The following route provides information about all **API-Endpoints, schemas, servers** and the whole project itselves. You should access this route via any browser.
 <br>
 GET /api-docs
 
@@ -74,4 +75,4 @@ GET /api-docs
 
 ### License
 
-This project is available for use under the **MIT License**.
+This project is available for use under the **MIT License**. Click [here](https://opensource.org/licenses/MIT) for further information.
