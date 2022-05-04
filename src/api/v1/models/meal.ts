@@ -11,6 +11,8 @@ const meal = new Schema<IMeal>(
       default: ''
     },
     price: { type: Number, required: true },
+    isVegetarian: { type: Boolean, required: true },
+    isVegan: { type: Boolean, required: true },
     allergenics: [
       {
         type: String,

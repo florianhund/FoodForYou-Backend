@@ -37,7 +37,15 @@ export default class MealService {
   }
 
   public async get(
-    { name, minPrice, maxPrice, allergenics, tags }: MealSearchQuery,
+    {
+      name,
+      minPrice,
+      maxPrice,
+      isVegetarian,
+      isVegan,
+      allergenics,
+      tags
+    }: MealSearchQuery,
     sortQuery?: string,
     fields?: string
   ): PromiseHandler<IMeal[]> {
@@ -47,9 +55,20 @@ export default class MealService {
         $lte: maxPrice || 50
       },
       name: new RegExp(name || '', 'i'),
-      allergenics: { $not: { $all: allergenics?.split(',') || [] } },
-      tags: { $all: tags?.split(',') || [] }
+      allergenics: { $not: { $in: allergenics?.split(',') || [] } }
     };
+
+    if (tags && tags.length > 0) {
+      filterQuery.tags = { $in: tags?.split(',') || [] };
+    }
+
+    if (isVegetarian) {
+      filterQuery.isVegetarian = isVegetarian;
+    }
+
+    if (isVegan) {
+      filterQuery.isVegan = isVegan;
+    }
 
     try {
       const meals = await this._repo.find(

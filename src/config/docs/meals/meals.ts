@@ -1,7 +1,7 @@
 export default {
   get: {
     tags: ['Meal Endpoints'],
-    description: 'Get meals',
+    description: 'Get meals. Returns all meals if query is empty',
     operationId: 'getMeals',
     parameters: [
       {
@@ -41,6 +41,24 @@ export default {
         description: 'filter meals by excluding allergenics'
       },
       {
+        name: 'isVegetarian',
+        in: 'query',
+        schema: {
+          type: 'boolean',
+          example: 'false'
+        },
+        description: 'true if meal is vegetarian'
+      },
+      {
+        name: 'isVegan',
+        in: 'query',
+        schema: {
+          type: 'boolean',
+          example: 'false'
+        },
+        description: 'true if meal is vegan'
+      },
+      {
         name: 'fields',
         in: 'query',
         schema: {
@@ -48,6 +66,15 @@ export default {
           example: 'name,price'
         },
         description: 'get only specific fields of meals'
+      },
+      {
+        name: 'tags',
+        in: 'query',
+        schema: {
+          type: 'string',
+          example: 'steak, tasty'
+        },
+        description: 'search meals by tags one or more tags'
       },
       {
         name: 'sort_by',
@@ -81,8 +108,8 @@ export default {
           }
         }
       },
-      404: {
-        description: '404 Not Found',
+      500: {
+        description: '500 Internal Server Error',
         content: {
           'application/json': {
             schema: {
@@ -90,10 +117,46 @@ export default {
               properties: {
                 message: {
                   type: 'string',
-                  example: 'Invalid Id',
+                  example: 'Internal Server Error',
                   description: 'error message'
                 }
               }
+            }
+          }
+        }
+      }
+    }
+  },
+  post: {
+    tags: ['Meal Endpoints'],
+    description: 'create a meal',
+    operationId: 'postMeal',
+    parameters: [
+      {
+        in: 'body',
+        name: 'meal',
+        description: 'meal to create',
+        schema: {
+          $ref: '#/components/schemas/Meal'
+        }
+      }
+    ],
+    responses: {
+      201: {
+        description: '201 Created',
+        headers: {
+          Location: {
+            description: 'Location of created meal',
+            type: 'string'
+          }
+        }
+      },
+      400: {
+        description: '400 Bad Request',
+        content: {
+          'application/json': {
+            schema: {
+              $ref: '#/components/schemas/ValidationError'
             }
           }
         }

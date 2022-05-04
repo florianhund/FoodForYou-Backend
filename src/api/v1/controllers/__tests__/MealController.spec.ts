@@ -184,7 +184,7 @@ describe('PATCH /meals/:id', () => {
 });
 
 describe('DELETE /meals/:id', () => {
-  it('should return 200 if valid id', async () => {
+  it('should return 204 if valid id', async () => {
     const response = await request(app).delete(`/api/v1/meals/${realId}`);
 
     expect(response.statusCode).toBe(204);

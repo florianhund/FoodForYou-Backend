@@ -40,6 +40,8 @@ export interface MealQuery {
   name?: string;
   min_price?: number;
   max_price?: number;
+  isVegetarian?: boolean;
+  isVegan?: boolean;
   without_allergenics?: string;
   sort_by?: string;
   tags?: string;
@@ -50,6 +52,8 @@ export interface MealSearchQuery {
   name?: string;
   minPrice?: number;
   maxPrice?: number;
+  isVegetarian?: boolean;
+  isVegan?: boolean;
   allergenics?: string;
   tags?: string;
 }
@@ -62,10 +66,12 @@ export interface MealFilterQuery {
   name: RegExp;
   allergenics: {
     $not: {
-      $all: string[];
+      $in: string[];
     };
   };
-  tags: {
-    $all: string[];
+  tags?: {
+    $in: string[];
   };
+  isVegetarian?: boolean | null;
+  isVegan?: boolean;
 }

@@ -28,6 +28,20 @@ const createSchema: Schema = {
     errorMessage: 'Price cannot be empty',
     toInt: true
   },
+  isVegetarian: {
+    notEmpty: true,
+    isBoolean: {
+      errorMessage: 'isVegetarian has to be boolean value'
+    },
+    errorMessage: 'isVegetarian cannot be empty'
+  },
+  isVegan: {
+    notEmpty: true,
+    isBoolean: {
+      errorMessage: 'isVegan has to be boolean value'
+    },
+    errorMessage: 'isVegan cannot be empty'
+  },
   description: {
     optional: {
       options: { checkFalsy: true }
@@ -112,6 +126,13 @@ const updateSchema: Schema = {
     },
     isArray: true,
     errorMessage: 'Tags must be an array of Strings'
+  },
+  'tags.*': {
+    notEmpty: true,
+    isLength: {
+      options: { min: 1, max: 15 }
+    },
+    errorMessage: 'Tag must be between 1 and 25 chars long'
   }
 };
 

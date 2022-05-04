@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { checkSchema } from 'express-validator';
 
 import HttpController from './base/HttpController';
+import { hasAllNullishValues } from '../utils';
 import { MealService } from '../services';
 import { httpMethods } from '../interfaces/types';
 import { validate } from '../middlewares';
@@ -55,18 +56,26 @@ export default class MealController extends HttpController {
       max_price: maxPrice,
       without_allergenics: allergenics,
       sort_by: sort,
+      isVegetarian,
+      isVegan,
       tags,
       fields
     } = req.query as unknown as MealQuery;
 
-    const [meals, error] =
-      !!name || !!minPrice || !!maxPrice || !!allergenics || !!tags
-        ? await mealsrv.get(
-            { name, minPrice, maxPrice, allergenics, tags },
-            sort,
-            fields
-          )
-        : await mealsrv.getAll(sort, fields);
+    const filter = {
+      name,
+      minPrice,
+      maxPrice,
+      allergenics,
+      sort,
+      isVegetarian,
+      isVegan,
+      tags
+    };
+
+    const [meals, error] = !hasAllNullishValues(filter)
+      ? await mealsrv.get(filter, sort, fields)
+      : await mealsrv.getAll(fields);
 
     if (!meals) return super.sendError(res, error);
     return super.sendSuccess(res, meals);
