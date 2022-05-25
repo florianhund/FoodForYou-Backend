@@ -1,4 +1,5 @@
 import MealServiceModule from './MealService';
+import UserServiceModule from './UserService';
 
-// eslint-disable-next-line import/prefer-default-export
 export const MealService = MealServiceModule;
+export const UserService = UserServiceModule;

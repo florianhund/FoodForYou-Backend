@@ -1,4 +1,7 @@
 import MealModel from './meal';
+import UserModel from './user';
+import OrderModel from './order';
 
-// eslint-disable-next-line import/prefer-default-export
 export const Meal = MealModel;
+export const User = UserModel;
+export const Order = OrderModel;

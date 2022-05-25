@@ -19,6 +19,7 @@
     "no-useless-constructor": "off",
     "no-underscore-dangle": "off",
     "no-empty-function": ["off", { "allow": "constructors" }],
+    "func-names": "off",
     "camelcase": "warn",
     "consistent-return": "off",
     "no-shadow": "off",

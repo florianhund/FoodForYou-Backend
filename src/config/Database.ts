@@ -9,7 +9,7 @@ export default class Database {
     public options: ConnectOptions
   ) {}
 
-  public async init(): Promise<void> {
+  public async init() {
     try {
       await mongoose.connect(this._connectionUrl, this.options);
       logger.log('Connected to Mongoose!', 'info');
@@ -19,7 +19,7 @@ export default class Database {
     }
   }
 
-  public static closeAllConnections(): void {
+  public static closeAllConnections() {
     mongoose.disconnect();
   }
 }

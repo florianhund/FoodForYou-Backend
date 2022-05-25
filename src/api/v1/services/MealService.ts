@@ -7,7 +7,7 @@ import { MealRepository } from '../repositories';
 import ValidationError from '../utils/ValidationError';
 
 export default class MealService {
-  private readonly _repo = new MealRepository();
+  private _repo = new MealRepository();
 
   public async getById(id: string, fields?: string): PromiseHandler<IMeal> {
     const objectId = MealRepository.createIdFromString(id);
@@ -27,7 +27,7 @@ export default class MealService {
   ): PromiseHandler<IMeal[]> {
     try {
       const meals = await this._repo.findAll(
-        this.getSortQuery(sortQuery),
+        MealRepository.getSortQuery(sortQuery || ''),
         fields?.split(',')
       );
       return [meals, undefined];
@@ -73,7 +73,7 @@ export default class MealService {
     try {
       const meals = await this._repo.find(
         filterQuery,
-        this.getSortQuery(sortQuery),
+        MealRepository.getSortQuery(sortQuery || ''),
         fields?.split(',')
       );
       return [meals, undefined];
@@ -114,20 +114,5 @@ export default class MealService {
     } catch (err) {
       return [null, new ValidationError()];
     }
-  }
-
-  private getSortQuery(sort: string | undefined): MongooseOrder[] {
-    const sortArray: MongooseOrder[] = [];
-
-    if (!sort) return sortArray;
-
-    const sorts = sort.split(',');
-    sorts.forEach((sort, i) => {
-      const dir = sort[0] === '-' ? -1 : 1;
-      const field = dir === 1 ? sort : sort.slice(1);
-      sortArray[i] = [field, dir];
-    });
-
-    return sortArray;
   }
 }

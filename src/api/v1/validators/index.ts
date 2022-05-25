@@ -1,4 +1,5 @@
-import MealValidator from './MealValidator';
+import mealValidator from './mealValidator';
+import userValidator from './userValidator';
 
-// eslint-disable-next-line import/prefer-default-export
-export const MealSchema = MealValidator;
+export const mealSchema = mealValidator;
+export const userSchema = userValidator;

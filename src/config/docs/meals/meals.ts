@@ -89,11 +89,19 @@ export default {
     ],
     responses: {
       200: {
-        description: '200 ok',
+        description: '200 OK',
         content: {
           'application/json': {
             schema: {
-              $ref: '#/components/schemas/Meal'
+              type: 'object',
+              properties: {
+                data: {
+                  type: 'array',
+                  items: {
+                    $ref: '#/components/schemas/Meal'
+                  }
+                }
+              }
             }
           }
         }
@@ -107,19 +115,19 @@ export default {
             }
           }
         }
-      },
-      500: {
-        description: '500 Internal Server Error',
-        content: {
-          'application/json': {
-            schema: {
-              type: 'object',
-              properties: {
-                message: {
-                  type: 'string',
-                  example: 'Internal Server Error',
-                  description: 'error message'
-                }
+      }
+    },
+    500: {
+      description: '500 Internal Server Error',
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              message: {
+                type: 'string',
+                example: 'Internal Server Error',
+                description: 'error message'
               }
             }
           }

@@ -54,4 +54,19 @@ export default class BaseRepository<T extends mongoose.Document>
   public static createIdFromString(id: string) {
     return new mongoose.Types.ObjectId(id);
   }
+
+  public static getSortQuery(sort: string): MongooseOrder[] {
+    const sortArray: MongooseOrder[] = [];
+
+    if (!sort) return sortArray;
+
+    const sorts = sort.split(',');
+    sorts.forEach((sort, i) => {
+      const dir = sort[0] === '-' ? -1 : 1;
+      const field = dir === 1 ? sort : sort.slice(1);
+      sortArray[i] = [field, dir];
+    });
+
+    return sortArray;
+  }
 }

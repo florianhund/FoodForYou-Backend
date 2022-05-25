@@ -1,5 +1,5 @@
-import HttpControllerModule from './base/HttpController';
-import MealControllermodule from './MealController';
+import MealControllerModule from './MealController';
+import UserControllerModule from './UserController';
 
-export const HttpController = HttpControllerModule;
-export const MealController = MealControllermodule;
+export const MealController = MealControllerModule;
+export const UserController = UserControllerModule;

@@ -75,3 +75,9 @@ export interface MealFilterQuery {
   isVegetarian?: boolean | null;
   isVegan?: boolean;
 }
+
+export interface UserQuery {
+  username?: string;
+  sort_by?: string;
+  fields?: string;
+}

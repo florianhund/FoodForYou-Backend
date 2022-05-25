@@ -1,8 +1,8 @@
 export default {
   get: {
-    tags: ['Meal Endpoints'],
-    description: 'get meal by id',
-    operationId: 'getMealById',
+    tags: ['User Endpoints'],
+    description: 'Get user by id',
+    operationId: 'getUserById',
     parameters: [
       {
         name: 'id',
@@ -22,7 +22,7 @@ export default {
               type: 'object',
               properties: {
                 data: {
-                  $ref: '#/components/schemas/Meal'
+                  $ref: '#/components/schemas/User'
                 }
               }
             }
@@ -81,9 +81,9 @@ export default {
     }
   },
   patch: {
-    tags: ['Meal Endpoints'],
-    description: 'update meal',
-    operationId: 'updateMeal',
+    tags: ['User Endpoints'],
+    description: 'update user',
+    operationId: 'updateUser',
     parameters: [
       {
         name: 'id',
@@ -94,87 +94,62 @@ export default {
         description: 'id to update'
       },
       {
+        name: 'user',
         in: 'body',
-        name: 'meal',
-        description: 'update body',
         schema: {
           type: 'object',
           properties: {
-            id: {
+            firstName: {
               type: 'string',
-              description: 'Id of Meal',
-              length: 24,
-              example: '6253f6610d5ef0a5f7cbde76'
+              example: 'John',
+              maxLength: '20',
+              description: 'first name'
             },
-            name: {
+            lastName: {
               type: 'string',
-              description: 'Name of Meal',
-              minLength: 5,
-              maxLength: 25,
-              example: 'burger'
+              example: 'Doe',
+              maxLength: '20',
+              description: 'last name'
             },
-            price: {
+            username: {
+              type: 'string',
+              example: 'john_doe38',
+              description: 'username'
+            },
+            email: {
+              type: 'string',
+              example: 'john.doe@gmail.com',
+              description: 'email'
+            },
+            birthday: {
+              type: 'date',
+              example: '1987-02.14',
+              description: 'birthday'
+            },
+            password: {
+              type: 'string',
+              example: 'my_secReTpaSsword342',
+              description: 'password'
+            },
+            address: {
+              type: 'string',
+              example: 'Teststreet 3',
+              description: 'address'
+            },
+            postalCode: {
               type: 'number',
-              description: 'Price of Meal',
-              min: 0,
-              max: 50,
-              example: '8.5'
+              example: '6060',
+              description: 'postal code'
             },
-            isVegetarian: {
+            isVerified: {
               type: 'boolean',
-              description: 'true if meal is vegetarian',
-              example: 'false'
+              example: 'true',
+              description: 'true if user is verified'
             },
-            isVegan: {
+            isAdmin: {
               type: 'boolean',
-              description: 'true if meal is vegan',
-              example: 'false'
-            },
-            description: {
-              type: 'string',
-              description: 'Description of Meal',
-              minLength: 10,
-              maxLength: 40,
-              example: 'This is a tasty Burger!'
-            },
-            allergenics: {
-              type: 'array',
-              items: {
-                type: 'string',
-                enum: [
-                  'A',
-                  'B',
-                  'C',
-                  'D',
-                  'E',
-                  'F',
-                  'G',
-                  'H',
-                  'L',
-                  'M',
-                  'N',
-                  'O',
-                  'P',
-                  'R'
-                ]
-              },
-              description: 'Allergenics of Meal',
-              example: ['A', 'E']
-            },
-            tags: {
-              type: 'array',
-              items: {
-                type: 'string',
-                minLength: 1,
-                maxLength: 15
-              },
-              description: 'tags',
-              example: ['steak, tasty, good']
-            },
-            __v: {
-              type: 'number',
-              description: 'version of Meal',
-              example: 0
+              example: 'false',
+              description: 'true if user is admin'
             }
           }
         }
@@ -231,9 +206,9 @@ export default {
     }
   },
   delete: {
-    tags: ['Meal Endpoints'],
-    description: 'delete meal',
-    operationId: 'deleteMealById',
+    tags: ['User Endpoints'],
+    description: 'delete user',
+    operationId: 'deleteUsers',
     parameters: [
       {
         name: 'id',

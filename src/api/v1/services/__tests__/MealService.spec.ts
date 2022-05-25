@@ -23,6 +23,8 @@ const testMeal = {
   _id: realId,
   name: 'pizza',
   price: 8,
+  isVegetarian: false,
+  isVegan: false,
   description: 'tasty pizza'
 };
 
@@ -87,7 +89,9 @@ describe('create meal', () => {
     const [meal] = await mealsrv.create({
       _id: id,
       name: 'spaghetti',
-      price: 9
+      price: 9,
+      isVegetarian: false,
+      isVegan: false
     } as IMeal);
     expect(meal).toBeTruthy();
     expect(meal?.price).toBe(9);

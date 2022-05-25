@@ -1,8 +1,5 @@
 export default class ValidationError extends Error {
-  constructor(
-    private _message: string = 'Internal Server Error',
-    private _code: number = 500
-  ) {
+  constructor(private _message = 'Internal Server Error', private _code = 500) {
     super(_message);
   }
 
