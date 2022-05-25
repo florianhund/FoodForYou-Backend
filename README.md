@@ -4,7 +4,7 @@
 
 FoodForYou API is an open source **food-delivery system API** which allows users to find and create meals, create orders and includes a full user login system.
 <br>
-Current Version: 0.1.0
+Current Version: 0.2.0
 
 ### Project Support Features
 
