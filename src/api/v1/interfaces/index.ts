@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { Types, UpdateQuery } from 'mongoose';
-import { httpMethods, MongooseOrder } from './types';
+import { httpMethods, middleware, MongooseOrder } from './types';
 
 export interface ILog {
   message: any;
@@ -12,16 +12,8 @@ export interface IRoute {
   path: string;
   method: httpMethods;
   handler: (req: Request, res: Response) => Response | Promise<Response>;
-  validator?: (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => Promise<void | Response>;
-  localMiddleware?: ((
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => void | Promise<void>)[];
+  validator?: middleware;
+  localMiddleware?: middleware[];
 }
 
 export interface IRead<T> {

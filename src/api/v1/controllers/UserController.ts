@@ -4,9 +4,16 @@ import { checkSchema } from 'express-validator';
 import HttpController from './base/HttpController';
 import { UserService } from '../services';
 import { httpMethods } from '../interfaces/types';
-import { UserQuery } from '../interfaces';
+import { UserQuery, IRoute } from '../interfaces';
 import { userSchema } from '../validators';
-import { validate } from '../middlewares';
+import { checkUser, validate } from '../middlewares';
+import Mailer from '../../../config/Mailer';
+import {
+  CLIENT_ID,
+  CLIENT_SECRET,
+  REFRESH_TOKEN
+} from '../../../config/constants';
+import HttpError from '../utils/HttpError';
 
 const usersrv = new UserService();
 
@@ -14,7 +21,7 @@ const usersrv = new UserService();
 export default class UserController extends HttpController {
   path = '/users';
 
-  routes = [
+  routes: IRoute[] = [
     {
       path: '/',
       method: httpMethods.GET,
@@ -46,6 +53,21 @@ export default class UserController extends HttpController {
       method: httpMethods.DELETE,
       handler: this.deleteUser,
       validator: validate(checkSchema(userSchema.id))
+    },
+    {
+      path: '/:id/send-verification',
+      method: httpMethods.GET,
+      localMiddleware: [checkUser.isNotVerified],
+      handler: this.sendVerification
+    },
+    {
+      path: '/:id/verify',
+      method: httpMethods.GET,
+      localMiddleware: [checkUser.isNotVerified],
+      handler: this.verifyUser,
+      validator: validate(
+        checkSchema({ ...userSchema.id, ...userSchema.verification })
+      )
     }
   ];
 
@@ -91,6 +113,37 @@ export default class UserController extends HttpController {
     const { id } = req.params;
     const [user, error] = await usersrv.delete(id);
     if (!user) return super.sendError(res, error);
+    return super.sendSuccess(res, {}, 204);
+  }
+
+  private async sendVerification(
+    req: Request,
+    res: Response
+  ): Promise<Response> {
+    if (!CLIENT_ID || !CLIENT_SECRET || !REFRESH_TOKEN)
+      throw new Error(
+        'Either Client id, client secret or refresh token is null'
+      );
+    const mailer = new Mailer(CLIENT_ID, CLIENT_SECRET, REFRESH_TOKEN);
+
+    const [user, error] = await usersrv.getById(req.params.id);
+    if (!user) return super.sendError(res, error);
+
+    // eslint-disable-next-line
+    mailer.sendVerification(user.email, user.otp!);
+    return super.sendSuccess(res, {}, 204);
+  }
+
+  private async verifyUser(req: Request, res: Response): Promise<Response> {
+    const { id } = req.params;
+    const { otp } = req.query;
+
+    const [user, error] = await usersrv.getById(id);
+    if (!user) return super.sendError(res, error);
+
+    if (+otp! !== user.otp)
+      return super.sendError(res, new HttpError('wrong code', 401));
+    await usersrv.update(id, { isVerified: true, otp: null });
     return super.sendSuccess(res, {}, 204);
   }
 }

@@ -21,6 +21,7 @@ export interface IUser extends Document {
   address: string;
   postalCode: number;
   isVerified: boolean;
+  otp: number | null;
   isAdmin: boolean;
   // virtual
   age: number;

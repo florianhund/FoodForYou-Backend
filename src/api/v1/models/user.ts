@@ -13,6 +13,7 @@ const user = new Schema<IUser>(
     address: { type: String, required: true },
     postalCode: { type: Number, required: true },
     isVerified: { type: Boolean, required: true },
+    otp: { type: Number, required: true },
     isAdmin: { type: Boolean, default: false }
   },
   { toJSON: { virtuals: true } }

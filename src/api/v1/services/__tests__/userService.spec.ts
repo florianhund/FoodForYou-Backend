@@ -30,7 +30,8 @@ const testUser = {
   address: 'Rudolfstr. 7b',
   postalCode: 6067,
   isVerified: false,
-  isAdmin: false
+  isAdmin: false,
+  otp: 8923
 };
 
 beforeAll(() => {
@@ -102,7 +103,8 @@ describe('create user', () => {
       address: 'Rudolfstr. 7b',
       postalCode: 6067,
       isVerified: false,
-      isAdmin: false
+      isAdmin: false,
+      otp: 4527
     } as unknown as IUser);
 
     expect(user).toBeTruthy();
@@ -120,7 +122,8 @@ describe('create user', () => {
       address: 'Rudolfstr. 7b',
       postalCode: 6067,
       isVerified: false,
-      isAdmin: false
+      isAdmin: false,
+      otp: 4527
     } as unknown as IUser);
 
     expect(user).toBeNull();

@@ -5,6 +5,12 @@ export default {
     },
     {
       name: 'User Endpoints'
+    },
+    {
+      name: 'Order Enpoints'
+    },
+    {
+      name: 'Auth Endpoints'
     }
   ]
 };

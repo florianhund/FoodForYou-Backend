@@ -1,4 +1,5 @@
 import validations from './validator';
+import * as user from './user';
 
-// eslint-disable-next-line import/prefer-default-export
 export const validate = validations;
+export const checkUser = user;

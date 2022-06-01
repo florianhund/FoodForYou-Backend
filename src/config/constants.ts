@@ -16,6 +16,7 @@ const getDbUrl = () => {
   return process.env.DATABASE_URL_TEST || '';
 };
 
-export const { NODE_ENV } = process.env;
+export const { NODE_ENV, CLIENT_ID, CLIENT_SECRET, REFRESH_TOKEN } =
+  process.env;
 export const PORT = process.env.PORT ? +process.env.PORT : 5000;
 export const DATABASE_URL = getDbUrl();

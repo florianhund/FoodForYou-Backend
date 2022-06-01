@@ -111,7 +111,7 @@ export default {
         content: {
           'application/json': {
             schema: {
-              $ref: '#/components/schemas/ValidationError'
+              $ref: '#/components/schemas/HttpError'
             }
           }
         }
@@ -164,7 +164,7 @@ export default {
         content: {
           'application/json': {
             schema: {
-              $ref: '#/components/schemas/ValidationError'
+              $ref: '#/components/schemas/HttpError'
             }
           }
         }

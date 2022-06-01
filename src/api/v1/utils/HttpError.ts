@@ -1,4 +1,4 @@
-export default class ValidationError extends Error {
+export default class HttpError extends Error {
   constructor(private _message = 'Internal Server Error', private _code = 500) {
     super(_message);
   }

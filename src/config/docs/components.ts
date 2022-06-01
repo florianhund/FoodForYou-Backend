@@ -155,7 +155,7 @@ export default {
           }
         }
       },
-      ValidationError: {
+      HttpError: {
         type: 'object',
         properties: {
           errors: {

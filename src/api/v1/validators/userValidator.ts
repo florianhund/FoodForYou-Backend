@@ -206,8 +206,16 @@ const updateSchema: Schema = {
   }
 };
 
+const verificationSchema: Schema = {
+  otp: {
+    notEmpty: true,
+    errorMessage: 'otp cannot be null'
+  }
+};
+
 export default {
   id: idSchema,
   create: createSchema,
-  update: updateSchema
+  update: updateSchema,
+  verification: verificationSchema
 };

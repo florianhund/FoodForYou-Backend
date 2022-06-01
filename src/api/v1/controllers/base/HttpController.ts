@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction, Router } from 'express';
 import { IRoute } from '../../interfaces';
-import ValidationError from '../../utils/ValidationError';
+import HttpError from '../../utils/HttpError';
 
 export default abstract class HttpController {
   public abstract path: string;
@@ -33,7 +33,7 @@ export default abstract class HttpController {
 
   protected sendError(
     res: Response,
-    err: ValidationError = new ValidationError()
+    err: HttpError = new HttpError()
   ): Response {
     return res.status(err.code).json({ message: err.message });
   }

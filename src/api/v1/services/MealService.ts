@@ -4,7 +4,7 @@ import { MealFilterQuery, MealSearchQuery } from '../interfaces';
 import { IMeal } from '../interfaces/models';
 import { PromiseHandler, MongooseOrder } from '../interfaces/types';
 import { MealRepository } from '../repositories';
-import ValidationError from '../utils/ValidationError';
+import HttpError from '../utils/HttpError';
 
 export default class MealService {
   private _repo = new MealRepository();
@@ -13,10 +13,10 @@ export default class MealService {
     const objectId = MealRepository.createIdFromString(id);
     try {
       const meal = await this._repo.findById(objectId, fields?.split(','));
-      if (!meal) return [null, new ValidationError('Invalid Id', 404)];
+      if (!meal) return [null, new HttpError('Invalid Id', 404)];
       return [meal, undefined];
     } catch (err) {
-      return [null, new ValidationError()];
+      return [null, new HttpError()];
       // same as return [null, undefined];
     }
   }
@@ -32,7 +32,7 @@ export default class MealService {
       );
       return [meals, undefined];
     } catch (err) {
-      return [null, new ValidationError()];
+      return [null, new HttpError()];
     }
   }
 
@@ -78,7 +78,7 @@ export default class MealService {
       );
       return [meals, undefined];
     } catch (err) {
-      return [null, new ValidationError()];
+      return [null, new HttpError()];
     }
   }
 
@@ -87,7 +87,7 @@ export default class MealService {
       const meal = await this._repo.create(data);
       return [meal, undefined];
     } catch (err) {
-      return [null, new ValidationError()];
+      return [null, new HttpError()];
     }
   }
 
@@ -98,10 +98,10 @@ export default class MealService {
     const objectId = MealRepository.createIdFromString(id);
     try {
       const meal = await this._repo.update(objectId, data);
-      if (!meal) return [null, new ValidationError('Invalid id', 404)];
+      if (!meal) return [null, new HttpError('Invalid id', 404)];
       return [meal, undefined];
     } catch (err) {
-      return [null, new ValidationError()];
+      return [null, new HttpError()];
     }
   }
 
@@ -109,10 +109,10 @@ export default class MealService {
     const objectId = MealRepository.createIdFromString(id);
     try {
       const meal = await this._repo.delete(objectId);
-      if (!meal) return [null, new ValidationError('Invalid Id', 404)];
+      if (!meal) return [null, new HttpError('Invalid Id', 404)];
       return [meal, undefined];
     } catch (err) {
-      return [null, new ValidationError()];
+      return [null, new HttpError()];
     }
   }
 }

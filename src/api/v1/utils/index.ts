@@ -1,6 +1,6 @@
-import ValidationErrorModule from './ValidationError';
+import HttpErrorModule from './HttpError';
 
-export const ValidationError = ValidationErrorModule;
+export const HttpError = HttpErrorModule;
 
 export const hasAllNullishValues = (obj: object) => {
   return Object.values(obj).every(val => val == null);

@@ -12,6 +12,7 @@ const superTest = new SuperTest('/api/v1/users');
 
 const fakeId = '123456789123456789123456';
 const realId = new Types.ObjectId();
+const realOtp = 4591;
 const user = {
   _id: realId,
   firstName: 'Florian',
@@ -22,6 +23,7 @@ const user = {
   password: 'SevretPassword_2',
   address: 'Rudolfstr. 7b',
   postalCode: 6067,
+  otp: realOtp,
   isVerified: false,
   isAdmin: false
 };
@@ -100,7 +102,8 @@ describe('POST /users', () => {
       birthday: '2006-01-06',
       password: 'SevretPassword_2',
       address: 'Rudolfstr. 7b',
-      postalCode: 6067
+      postalCode: 6067,
+      otp: 1234
     };
 
     const response = await superTest.post('', data);
@@ -182,5 +185,31 @@ describe('DELETE /users/:id', () => {
 
     expect(response.statusCode).toBe(400);
     expect(response.headers['content-type']).toMatch(/application\/json/g);
+  });
+});
+
+describe('GET /users/:id/verify', () => {
+  it('should return 204 & verify user if otp is right', async () => {
+    const response = await superTest.get(`/${realId}/verify?otp=${realOtp}`);
+
+    expect(response.statusCode).toBe(204);
+  });
+
+  it('should return 401 if otp is not right', async () => {
+    const response = await superTest.get(`/${realId}/verify?otp=1000`);
+
+    expect(response.statusCode).toBe(401);
+  });
+
+  it('should return 404 if id is invalid', async () => {
+    const response = await superTest.get(`/${fakeId}/verify?otp=${realOtp}`);
+
+    expect(response.statusCode).toBe(404);
+  });
+
+  it('should return 400 if otp is undefined', async () => {
+    const response = await superTest.get(`/${realId}/verify`);
+
+    expect(response.statusCode).toBe(400);
   });
 });
