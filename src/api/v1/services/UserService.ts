@@ -5,6 +5,7 @@ import { IUser } from '../interfaces/models';
 import { PromiseHandler } from '../interfaces/types';
 import { UserRepository } from '../repositories';
 import HttpError from '../utils/HttpError';
+import { User } from '../models';
 
 export default class UserService {
   private _repo = new UserRepository();
@@ -32,17 +33,12 @@ export default class UserService {
     }
   }
 
-  public async getByUsername(
-    username: string,
-    sortQuery?: string,
+  public async getByEmail(
+    email: string,
     fields?: string
   ): PromiseHandler<IUser> {
     try {
-      const [user] = await this._repo.find(
-        { username },
-        UserRepository.getSortQuery(sortQuery || ''),
-        fields?.split(',')
-      );
+      const [user] = await this._repo.find({ email }, [], fields?.split(','));
       if (!user) return [null, new HttpError('No User found!', 404)];
       return [user, undefined];
     } catch (err) {
@@ -51,25 +47,23 @@ export default class UserService {
   }
 
   public async create(data: IUser): PromiseHandler<IUser> {
-    const hashedPassword = await bcrypt.hash(data.password, 10);
+    const hashedPassword = await bcrypt.hash(data.password!, 10);
     const otp = Math.floor(Math.random() * 9000) + 1000;
-    const userData = {
+    const user = new User({
       firstName: data.firstName,
       lastName: data.lastName,
-      username: data.username,
       email: data.email,
-      birthday: data.birthday,
-      address: data.address,
-      postalCode: data.postalCode,
       password: hashedPassword,
+      provider: 'email',
       isVerified: false,
       isAdmin: false,
       otp
-    } as unknown as IUser;
+    });
+    user.providerId = user._id;
 
     try {
-      const user = await this._repo.create(userData);
-      return [user, undefined];
+      const newUser = await user.save();
+      return [newUser, undefined];
     } catch (err) {
       return [null, new HttpError()];
     }

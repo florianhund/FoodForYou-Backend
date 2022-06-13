@@ -43,7 +43,7 @@ Run the following command in the root directory to start the application.
 npm start
 ```
 
-The server port will be the port specified in .env file.
+The server will run at the port specified in .env file.
 
 ### Documentation
 
@@ -68,6 +68,10 @@ GET /api-docs
 - [Swagger-Ui-Express](https://swagger.io/) This is an Interface Description Language for **describing RESTful APIs**. It is used to design, build and document RESTful web services.
 
 - [Jest](https://jestjs.io/) This is a delightful JavaScript / Typescript **Testing Framework**.
+
+- [Passport](https://www.passportjs.org/) This is **authentication middleware** for Node.js. Extremely flexible and modular, Passport can be unobtrusively dropped in to any Express-based web application. A comprehensive set of strategies support authentication using a username and password, Facebook, Twitter, and more.
+
+- [Nodemailer](https://nodemailer.com/about/) This is a module for Node.js applications to allow easy as cake **email sending**. The project got started back in 2010 when there was no sane option to send email messages, today it is the solution most Node.js users turn to by default.
 
 ### Authors
 

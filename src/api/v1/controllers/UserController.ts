@@ -9,9 +9,9 @@ import { userSchema } from '../validators';
 import { checkUser, validate } from '../middlewares';
 import Mailer from '../../../config/Mailer';
 import {
-  CLIENT_ID,
-  CLIENT_SECRET,
-  REFRESH_TOKEN
+  GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET,
+  GOOGLE_REFRESH_TOKEN
 } from '../../../config/constants';
 import HttpError from '../utils/HttpError';
 
@@ -32,7 +32,7 @@ export default class UserController extends HttpController {
       method: httpMethods.POST,
       handler: this.createUser,
       validator: validate(checkSchema(userSchema.create))
-      // ! check optional -> checkFalsy
+      // ? check optional -> checkFalsy
     },
     {
       path: '/:id',
@@ -71,16 +71,12 @@ export default class UserController extends HttpController {
     }
   ];
 
-  // query[username] returns ONE document
+  // query.username returns ONE document
   private async getUsers(req: Request, res: Response): Promise<Response> {
-    const {
-      username,
-      sort_by: sort,
-      fields
-    } = req.query as unknown as UserQuery;
+    const { email, sort_by: sort, fields } = req.query as unknown as UserQuery;
 
-    const [user, error] = username
-      ? await usersrv.getByUsername(username, sort, fields)
+    const [user, error] = email
+      ? await usersrv.getByEmail(email, fields)
       : await usersrv.getAll(sort, fields);
 
     if (!user) return super.sendError(res, error);
@@ -120,11 +116,11 @@ export default class UserController extends HttpController {
     req: Request,
     res: Response
   ): Promise<Response> {
-    if (!CLIENT_ID || !CLIENT_SECRET || !REFRESH_TOKEN)
+    if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET || !GOOGLE_REFRESH_TOKEN)
       throw new Error(
         'Either Client id, client secret or refresh token is null'
       );
-    const mailer = new Mailer(CLIENT_ID, CLIENT_SECRET, REFRESH_TOKEN);
+    const mailer = new Mailer(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REFRESH_TOKEN);
 
     const [user, error] = await usersrv.getById(req.params.id);
     if (!user) return super.sendError(res, error);

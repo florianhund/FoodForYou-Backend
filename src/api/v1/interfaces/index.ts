@@ -1,5 +1,7 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, RequestHandler, Response } from 'express';
 import { Types, UpdateQuery } from 'mongoose';
+import http from 'http';
+
 import { httpMethods, middleware, MongooseOrder } from './types';
 
 export interface ILog {
@@ -11,9 +13,18 @@ export interface ILog {
 export interface IRoute {
   path: string;
   method: httpMethods;
-  handler: (req: Request, res: Response) => Response | Promise<Response>;
+  handler: (
+    req: Request,
+    res: Response
+  ) => Response | void | Promise<Response | void>;
   validator?: middleware;
   localMiddleware?: middleware[];
+}
+
+export interface IServer {
+  loadControllers(): any;
+  loadGlobalMiddleware(middleware: RequestHandler[]): any;
+  run(): http.Server;
 }
 
 export interface IRead<T> {
@@ -69,7 +80,7 @@ export interface MealFilterQuery {
 }
 
 export interface UserQuery {
-  username?: string;
+  email?: string;
   sort_by?: string;
   fields?: string;
 }

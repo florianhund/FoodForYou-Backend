@@ -17,12 +17,10 @@ const user = {
   _id: realId,
   firstName: 'Florian',
   lastName: 'Hundegger',
-  username: 'flohund_08',
   email: 'flo.hundegger@gmail.com',
-  birthday: '2006-01-06',
   password: 'SevretPassword_2',
-  address: 'Rudolfstr. 7b',
-  postalCode: 6067,
+  provider: 'email',
+  providerId: realId,
   otp: realOtp,
   isVerified: false,
   isAdmin: false
@@ -53,16 +51,16 @@ describe('GET /users', () => {
     expect(Array.isArray(response.body.data)).toBeTruthy();
   });
 
-  it('should return 200 if username query is real & return single document', async () => {
-    const response = await superTest.get('?username=flohund_08');
+  it('should return 200 if email query is real & return single document', async () => {
+    const response = await superTest.get('?email=flo.hundegger@gmail.com');
 
     expect(response.statusCode).toBe(200);
     expect(response.headers['content-type']).toMatch(/application\/json/g);
     expect(response.body.data).toBeTruthy();
   });
 
-  it('should return 404 if username query is wrong', async () => {
-    const response = await superTest.get('?username=something');
+  it('should return 404 if email query is wrong', async () => {
+    const response = await superTest.get('?email=something');
 
     expect(response.statusCode).toBe(404);
   });
@@ -97,12 +95,8 @@ describe('POST /users', () => {
     const data = {
       firstName: 'Florian',
       lastName: 'Hundegger',
-      username: 'fhund_08',
       email: 'f.hundegger@gmail.com',
-      birthday: '2006-01-06',
       password: 'SevretPassword_2',
-      address: 'Rudolfstr. 7b',
-      postalCode: 6067,
       otp: 1234
     };
 

@@ -35,3 +35,5 @@ export type middleware = (
   res: Response,
   next: NextFunction
 ) => void | Response | Promise<void | Response>;
+
+export type UserProvider = 'email' | 'google' | 'facebook';

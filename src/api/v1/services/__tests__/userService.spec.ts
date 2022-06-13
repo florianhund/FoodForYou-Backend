@@ -23,12 +23,10 @@ const testUser = {
   _id: realId,
   firstName: 'Florian',
   lastName: 'Hundegger',
-  username: 'flohund_08',
   email: 'flo.hundegger@gmail.com',
-  birthday: '2006-01-06',
   password: 'SevretPassword_2',
-  address: 'Rudolfstr. 7b',
-  postalCode: 6067,
+  provider: 'email',
+  providerId: realId,
   isVerified: false,
   isAdmin: false,
   otp: 8923
@@ -64,13 +62,13 @@ describe('get users', () => {
   });
 
   it('should return user if real username', async () => {
-    const [user] = await usersrv.getByUsername('flohund_08');
+    const [user] = await usersrv.getByEmail('flo.hundegger@gmail.com');
 
     expect(user).toBeTruthy();
   });
 
   it('should return null if wrong username', async () => {
-    const [user] = await usersrv.getByUsername('something');
+    const [user] = await usersrv.getByEmail('something');
 
     expect(user).toBeNull();
   });
@@ -96,31 +94,25 @@ describe('create user', () => {
     const [user] = await usersrv.create({
       firstName: 'Florian',
       lastName: 'Hundegger',
-      username: 'fhund_08',
       email: 'f.hundegger@gmail.com',
       birthday: '2006-01-06',
       password: 'SevretPassword_2',
-      address: 'Rudolfstr. 7b',
-      postalCode: 6067,
       isVerified: false,
       isAdmin: false,
       otp: 4527
     } as unknown as IUser);
 
     expect(user).toBeTruthy();
-    expect(user?.postalCode).toBe(6067);
+    expect(user?.lastName).toBe('Hundegger');
   });
 
   it('should not create user when username or email is the same', async () => {
     const [user] = await usersrv.create({
       firstName: 'Florian',
       lastName: 'Hundegger',
-      username: 'flohund_08',
       email: 'flo.hundegger@gmail.com',
       birthday: '2006-01-06',
       password: 'SevretPassword_2',
-      address: 'Rudolfstr. 7b',
-      postalCode: 6067,
       isVerified: false,
       isAdmin: false,
       otp: 4527
@@ -133,10 +125,10 @@ describe('create user', () => {
 describe('update user', () => {
   it('should update user if id is valid', async () => {
     const [user] = await usersrv.update(`${realId}`, {
-      postalCode: 6060
+      firstName: 'Stefan'
     });
     expect(user).toBeTruthy();
-    expect(user?.postalCode).toBe(6060);
+    expect(user?.firstName).toBe('Stefan');
   });
   it('should return 404 error if id is invalid', async () => {
     const [user, error] = await usersrv.update(fakeId, {});

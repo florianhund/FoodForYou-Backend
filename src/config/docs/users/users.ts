@@ -5,13 +5,13 @@ export default {
     operationId: 'getUsers',
     parameters: [
       {
-        name: 'username',
+        name: 'email',
         in: 'query',
         schmema: {
           type: 'string',
-          example: 'john_doe38'
+          example: 'john.doe@gmail.com'
         },
-        description: 'find user by username'
+        description: 'find user by email'
       }
     ],
     responses: {

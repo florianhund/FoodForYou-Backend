@@ -27,7 +27,7 @@ export default abstract class HttpController {
   }
 
   protected sendSuccess(res: Response, data: any, status?: number): Response {
-    if (status === 201 || status === 204) return res.status(status).send();
+    if (status === 201 || status === 204) return res.sendStatus(status);
     return res.status(status || 200).json({ data });
   }
 

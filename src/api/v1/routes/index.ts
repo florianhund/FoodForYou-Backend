@@ -13,7 +13,7 @@ router.use(userController.path, userController.setRoutes());
 router.use(authController.path, authController.setRoutes());
 
 export const defaultHandler = (req: Request, res: Response) => {
-  res.status(404).send();
+  res.sendStatus(404);
 };
 
 export default router;

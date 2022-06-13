@@ -1,5 +1,5 @@
 import { Document, ObjectId } from 'mongoose';
-import { Allergenics } from './types';
+import { Allergenics, UserProvider } from './types';
 
 export interface IMeal extends Document {
   name: string;
@@ -11,20 +11,18 @@ export interface IMeal extends Document {
   tags?: string[];
 }
 
+// add phone number
 export interface IUser extends Document {
   firstName: string;
   lastName: string;
-  username: string;
   email: string;
-  birthday: Date;
-  password: string;
-  address: string;
-  postalCode: number;
+  password?: string;
   isVerified: boolean;
   otp: number | null;
+  provider: UserProvider;
+  providerId: string;
   isAdmin: boolean;
   // virtual
-  age: number;
   fullName: string;
 }
 

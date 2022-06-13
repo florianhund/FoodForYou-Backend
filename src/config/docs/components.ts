@@ -111,25 +111,10 @@ export default {
             description: 'email',
             example: 'john.doe@gmail.com'
           },
-          birthday: {
-            type: 'date',
-            description: 'birthday',
-            example: '2001-08-17'
-          },
           password: {
             type: 'string',
             description: 'secret password',
             example: 'my_secret_password23'
-          },
-          address: {
-            type: 'string',
-            description: 'address where you live',
-            example: 'teststreet'
-          },
-          postalCode: {
-            type: 'string',
-            description: 'postalCode of your home town',
-            example: '6060'
           },
           isVerified: {
             type: 'boolean',

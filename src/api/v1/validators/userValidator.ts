@@ -29,23 +29,6 @@ const createSchema: Schema = {
     },
     errorMessage: 'lastName cannot be empty'
   },
-  username: {
-    notEmpty: true,
-    isLength: {
-      options: { min: 8, max: 20 },
-      errorMessage: 'username must be between 5 and 20 characters long'
-    },
-    errorMessage: 'username cannot be empty',
-    custom: {
-      options: async value => {
-        const userByUsername: IUser | null = await User.findOne({
-          username: value
-        });
-        if (userByUsername) throw new Error('username address is already used');
-        return true;
-      }
-    }
-  },
   email: {
     notEmpty: true,
     isEmail: true,
@@ -58,13 +41,6 @@ const createSchema: Schema = {
       }
     }
   },
-  birthday: {
-    notEmpty: true,
-    isISO8601: true,
-    toDate: true,
-    errorMessage: 'birthday has to be a date and not empty'
-    // yyyy:mm:dd
-  },
   password: {
     notEmpty: true,
     isStrongPassword: {
@@ -73,21 +49,7 @@ const createSchema: Schema = {
     },
     errorMessage: 'password cannot be empty'
   },
-  address: {
-    notEmpty: true,
-    isLength: {
-      options: {
-        max: 40
-      },
-      errorMessage: 'address has to be max 40 chars long'
-    },
-    errorMessage: 'adress cannot be empty'
-  },
-  postalCode: {
-    notEmpty: true,
-    isInt: true,
-    errorMessage: 'postalCode has to be int number and not empty'
-  },
+
   isVerified: {
     isEmpty: true,
     errorMessage: 'isVerified has to be empty'
@@ -119,25 +81,6 @@ const updateSchema: Schema = {
     },
     errorMessage: 'lastName cannot be empty'
   },
-  username: {
-    optional: {
-      options: { checkFalsy: true }
-    },
-    isLength: {
-      options: { min: 8, max: 30 },
-      errorMessage: 'username must be between 5 and 25 characters long'
-    },
-    errorMessage: 'username cannot be empty',
-    custom: {
-      options: async value => {
-        const userByUsername: IUser | null = await User.findOne({
-          username: value
-        });
-        if (userByUsername) throw new Error('username address is already used');
-        return true;
-      }
-    }
-  },
   email: {
     optional: {
       options: { checkFalsy: true }
@@ -154,15 +97,6 @@ const updateSchema: Schema = {
       }
     }
   },
-  birthday: {
-    optional: {
-      options: { checkFalsy: true }
-    },
-    isISO8601: true,
-    toDate: true,
-    errorMessage: 'birthday has to be a date and not empty'
-    // yyyy:mm:dd
-  },
   password: {
     optional: {
       options: { checkFalsy: true }
@@ -173,25 +107,7 @@ const updateSchema: Schema = {
     },
     errorMessage: 'password cannot be empty'
   },
-  address: {
-    optional: {
-      options: { checkFalsy: true }
-    },
-    isLength: {
-      options: {
-        max: 40
-      },
-      errorMessage: 'address has to be max 40 chars long'
-    },
-    errorMessage: 'adress cannot be empty'
-  },
-  postalCode: {
-    optional: {
-      options: { checkFalsy: true }
-    },
-    isInt: true,
-    errorMessage: 'postalCode has to be int number and not empty'
-  },
+
   isVerified: {
     optional: {
       options: { checkFalsy: true }

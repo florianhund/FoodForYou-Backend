@@ -5,10 +5,11 @@ import * as swaggerUi from 'swagger-ui-express';
 import router, { defaultHandler } from './api/v1/routes';
 import Logger from './config/Logger';
 import docs from './config/docs';
+import { IServer } from './api/v1/interfaces';
 
 const logger = new Logger(__filename);
 
-export default class Server {
+export default class Server implements IServer {
   // eslint-disable-next-line no-use-before-define
   private static _server: Server;
 
@@ -40,7 +41,7 @@ export default class Server {
     return this;
   }
 
-  public loadGlobalSettings(variables: { [name: string]: string }[]): Server {
+  public setGlobalSettings(variables: { [name: string]: string }[]): Server {
     variables.forEach(object => {
       const [key]: string[] = Object.keys(object);
       this._app.set(key, object[0]);
