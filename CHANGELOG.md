@@ -2,7 +2,6 @@
 All notable changes to this project are documented in this file following the [Keep a CHANGELOG](https://keepachangelog.com/en/1.0.0/) conventions.
 
 ## [Unreleased]
----
 ### Added
 - Implement Payments
 ### Changed
@@ -16,5 +15,4 @@ All notable changes to this project are documented in this file following the [K
 - update total price when adding meals to order
 
 ## [1.0.0-alpha.1] - 2022-06-23
----
 Initial Version.
