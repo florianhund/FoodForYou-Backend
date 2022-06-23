@@ -189,7 +189,7 @@ export default {
         content: {
           'application/json': {
             schema: {
-              $ref: '#/components/schemas/HttpError'
+              $ref: '#/components/schemas/ValidationError'
             }
           }
         }
@@ -253,7 +253,7 @@ export default {
         content: {
           'application/json': {
             schema: {
-              $ref: '#/components/schemas/HttpError'
+              $ref: '#/components/schemas/ValidationError'
             }
           }
         }

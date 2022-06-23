@@ -28,10 +28,13 @@ export interface IUser extends Document {
 
 export interface IOrder extends Document {
   orderTime: Date;
-  deliveredTime: Date;
+  deliveryTime: Date;
   isDelivered: boolean;
-  // state: noticed | in order | in delivery | delivered
+  address: string;
+  postalCode: number;
+  status: 'in progress' | 'in delivery' | 'delivered';
   isPaid: boolean;
+  totalPrice: number;
   userId: ObjectId;
   meals: ObjectId[];
 }

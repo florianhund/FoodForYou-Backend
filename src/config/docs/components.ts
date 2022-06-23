@@ -10,7 +10,7 @@ export default {
         type: 'object',
         required: ['name, price', 'isVegetarian', 'isVegan'],
         properties: {
-          id: {
+          _id: {
             type: 'string',
             description: 'Id of Meal',
             length: 24,
@@ -91,6 +91,17 @@ export default {
       User: {
         type: 'object',
         properties: {
+          _id: {
+            type: 'string',
+            description: 'Id of Meal',
+            length: 24,
+            example: '6253f6610d5ef0a5f7cbde76'
+          },
+          __v: {
+            type: 'number',
+            description: 'version of Meal',
+            example: 0
+          },
           firstName: {
             type: 'string',
             description: 'first name of user',
@@ -128,11 +139,6 @@ export default {
             example: 'false',
             default: false
           },
-          age: {
-            type: 'number',
-            description: 'virtual property',
-            example: '19'
-          },
           fullName: {
             type: 'string',
             description: 'virtual property',
@@ -140,7 +146,78 @@ export default {
           }
         }
       },
-      HttpError: {
+      Order: {
+        type: 'object',
+        properties: {
+          _id: {
+            type: 'string',
+            description: 'Id of Meal',
+            length: 24,
+            example: '6253f6610d5ef0a5f7cbde76'
+          },
+          __v: {
+            type: 'number',
+            description: 'version of Meal',
+            example: 0
+          },
+          orderTime: {
+            type: 'string',
+            example: '2022-06-23T19:23:24.538Z',
+            description: 'order Time'
+          },
+          deliveryTime: {
+            type: 'string',
+            example: '2022-06-23T19:58:32.873Z',
+            description: 'delivery Time'
+          },
+          isPaid: {
+            type: 'boolean',
+            example: 'false',
+            description: 'true if order is paid'
+          },
+          isDelivered: {
+            type: 'boolean',
+            example: 'false',
+            description: 'true if order is delivered'
+          },
+          status: {
+            type: 'string',
+            example: 'in delivery',
+            enum: ['in progress', 'in delivery', 'delivered'],
+            description:
+              'in progress before delivery, in delivery during delivery, delivered if delivered'
+          },
+          address: {
+            type: 'string',
+            example: 'Rudolfstr. 7b',
+            description: 'address to deliver'
+          },
+          postalCode: {
+            type: 'number',
+            example: '6067',
+            description: 'postal code to deliver'
+          },
+          totalPrice: {
+            type: 'number',
+            example: '17.3',
+            description: 'total price'
+          },
+          userId: {
+            type: 'string',
+            example: '6293cd8bec9db4c3cbb85155',
+            description: 'user id'
+          },
+          meals: {
+            type: 'array',
+            items: {
+              type: 'string'
+            },
+            example: ['6293cd8bec9db4c3cbb85155'],
+            description: 'ids of ordered meals'
+          }
+        }
+      },
+      ValidationError: {
         type: 'object',
         properties: {
           errors: {

@@ -5,6 +5,25 @@ export default {
     operationId: 'getUsers',
     parameters: [
       {
+        name: 'sort_by',
+        in: 'query',
+        schema: {
+          type: 'string',
+          example: 'lastName, -firstName'
+        },
+        description:
+          'list of fields to sort. insert - before field for desc order'
+      },
+      {
+        name: 'fields',
+        in: 'query',
+        schema: {
+          type: 'string',
+          example: 'firstName, lastName, email'
+        },
+        description: 'list of fields'
+      },
+      {
         name: 'email',
         in: 'query',
         schmema: {
@@ -38,7 +57,7 @@ export default {
         content: {
           'application/json': {
             schema: {
-              $ref: '#/components/schemas/HttpError'
+              $ref: '#/components/schemas/ValidationError'
             }
           }
         }
@@ -91,7 +110,7 @@ export default {
         content: {
           'application/json': {
             schema: {
-              $ref: '#/components/schemas/HttpError'
+              $ref: '#/components/schemas/ValidationError'
             }
           }
         }

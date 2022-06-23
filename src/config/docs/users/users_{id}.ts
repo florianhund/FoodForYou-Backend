@@ -121,11 +121,6 @@ export default {
               example: 'john.doe@gmail.com',
               description: 'email'
             },
-            birthday: {
-              type: 'date',
-              example: '1987-02.14',
-              description: 'birthday'
-            },
             password: {
               type: 'string',
               example: 'my_secReTpaSsword342',
@@ -164,7 +159,7 @@ export default {
         content: {
           'application/json': {
             schema: {
-              $ref: '#/components/schemas/HttpError'
+              $ref: '#/components/schemas/ValidationError'
             }
           }
         }
@@ -228,7 +223,7 @@ export default {
         content: {
           'application/json': {
             schema: {
-              $ref: '#/components/schemas/HttpError'
+              $ref: '#/components/schemas/ValidationError'
             }
           }
         }

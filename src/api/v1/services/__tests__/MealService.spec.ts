@@ -106,6 +106,7 @@ describe('update meal', () => {
     expect(meal).toBeTruthy();
     expect(meal?.price).toBe(20);
   });
+
   it('should return 404 error if id is invalid', async () => {
     const [meal, error] = await mealsrv.update(fakeId, {});
     expect(meal).toBeFalsy();

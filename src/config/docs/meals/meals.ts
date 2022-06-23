@@ -5,6 +5,25 @@ export default {
     operationId: 'getMeals',
     parameters: [
       {
+        name: 'sort_by',
+        in: 'query',
+        schema: {
+          type: 'string',
+          example: '-name'
+        },
+        description:
+          'list of fields to sort. insert - before field for desc order'
+      },
+      {
+        name: 'fields',
+        in: 'query',
+        schema: {
+          type: 'string',
+          example: 'name, price'
+        },
+        description: 'list of fields'
+      },
+      {
         name: 'name',
         in: 'query',
         schema: {
@@ -111,7 +130,7 @@ export default {
         content: {
           'application/json': {
             schema: {
-              $ref: '#/components/schemas/HttpError'
+              $ref: '#/components/schemas/ValidationError'
             }
           }
         }
@@ -164,7 +183,7 @@ export default {
         content: {
           'application/json': {
             schema: {
-              $ref: '#/components/schemas/HttpError'
+              $ref: '#/components/schemas/ValidationError'
             }
           }
         }

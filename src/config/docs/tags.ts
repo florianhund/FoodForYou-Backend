@@ -7,7 +7,7 @@ export default {
       name: 'User Endpoints'
     },
     {
-      name: 'Order Enpoints'
+      name: 'Order Endpoints'
     },
     {
       name: 'Auth Endpoints'

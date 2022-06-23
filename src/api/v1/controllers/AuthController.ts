@@ -73,7 +73,7 @@ export default class AuthController extends HttpController {
     },
     {
       path: '/logout',
-      method: httpMethods.POST,
+      method: httpMethods.DELETE,
       handler: this.handleLogout,
       localMiddleware: [checkUser.isAuthenticated]
     }

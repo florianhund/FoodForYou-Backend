@@ -9,6 +9,7 @@ import { validate } from '../middlewares';
 import { mealSchema } from '../validators';
 import { MealQuery } from '../interfaces';
 
+// TODO: make it class member
 const mealsrv = new MealService();
 
 export default class MealController extends HttpController {

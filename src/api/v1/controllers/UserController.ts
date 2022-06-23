@@ -120,7 +120,11 @@ export default class UserController extends HttpController {
       throw new Error(
         'Either Client id, client secret or refresh token is null'
       );
-    const mailer = new Mailer(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REFRESH_TOKEN);
+    const mailer = new Mailer(
+      GOOGLE_CLIENT_ID,
+      GOOGLE_CLIENT_SECRET,
+      GOOGLE_REFRESH_TOKEN
+    );
 
     const [user, error] = await usersrv.getById(req.params.id);
     if (!user) return super.sendError(res, error);

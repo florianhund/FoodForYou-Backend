@@ -62,11 +62,11 @@ export default class MealService {
       filterQuery.tags = { $in: tags?.split(',') || [] };
     }
 
-    if (isVegetarian) {
+    if (isVegetarian != null) {
       filterQuery.isVegetarian = isVegetarian;
     }
 
-    if (isVegan) {
+    if (isVegan != null) {
       filterQuery.isVegan = isVegan;
     }
 

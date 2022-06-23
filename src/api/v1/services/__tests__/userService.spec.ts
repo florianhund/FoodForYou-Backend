@@ -95,7 +95,6 @@ describe('create user', () => {
       firstName: 'Florian',
       lastName: 'Hundegger',
       email: 'f.hundegger@gmail.com',
-      birthday: '2006-01-06',
       password: 'SevretPassword_2',
       isVerified: false,
       isAdmin: false,
@@ -104,21 +103,6 @@ describe('create user', () => {
 
     expect(user).toBeTruthy();
     expect(user?.lastName).toBe('Hundegger');
-  });
-
-  it('should not create user when username or email is the same', async () => {
-    const [user] = await usersrv.create({
-      firstName: 'Florian',
-      lastName: 'Hundegger',
-      email: 'flo.hundegger@gmail.com',
-      birthday: '2006-01-06',
-      password: 'SevretPassword_2',
-      isVerified: false,
-      isAdmin: false,
-      otp: 4527
-    } as unknown as IUser);
-
-    expect(user).toBeNull();
   });
 });
 
@@ -130,6 +114,7 @@ describe('update user', () => {
     expect(user).toBeTruthy();
     expect(user?.firstName).toBe('Stefan');
   });
+
   it('should return 404 error if id is invalid', async () => {
     const [user, error] = await usersrv.update(fakeId, {});
     expect(user).toBeFalsy();

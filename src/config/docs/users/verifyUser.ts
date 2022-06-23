@@ -22,7 +22,7 @@ export const sendVerification = {
         content: {
           'application/json': {
             schema: {
-              $ref: '#/components/schemas/HttpError'
+              $ref: '#/components/schemas/ValidationError'
             }
           }
         }
@@ -98,7 +98,7 @@ export const verify = {
         content: {
           'application/json': {
             schema: {
-              $ref: '#/components/schemas/HttpError'
+              $ref: '#/components/schemas/ValidationError'
             }
           }
         }

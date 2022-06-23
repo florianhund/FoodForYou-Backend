@@ -14,11 +14,12 @@ export default class SuperTest {
 
   private _initializeServer() {
     this._server = Server.instantiate(3000);
-    this._server.loadGlobalMiddleware([
-      express.urlencoded({ extended: false }),
-      express.json()
-    ]);
-    this._server.loadControllers();
+    this._server
+      .loadGlobalMiddleware([
+        express.urlencoded({ extended: false }),
+        express.json()
+      ])
+      .loadControllers();
     this._app = this._server.app;
   }
 

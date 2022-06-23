@@ -17,7 +17,7 @@ initializePassport(passport);
 
 const middleware = [
   cookieSession({
-    maxAge: 24 * 60 * 60 * 1000,
+    maxAge: 10 * 60 * 60 * 1000,
     keys: [COOKIE_KEY as string]
   }),
   express.urlencoded({ extended: false }),
