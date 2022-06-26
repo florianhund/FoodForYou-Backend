@@ -1,16 +1,16 @@
 export default {
   base: {
     get: {
-      tags: ['Order Endpoints'],
-      description: 'Get orders. Returns all orders if query is empty',
-      operationId: 'getOrders',
+      tags: ['User Endpoints'],
+      description: 'Get users',
+      operationId: 'getUsers',
       parameters: [
         {
           name: 'sort_by',
           in: 'query',
           schema: {
             type: 'string',
-            example: '-totalPrice'
+            example: 'lastName,-firstName'
           },
           description:
             'list of fields to sort. insert - before field for desc order'
@@ -20,92 +20,18 @@ export default {
           in: 'query',
           schema: {
             type: 'string',
-            example: 'userId,meals'
+            example: 'firstName,lastName,email'
           },
           description: 'list of fields'
         },
         {
-          name: 'ordered_meals_ids',
+          name: 'email',
           in: 'query',
-          schema: {
+          schmema: {
             type: 'string',
-            example: '6293cd8bec9db4c3cbb85155,6293cd8bec9db4c3cbb85312'
+            example: 'john.doe@gmail.com'
           },
-          description: 'filter including meals'
-        },
-        {
-          name: 'user_id',
-          in: 'query',
-          schema: {
-            type: 'string',
-            example: '6293cd8bec9db4c3cbb85155'
-          },
-          description: 'userid'
-        },
-        {
-          name: 'min_price',
-          in: 'query',
-          schema: {
-            type: 'number',
-            example: '20'
-          },
-          description: 'min_price'
-        },
-        {
-          name: 'max_price',
-          in: 'query',
-          schema: {
-            type: 'number',
-            example: '15'
-          },
-          description: 'max price'
-        },
-        {
-          name: 'postalCode',
-          in: 'query',
-          schema: {
-            type: 'number',
-            example: '6112'
-          },
-          description: 'postalCode'
-        },
-        {
-          name: 'address',
-          in: 'query',
-          schema: {
-            type: 'string',
-            example: 'some street'
-          },
-          description: 'address'
-        },
-        {
-          name: 'isPaid',
-          in: 'query',
-          schema: {
-            type: 'boolean',
-            example: 'false'
-          },
-          description: 'checks if order is paid'
-        },
-        {
-          name: 'before',
-          in: 'query',
-          schema: {
-            type: 'string',
-            example: '2022-06-30'
-          },
-          description:
-            'checks if user is before date excluding the day of the date.'
-        },
-        {
-          name: 'after',
-          in: 'query',
-          schema: {
-            type: 'string',
-            example: '2022-06-23'
-          },
-          description:
-            'checks if user is after date including the day of the date.'
+          description: 'find user by email'
         }
       ],
       responses: {
@@ -119,7 +45,7 @@ export default {
                   data: {
                     type: 'array',
                     items: {
-                      $ref: '#/components/schemas/Order'
+                      $ref: '#/components/schemas/User'
                     }
                   }
                 }
@@ -136,19 +62,19 @@ export default {
               }
             }
           }
-        }
-      },
-      500: {
-        description: '500 Internal Server Error',
-        content: {
-          'application/json': {
-            schema: {
-              type: 'object',
-              properties: {
-                message: {
-                  type: 'string',
-                  example: 'Internal Server Error',
-                  description: 'error message'
+        },
+        500: {
+          description: '500 Internal Server Error',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  message: {
+                    type: 'string',
+                    example: 'Internal Server Error',
+                    description: 'error message'
+                  }
                 }
               }
             }
@@ -157,41 +83,16 @@ export default {
       }
     },
     post: {
-      tags: ['Order Endpoints'],
-      description: 'create a order',
-      operationId: 'postOrder',
+      tags: ['User Endpoints'],
+      description: 'create user',
+      operationId: 'createUser',
       parameters: [
         {
           in: 'body',
-          name: 'order',
-          description: 'order to create',
+          name: 'user',
+          description: 'user to create',
           schema: {
-            type: 'object',
-            properties: {
-              address: {
-                type: 'string',
-                example: 'some street',
-                description: 'address'
-              },
-              postalCode: {
-                type: 'number',
-                example: '6060',
-                description: 'postal code'
-              },
-              userId: {
-                type: 'string',
-                example: '6293cd8bec9db4c3cbb85155',
-                description: 'user id'
-              },
-              meals: {
-                type: 'array',
-                items: {
-                  type: 'string'
-                },
-                example: ['6293cd8bec9db4c3cbb85155'],
-                description: 'array of ids of meals'
-              }
-            }
+            $ref: '#/components/schemas/User'
           }
         }
       ],
@@ -200,7 +101,7 @@ export default {
           description: '201 Created',
           headers: {
             Location: {
-              description: 'Location of created meal',
+              description: 'Location of created user',
               type: 'string'
             }
           }
@@ -237,9 +138,9 @@ export default {
   },
   id: {
     get: {
-      tags: ['Order Endpoints'],
-      description: 'Get order by id',
-      operationId: 'getOrdererById',
+      tags: ['User Endpoints'],
+      description: 'Get user by id',
+      operationId: 'getUserById',
       parameters: [
         {
           name: 'id',
@@ -259,7 +160,7 @@ export default {
                 type: 'object',
                 properties: {
                   data: {
-                    $ref: '#/components/schemas/Order'
+                    $ref: '#/components/schemas/User'
                   }
                 }
               }
@@ -318,9 +219,9 @@ export default {
       }
     },
     patch: {
-      tags: ['Order Endpoints'],
-      description: 'update order',
-      operationId: 'updateOrder',
+      tags: ['User Endpoints'],
+      description: 'update user',
+      operationId: 'updateUser',
       parameters: [
         {
           name: 'id',
@@ -336,9 +237,31 @@ export default {
           schema: {
             type: 'object',
             properties: {
+              firstName: {
+                type: 'string',
+                example: 'John',
+                maxLength: '20',
+                description: 'first name'
+              },
+              lastName: {
+                type: 'string',
+                example: 'Doe',
+                maxLength: '20',
+                description: 'last name'
+              },
+              email: {
+                type: 'string',
+                example: 'john.doe@gmail.com',
+                description: 'email'
+              },
+              password: {
+                type: 'string',
+                example: 'my_secReTpaSsword342',
+                description: 'password'
+              },
               address: {
                 type: 'string',
-                example: 'some street',
+                example: 'Teststreet 3',
                 description: 'address'
               },
               postalCode: {
@@ -346,40 +269,15 @@ export default {
                 example: '6060',
                 description: 'postal code'
               },
-              userId: {
-                type: 'string',
-                example: '6293cd8bec9db4c3cbb85155',
-                description: 'user id'
+              isVerified: {
+                type: 'boolean',
+                example: 'true',
+                description: 'true if user is verified'
               },
-              meals: {
-                type: 'array',
-                items: {
-                  type: 'string'
-                },
-                example: ['6293cd8bec9db4c3cbb85155'],
-                description: 'array of ids of meals'
-              },
-              deliveryTime: {
-                type: 'string',
-                example: '2022-06-23T19:58:32.873Z',
-                description: 'delivery Time'
-              },
-              isPaid: {
+              isAdmin: {
                 type: 'boolean',
                 example: 'false',
-                description: 'true if order is paid'
-              },
-              isDelivered: {
-                type: 'boolean',
-                example: 'false',
-                description: 'true if order is delivered'
-              },
-              status: {
-                type: 'string',
-                example: 'in delivery',
-                enum: ['in progress', 'in delivery', 'delivered'],
-                description:
-                  'in progress before delivery, in delivery during delivery, delivered if delivered'
+                description: 'true if user is admin'
               }
             }
           }
@@ -436,9 +334,9 @@ export default {
       }
     },
     delete: {
-      tags: ['Order Endpoints'],
-      description: 'delete order',
-      operationId: 'deleteOrder',
+      tags: ['User Endpoints'],
+      description: 'delete user',
+      operationId: 'deleteUsers',
       parameters: [
         {
           name: 'id',
@@ -459,6 +357,164 @@ export default {
             'application/json': {
               schema: {
                 $ref: '#/components/schemas/ValidationError'
+              }
+            }
+          }
+        },
+        404: {
+          description: '404 Not Found',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  message: {
+                    type: 'string',
+                    example: 'Invalid Id',
+                    description: 'error message'
+                  }
+                }
+              }
+            }
+          }
+        },
+        500: {
+          description: '500 Internal Server Error',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  message: {
+                    type: 'string',
+                    example: 'Internal Server Error',
+                    description: 'error message'
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  sendVerification: {
+    get: {
+      tags: ['User Endpoints'],
+      description: 'send email with otp code',
+      operationId: 'sendUserVerifciation',
+      parameters: [
+        {
+          name: 'id',
+          in: 'params',
+          schema: {
+            $ref: '#/components/schemas/Id'
+          },
+          description: 'userid'
+        }
+      ],
+      responses: {
+        204: {
+          description: '204 No Content'
+        },
+        400: {
+          description: '400 Bad Request',
+          content: {
+            'application/json': {
+              schema: {
+                $ref: '#/components/schemas/ValidationError'
+              }
+            }
+          }
+        },
+        404: {
+          description: '404 Not Found',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  message: {
+                    type: 'string',
+                    example: 'Invalid Id',
+                    description: 'error message'
+                  }
+                }
+              }
+            }
+          }
+        },
+        500: {
+          description: '500 Internal Server Error',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  message: {
+                    type: 'string',
+                    example: 'Internal Server Error',
+                    description: 'error message'
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  verify: {
+    get: {
+      tags: ['User Endpoints'],
+      description: 'verify user',
+      operationId: 'verifyUser',
+      parameters: [
+        {
+          name: 'id',
+          in: 'params',
+          schema: {
+            $ref: '#/components/schemas/Id'
+          },
+          description: 'userid'
+        },
+        {
+          name: 'otp',
+          in: 'query',
+          schema: {
+            type: 'number',
+            example: '4178'
+          },
+          description: '4 digit verification code'
+        }
+      ],
+      responses: {
+        204: {
+          description: '204 No Content'
+        },
+        400: {
+          description: '400 Bad Request',
+          content: {
+            'application/json': {
+              schema: {
+                $ref: '#/components/schemas/ValidationError'
+              }
+            }
+          }
+        },
+        401: {
+          description: '401 Unauthorized',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  message: {
+                    type: 'string',
+                    example: 'wrong otp',
+                    description: 'error message'
+                  }
+                }
               }
             }
           }

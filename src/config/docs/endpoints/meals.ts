@@ -1,16 +1,16 @@
 export default {
   base: {
     get: {
-      tags: ['Order Endpoints'],
-      description: 'Get orders. Returns all orders if query is empty',
-      operationId: 'getOrders',
+      tags: ['Meal Endpoints'],
+      description: 'Get meals. Returns all meals if query is empty',
+      operationId: 'getMeals',
       parameters: [
         {
           name: 'sort_by',
           in: 'query',
           schema: {
             type: 'string',
-            example: '-totalPrice'
+            example: '-name'
           },
           description:
             'list of fields to sort. insert - before field for desc order'
@@ -20,92 +20,91 @@ export default {
           in: 'query',
           schema: {
             type: 'string',
-            example: 'userId,meals'
+            example: 'name,price'
           },
           description: 'list of fields'
         },
         {
-          name: 'ordered_meals_ids',
+          name: 'name',
           in: 'query',
           schema: {
             type: 'string',
-            example: '6293cd8bec9db4c3cbb85155,6293cd8bec9db4c3cbb85312'
+            example: 'pizza'
           },
-          description: 'filter including meals'
-        },
-        {
-          name: 'user_id',
-          in: 'query',
-          schema: {
-            type: 'string',
-            example: '6293cd8bec9db4c3cbb85155'
-          },
-          description: 'userid'
+          description: 'filter meals by given name'
         },
         {
           name: 'min_price',
           in: 'query',
           schema: {
             type: 'number',
-            example: '20'
+            example: 3
           },
-          description: 'min_price'
+          description: 'filter meals by minprice'
         },
         {
           name: 'max_price',
           in: 'query',
           schema: {
             type: 'number',
-            example: '15'
+            example: 10
           },
-          description: 'max price'
+          description: 'filter meals by maxprice'
         },
         {
-          name: 'postalCode',
-          in: 'query',
-          schema: {
-            type: 'number',
-            example: '6112'
-          },
-          description: 'postalCode'
-        },
-        {
-          name: 'address',
+          name: 'without_allergenics',
           in: 'query',
           schema: {
             type: 'string',
-            example: 'some street'
+            example: 'B,C,H'
           },
-          description: 'address'
+          description: 'filter meals by excluding allergenics'
         },
         {
-          name: 'isPaid',
+          name: 'isVegetarian',
           in: 'query',
           schema: {
             type: 'boolean',
             example: 'false'
           },
-          description: 'checks if order is paid'
+          description: 'true if meal is vegetarian'
         },
         {
-          name: 'before',
+          name: 'isVegan',
+          in: 'query',
+          schema: {
+            type: 'boolean',
+            example: 'false'
+          },
+          description: 'true if meal is vegan'
+        },
+        {
+          name: 'fields',
           in: 'query',
           schema: {
             type: 'string',
-            example: '2022-06-30'
+            example: 'name,price'
           },
-          description:
-            'checks if user is before date excluding the day of the date.'
+          description: 'get only specific fields of meals'
         },
         {
-          name: 'after',
+          name: 'tags',
           in: 'query',
           schema: {
             type: 'string',
-            example: '2022-06-23'
+            example: 'steak, tasty'
+          },
+          description: 'search meals by tags one or more tags'
+        },
+        {
+          name: 'sort_by',
+          in: 'query',
+          schema: {
+            type: 'string',
+            example: '-name,price'
           },
           description:
-            'checks if user is after date including the day of the date.'
+            'specify order of meals by setting fields to order. add - before field for desc order'
         }
       ],
       responses: {
@@ -119,7 +118,7 @@ export default {
                   data: {
                     type: 'array',
                     items: {
-                      $ref: '#/components/schemas/Order'
+                      $ref: '#/components/schemas/Meal'
                     }
                   }
                 }
@@ -157,41 +156,16 @@ export default {
       }
     },
     post: {
-      tags: ['Order Endpoints'],
-      description: 'create a order',
-      operationId: 'postOrder',
+      tags: ['Meal Endpoints'],
+      description: 'create a meal',
+      operationId: 'postMeal',
       parameters: [
         {
           in: 'body',
-          name: 'order',
-          description: 'order to create',
+          name: 'meal',
+          description: 'meal to create',
           schema: {
-            type: 'object',
-            properties: {
-              address: {
-                type: 'string',
-                example: 'some street',
-                description: 'address'
-              },
-              postalCode: {
-                type: 'number',
-                example: '6060',
-                description: 'postal code'
-              },
-              userId: {
-                type: 'string',
-                example: '6293cd8bec9db4c3cbb85155',
-                description: 'user id'
-              },
-              meals: {
-                type: 'array',
-                items: {
-                  type: 'string'
-                },
-                example: ['6293cd8bec9db4c3cbb85155'],
-                description: 'array of ids of meals'
-              }
-            }
+            $ref: '#/components/schemas/Meal'
           }
         }
       ],
@@ -237,9 +211,9 @@ export default {
   },
   id: {
     get: {
-      tags: ['Order Endpoints'],
-      description: 'Get order by id',
-      operationId: 'getOrdererById',
+      tags: ['Meal Endpoints'],
+      description: 'get meal by id',
+      operationId: 'getMealById',
       parameters: [
         {
           name: 'id',
@@ -259,7 +233,7 @@ export default {
                 type: 'object',
                 properties: {
                   data: {
-                    $ref: '#/components/schemas/Order'
+                    $ref: '#/components/schemas/Meal'
                   }
                 }
               }
@@ -318,9 +292,9 @@ export default {
       }
     },
     patch: {
-      tags: ['Order Endpoints'],
-      description: 'update order',
-      operationId: 'updateOrder',
+      tags: ['Meal Endpoints'],
+      description: 'update meal',
+      operationId: 'updateMeal',
       parameters: [
         {
           name: 'id',
@@ -331,55 +305,87 @@ export default {
           description: 'id to update'
         },
         {
-          name: 'user',
           in: 'body',
+          name: 'meal',
+          description: 'update body',
           schema: {
             type: 'object',
             properties: {
-              address: {
+              id: {
                 type: 'string',
-                example: 'some street',
-                description: 'address'
+                description: 'Id of Meal',
+                length: 24,
+                example: '6253f6610d5ef0a5f7cbde76'
               },
-              postalCode: {
+              name: {
+                type: 'string',
+                description: 'Name of Meal',
+                minLength: 5,
+                maxLength: 25,
+                example: 'burger'
+              },
+              price: {
                 type: 'number',
-                example: '6060',
-                description: 'postal code'
+                description: 'Price of Meal',
+                min: 0,
+                max: 50,
+                example: '8.5'
               },
-              userId: {
+              isVegetarian: {
+                type: 'boolean',
+                description: 'true if meal is vegetarian',
+                example: 'false'
+              },
+              isVegan: {
+                type: 'boolean',
+                description: 'true if meal is vegan',
+                example: 'false'
+              },
+              description: {
                 type: 'string',
-                example: '6293cd8bec9db4c3cbb85155',
-                description: 'user id'
+                description: 'Description of Meal',
+                minLength: 10,
+                maxLength: 40,
+                example: 'This is a tasty Burger!'
               },
-              meals: {
+              allergenics: {
                 type: 'array',
                 items: {
-                  type: 'string'
+                  type: 'string',
+                  enum: [
+                    'A',
+                    'B',
+                    'C',
+                    'D',
+                    'E',
+                    'F',
+                    'G',
+                    'H',
+                    'L',
+                    'M',
+                    'N',
+                    'O',
+                    'P',
+                    'R'
+                  ]
                 },
-                example: ['6293cd8bec9db4c3cbb85155'],
-                description: 'array of ids of meals'
+                description: 'Allergenics of Meal',
+                example: ['A', 'E']
               },
-              deliveryTime: {
-                type: 'string',
-                example: '2022-06-23T19:58:32.873Z',
-                description: 'delivery Time'
+              tags: {
+                type: 'array',
+                items: {
+                  type: 'string',
+                  minLength: 1,
+                  maxLength: 15
+                },
+                description: 'tags',
+                example: ['steak, tasty, good']
               },
-              isPaid: {
-                type: 'boolean',
-                example: 'false',
-                description: 'true if order is paid'
-              },
-              isDelivered: {
-                type: 'boolean',
-                example: 'false',
-                description: 'true if order is delivered'
-              },
-              status: {
-                type: 'string',
-                example: 'in delivery',
-                enum: ['in progress', 'in delivery', 'delivered'],
-                description:
-                  'in progress before delivery, in delivery during delivery, delivered if delivered'
+              __v: {
+                type: 'number',
+                description: 'version of Meal',
+                example: 0
               }
             }
           }
@@ -436,9 +442,9 @@ export default {
       }
     },
     delete: {
-      tags: ['Order Endpoints'],
-      description: 'delete order',
-      operationId: 'deleteOrder',
+      tags: ['Meal Endpoints'],
+      description: 'delete meal',
+      operationId: 'deleteMealById',
       parameters: [
         {
           name: 'id',

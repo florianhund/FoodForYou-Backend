@@ -79,7 +79,6 @@ export default class OrderService {
       );
       return [orders, undefined];
     } catch (err) {
-      console.log(err);
       return [null, new HttpError()];
     }
   }
@@ -94,7 +93,6 @@ export default class OrderService {
       } as IOrder);
       return [order, undefined];
     } catch (err) {
-      console.log(err);
       return [null, new HttpError()];
     }
   }

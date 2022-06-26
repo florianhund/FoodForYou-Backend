@@ -8,7 +8,7 @@ import SuperTest from '../../../../../__tests__/utils/SuperTest';
 const db = new Database(DATABASE_URL, {
   useNewUrlParser: true
 } as ConnectOptions);
-const superTest = new SuperTest('/api/v1/ordrs');
+const superTest = new SuperTest('/api/v1/orders');
 
 const fakeId = '123456789123456789123456';
 const realId = new Types.ObjectId();
@@ -112,8 +112,6 @@ describe('POST /orders', () => {
     };
 
     const response = await superTest.post('', data);
-    console.log(response.text);
-
     expect(response.statusCode).toBe(201);
     expect(response.headers.location).toBeTruthy();
   });
@@ -123,7 +121,7 @@ describe('POST /orders', () => {
       address: 'Rudolfstr. 7b',
       postalCode: 6067,
       userId: realUserId,
-      meals: [realMealId]
+      meals: []
     };
 
     const response = await superTest.post('', data);
@@ -196,10 +194,6 @@ describe('PATCH /orders/:id', () => {
     expect(response.statusCode).toBe(400);
     expect(response.headers['content-type']).toMatch(/application\/json/g);
   });
-
-  // it('should update price when adding meals', async () => {});
-
-  // it('should update status when setting isDeliverd: true', async () => {});
 });
 
 describe('DELETE /orders/:id', () => {

@@ -42,9 +42,17 @@ export default class BaseRepository<T extends mongoose.Document>
 
   public async update(
     id: mongoose.Types.ObjectId,
-    data: mongoose.UpdateQuery<T>
+    data: any
   ): Promise<T | null> {
+    // const doc = await this._model.findById(id);
+    // if (!doc) return null;
+    // const updatedDoc = await this._model.findByIdAndUpdate(id, data, {
+    //   new: true
+    // });
+    // doc.save();
+    // return updatedDoc;
     return this._model.findByIdAndUpdate(id, data, { new: true });
+    // return this._model.findOneAndUpdate({ _id: id }, data, { new: true });
   }
 
   public async delete(id: mongoose.Types.ObjectId): Promise<T | null> {

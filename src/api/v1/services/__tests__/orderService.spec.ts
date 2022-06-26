@@ -22,6 +22,7 @@ const realId = new Types.ObjectId();
 const realUserId = new Types.ObjectId();
 const realMealId = new Types.ObjectId();
 const testOrder = {
+  _id: realId,
   address: 'Rudolfstr. 7b',
   postalCode: 6067,
   userId: realUserId,
@@ -65,11 +66,11 @@ afterAll(() => {
 });
 
 beforeEach(async () => {
-  await new User(testOrder).save();
+  await new Order(testOrder).save();
 });
 
 afterEach(async () => {
-  await User.deleteMany({});
+  await Order.deleteMany({});
 });
 
 describe('get orders', () => {
@@ -103,32 +104,50 @@ describe('get order by id', () => {
 
 describe('create order', () => {
   it('should create order', async () => {
-    const [user] = await ordersrv.create({
+    const [order] = await ordersrv.create({
       postalCode: 6060,
       address: 'In der Schranne 10',
       userId: realUserId,
       meals: [realMealId]
     } as unknown as IOrder);
-
-    expect(user).toBeTruthy();
-    expect(user?.address).toBe('In der Schranne 10');
+    expect(order).toBeTruthy();
+    expect(order?.address).toBe('In der Schranne 10');
   });
 });
 
 describe('update order', () => {
   it('should update user if id is valid', async () => {
-    const [user] = await ordersrv.update(`${realId}`, {
+    const [order] = await ordersrv.update(`${realId}`, {
       postalCode: 6020
     });
-    expect(user).toBeTruthy();
-    expect(user?.postalCode).toBe(6060);
+
+    expect(order).toBeTruthy();
+    expect(order?.postalCode).toBe(6020);
   });
 
   it('should return 404 error if id is invalid', async () => {
-    const [user, error] = await ordersrv.update(fakeId, {});
-    expect(user).toBeFalsy();
+    const [order, error] = await ordersrv.update(fakeId, {});
+    expect(order).toBeFalsy();
     expect(error).toBeTruthy();
     expect(error?.code).toBe(404);
+  });
+
+  it('should update price when adding meals', async () => {
+    const [order] = await ordersrv.update(`${realId}`, {
+      meals: [realMealId, realMealId, realMealId, realMealId]
+    });
+
+    expect(order).toBeTruthy();
+    expect(order?.totalPrice).toBe(32); // 4x8
+  });
+
+  it('should update status when setting isDeliverd: true', async () => {
+    const [order] = await ordersrv.update(`${realId}`, {
+      isDelivered: true
+    });
+
+    expect(order).toBeTruthy();
+    expect(order?.status).toBe('delivered');
   });
 });
 
@@ -136,12 +155,12 @@ describe('delete orders', () => {
   it('should delete and return user if id is valid', async () => {
     const [order] = await ordersrv.delete(`${realId}`);
     expect(order).toBeTruthy();
-    expect(order?.userId).toBe(testOrder.userId);
+    expect(order?.userId).toEqual(testOrder.userId);
   });
 
   it('should return 404 error if invalid id', async () => {
-    const [user, error] = await ordersrv.delete(fakeId);
-    expect(user).toBeFalsy();
+    const [orderedMeals, error] = await ordersrv.delete(fakeId);
+    expect(orderedMeals).toBeFalsy();
     expect(error).toBeTruthy();
     expect(error?.code).toBe(404);
   });

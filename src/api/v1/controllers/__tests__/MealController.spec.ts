@@ -1,4 +1,3 @@
-import request from 'supertest';
 import express, { Application } from 'express';
 import { ConnectOptions, Types } from 'mongoose';
 
@@ -6,13 +5,12 @@ import Server from '../../../../Server';
 import Database from '../../../../config/Database';
 import { DATABASE_URL } from '../../../../config/constants';
 import { Meal } from '../../models';
+import SuperTest from '../../../../../__tests__/utils/SuperTest';
 
 const db = new Database(DATABASE_URL, {
   useNewUrlParser: true
 } as ConnectOptions);
-
-const server: Server = Server.instantiate(3000);
-let app: Application;
+const superTest = new SuperTest('/api/v1/meals');
 
 const fakeId = '123456789123456789123456';
 const realId = new Types.ObjectId();
@@ -28,12 +26,6 @@ const meal = {
 
 beforeAll(() => {
   db.init();
-  server.loadGlobalMiddleware([
-    express.urlencoded({ extended: false }),
-    express.json()
-  ]);
-  server.loadControllers();
-  app = server.app;
 });
 
 afterAll(() => {
@@ -50,7 +42,7 @@ afterEach(async () => {
 
 describe('GET /meals', () => {
   it('should return 200 & array if query object is empty', async () => {
-    const response = await request(app).get('/api/v1/meals');
+    const response = await superTest.get('');
 
     expect(response.statusCode).toBe(200);
     expect(response.headers['content-type']).toMatch(/application\/json/g);
@@ -58,7 +50,7 @@ describe('GET /meals', () => {
   });
 
   it('should return 200 & array if query object is not empty', async () => {
-    const response = await request(app).get('/api/v1/meals?name=pizza');
+    const response = await superTest.get('?name=pizza');
 
     expect(response.statusCode).toBe(200);
     expect(response.headers['content-type']).toMatch(/application\/json/g);
@@ -66,9 +58,7 @@ describe('GET /meals', () => {
   });
 
   it('should return 400 if query[without_allergenics] is no allergenic', async () => {
-    const response = await request(app).get(
-      '/api/v1/meals?without_allergenics=Z'
-    );
+    const response = await superTest.get('?without_allergenics=Z');
 
     expect(response.statusCode).toBe(400);
     expect(response.headers['content-type']).toMatch(/application\/json/g);
@@ -77,7 +67,7 @@ describe('GET /meals', () => {
 
 describe('GET /meals/:id', () => {
   it('should return 200 & object if valid id', async () => {
-    const response = await request(app).get(`/api/v1/meals/${realId}`);
+    const response = await superTest.get(`/${realId}`);
 
     expect(response.statusCode).toBe(200);
     expect(response.headers['content-type']).toMatch(/application\/json/g);
@@ -85,14 +75,14 @@ describe('GET /meals/:id', () => {
   });
 
   it('should return 404 if id is invalid', async () => {
-    const response = await request(app).get(`/api/v1/meals/${fakeId}`);
+    const response = await superTest.get(`/${fakeId}`);
 
     expect(response.statusCode).toBe(404);
     expect(response.headers['content-type']).toMatch(/application\/json/g);
   });
 
   it('should return 400 if id is not 24 chars long', async () => {
-    const response = await request(app).get('/api/v1/meals/123');
+    const response = await superTest.get('/123');
 
     expect(response.statusCode).toBe(400);
     expect(response.headers['content-type']).toMatch(/application\/json/g);
@@ -108,10 +98,7 @@ describe('POST /meals', () => {
       isVegan: false
     };
 
-    const response = await request(app)
-      .post('/api/v1/meals')
-      .set('Content-Type', 'Application/json')
-      .send(data);
+    const response = await superTest.post('', data);
 
     expect(response.statusCode).toBe(201);
     expect(response.headers.location).toBeTruthy();
@@ -122,10 +109,7 @@ describe('POST /meals', () => {
       name: 'pizza'
     };
 
-    const response = await request(app)
-      .post('/api/v1/meals')
-      .set('Content-Type', 'Application/json')
-      .send(data);
+    const response = await superTest.post('', data);
 
     expect(response.statusCode).toBe(400);
     expect(response.headers['content-type']).toMatch(/application\/json/g);
@@ -137,10 +121,7 @@ describe('PATCH /meals/:id', () => {
     const data = {
       price: 6
     };
-    const response = await request(app)
-      .patch(`/api/v1/meals/${realId}`)
-      .set('Content-Type', 'Application/json')
-      .send(data);
+    const response = await superTest.patch(`/${realId}`, data);
 
     expect(response.statusCode).toBe(204);
   });
@@ -149,10 +130,7 @@ describe('PATCH /meals/:id', () => {
     const data = {
       test: 'burger'
     };
-    const response = await request(app)
-      .patch(`/api/v1/meals/${realId}`)
-      .set('Content-Type', 'Application/json')
-      .send(data);
+    const response = await superTest.patch(`/${realId}`, data);
 
     expect(response.statusCode).toBe(204);
   });
@@ -162,10 +140,7 @@ describe('PATCH /meals/:id', () => {
       name: 'lasagne',
       price: 2
     };
-    const response = await request(app)
-      .patch(`/api/v1/meals/${fakeId}`)
-      .set('Content-Type', 'Application/json')
-      .send(data);
+    const response = await superTest.patch(`/${fakeId}`, data);
 
     expect(response.statusCode).toBe(404);
     expect(response.headers['content-type']).toMatch(/application\/json/g);
@@ -177,10 +152,7 @@ describe('PATCH /meals/:id', () => {
       price: 1000
     };
 
-    const response = await request(app)
-      .patch(`/api/v1/meals/123`)
-      .set('Content-Type', 'Application/json')
-      .send(data);
+    const response = await superTest.patch('/123', data);
 
     expect(response.statusCode).toBe(400);
     expect(response.headers['content-type']).toMatch(/application\/json/g);
@@ -189,20 +161,20 @@ describe('PATCH /meals/:id', () => {
 
 describe('DELETE /meals/:id', () => {
   it('should return 204 if valid id', async () => {
-    const response = await request(app).delete(`/api/v1/meals/${realId}`);
+    const response = await superTest.delete(`/${realId}`);
 
     expect(response.statusCode).toBe(204);
   });
 
   it('should return 404 if invalid id', async () => {
-    const response = await request(app).delete(`/api/v1/meals/${fakeId}`);
+    const response = await superTest.delete(`/${fakeId}`);
 
     expect(response.statusCode).toBe(404);
     expect(response.headers['content-type']).toMatch(/application\/json/g);
   });
 
   it('should return 400 if id is not 24 chars', async () => {
-    const response = await request(app).delete('/api/v1/meals/123');
+    const response = await superTest.delete('/123');
 
     expect(response.statusCode).toBe(400);
     expect(response.headers['content-type']).toMatch(/application\/json/g);

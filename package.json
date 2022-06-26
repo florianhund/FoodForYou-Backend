@@ -6,7 +6,7 @@
   "scripts": {
     "start": "ts-node --files ./src/index.ts",
     "dev": "nodemon ./src/index.ts",
-    "test": "jest",
+    "test": "jest --runInBand",
     "build": "tsc -p .",
     "prettier-format": "prettier --config .prettierrc . --write",
     "lint": "eslint . --ext .ts"
@@ -77,7 +77,7 @@
     "eslint-plugin-prettier": "4.0.0",
     "husky": "7.0.4",
     "jest": "27.5.1",
-    "nodemon": "2.0.15",
+    "nodemon": "2.0.18",
     "prettier": "2.6.0",
     "supertest": "6.2.2",
     "ts-jest": "27.1.4",

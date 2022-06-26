@@ -101,7 +101,6 @@ describe('POST /users', () => {
     };
 
     const response = await superTest.post('', data);
-    console.log(response.text);
 
     expect(response.statusCode).toBe(201);
     expect(response.headers.location).toBeTruthy();

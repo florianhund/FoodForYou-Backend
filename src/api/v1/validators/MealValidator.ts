@@ -17,7 +17,8 @@ const createSchema: Schema = {
       options: { min: 5, max: 25 },
       errorMessage: 'Name must be between 5 and 25 characters'
     },
-    errorMessage: 'Name cannot be empty'
+    isString: true,
+    errorMessage: 'Name cannot be empty and must be string'
   },
   price: {
     notEmpty: true,
@@ -49,7 +50,9 @@ const createSchema: Schema = {
     isLength: {
       options: { min: 10, max: 60 }
     },
-    errorMessage: 'Description must be between 10 and 60 characters'
+    isString: true,
+    errorMessage:
+      'Description must be between 10 and 60 characters and must be string'
   },
   allergenics: {
     optional: {
@@ -72,6 +75,14 @@ const createSchema: Schema = {
     },
     isArray: true,
     errorMessage: 'Tags must be an array of Strings'
+  },
+  'tags.*': {
+    isString: true,
+    notEmpty: true,
+    isLength: {
+      options: { min: 1, max: 15 }
+    },
+    errorMessage: 'Tag must be between 1 and 25 chars long and string'
   }
 };
 
@@ -84,7 +95,8 @@ const updateSchema: Schema = {
       options: { min: 5, max: 25 },
       errorMessage: 'Name must be between 5 and 25 character'
     },
-    errorMessage: 'Name cannot be empty'
+    isString: true,
+    errorMessage: 'Name cannot be empty and must be string'
   },
   price: {
     optional: {
@@ -119,7 +131,8 @@ const updateSchema: Schema = {
     isLength: {
       options: { min: 10, max: 40 }
     },
-    errorMessage: 'Description must be between 10 and 40 characters'
+    isString: true,
+    errorMessage: 'Description must be between 10 and 40 characters and must be string'
   },
   allergenics: {
     optional: {

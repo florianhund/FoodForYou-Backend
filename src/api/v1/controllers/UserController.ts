@@ -75,12 +75,12 @@ export default class UserController extends HttpController {
   private async getUsers(req: Request, res: Response): Promise<Response> {
     const { email, sort_by: sort, fields } = req.query as unknown as UserQuery;
 
-    const [user, error] = email
+    const [users, error] = email
       ? await usersrv.getByEmail(email, fields)
       : await usersrv.getAll(sort, fields);
 
-    if (!user) return super.sendError(res, error);
-    return super.sendSuccess(res, user);
+    if (!users) return super.sendError(res, error);
+    return super.sendSuccess(res, users);
   }
 
   private async createUser(req: Request, res: Response): Promise<Response> {

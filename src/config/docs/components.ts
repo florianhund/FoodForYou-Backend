@@ -112,11 +112,6 @@ export default {
             description: 'last name of user',
             example: 'Doe'
           },
-          username: {
-            type: 'string',
-            description: 'username',
-            example: 'john_doe8'
-          },
           email: {
             type: 'string',
             description: 'email',

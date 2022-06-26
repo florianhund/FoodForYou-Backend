@@ -1,6 +1,7 @@
 import { Schema } from 'express-validator';
 import { IMeal, IUser } from '../interfaces/models';
 import { Meal, User } from '../models';
+import { hasNullishValues } from '../utils';
 
 const idSchema: Schema = {
   id: {
@@ -47,11 +48,17 @@ const getSchema: Schema = {
       options: { checkFalsy: true }
     },
     custom: {
-      options: async value => {
-        value.split(',').forEach(async (id: string) => {
-          const meal: IMeal | null = await Meal.findById(id);
-          if (!meal) throw new Error('At least one given id doesnt exist');
-        });
+      options: async (value: string) => {
+        const ids = await Promise.all(
+          value.split(',').map(id => {
+            if (id.length !== 24)
+              throw new Error('At least one given id is not 24 chars long');
+            return Meal.findById(id);
+          })
+        );
+
+        if (hasNullishValues(ids))
+          throw new Error('At least one given id doesnt exist');
         return true;
       }
     }
@@ -82,7 +89,8 @@ const getSchema: Schema = {
 const createSchema: Schema = {
   address: {
     notEmpty: true,
-    errorMessage: 'address cannot be empty'
+    isString: true,
+    errorMessage: 'address cannot be empty and string'
   },
   postalCode: {
     notEmpty: true,
@@ -126,7 +134,6 @@ const createSchema: Schema = {
   }
 };
 
-// ! not finished
 const updateSchema: Schema = {
   postalCode: {
     optional: {
@@ -157,7 +164,7 @@ const updateSchema: Schema = {
       options: { checkFalsy: true }
     },
     isArray: true,
-    errorMessage: 'Meals cannot be empty'
+    errorMessage: 'Meals has to be array'
   },
   'meals.*': {
     optional: {
@@ -216,6 +223,13 @@ const updateSchema: Schema = {
   totalPrice: {
     isEmpty: true,
     errorMessage: 'cannot update totalPrice'
+  },
+  address: {
+    optional: {
+      options: { checkFalsy: true }
+    },
+    isString: true,
+    errorMessage: 'address has to be a string'
   }
 };
 

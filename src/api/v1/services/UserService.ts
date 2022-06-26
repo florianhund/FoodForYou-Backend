@@ -16,6 +16,7 @@ export default class UserService {
         UserRepository.getSortQuery(sort || ''),
         fields?.split(',')
       );
+
       return [users, undefined];
     } catch (err) {
       return [null, new HttpError()];

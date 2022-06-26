@@ -7,12 +7,14 @@ All notable changes to this project are documented in this file following the [K
 ### Changed
 - refactor code
 
-## [1.0.0-alpha.2] - 2022-06-xx
+## [1.0.0-alpha.2] - 2022-06-26
+### Added
+- Automatically change total price / status of order when updating.
 ### Changed
-- docs structure
+- Changed docs structure
+- Refactored tests
 ### Fixed
-- isString validation
-- update total price when adding meals to order
+- Fixed validation bugs
 
 ## [1.0.0-alpha.1] - 2022-06-23
 Initial Version.

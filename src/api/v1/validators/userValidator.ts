@@ -19,7 +19,8 @@ const createSchema: Schema = {
       options: { max: 20 },
       errorMessage: 'firstName must have max 20 chars'
     },
-    errorMessage: 'firstName cannot be empty'
+    isString: true,
+    errorMessage: 'firstName cannot be empty and string'
   },
   lastName: {
     notEmpty: true,
@@ -27,7 +28,8 @@ const createSchema: Schema = {
       options: { max: 20 },
       errorMessage: 'lastName must have max 20 chars'
     },
-    errorMessage: 'lastName cannot be empty'
+    isString: true,
+    errorMessage: 'lastName cannot be empty and string'
   },
   email: {
     notEmpty: true,
@@ -69,7 +71,8 @@ const updateSchema: Schema = {
       options: { max: 20 },
       errorMessage: 'firstName must have max 20 chars'
     },
-    errorMessage: 'firstName cannot be empty'
+    isString: true,
+    errorMessage: 'firstName cannot be empty and string'
   },
   lastName: {
     optional: {
@@ -79,7 +82,8 @@ const updateSchema: Schema = {
       options: { max: 20 },
       errorMessage: 'lastName must have max 20 chars'
     },
-    errorMessage: 'lastName cannot be empty'
+    isString: true,
+    errorMessage: 'lastName cannot be empty and string'
   },
   email: {
     optional: {
@@ -107,7 +111,6 @@ const updateSchema: Schema = {
     },
     errorMessage: 'password cannot be empty'
   },
-
   isVerified: {
     optional: {
       options: { checkFalsy: true }
@@ -119,12 +122,25 @@ const updateSchema: Schema = {
   isAdmin: {
     isEmpty: true,
     errorMessage: 'isAdmin has to be empty'
+  },
+  otp: {
+    isEmpty: true,
+    errorMessage: 'otp has to be empty'
+  },
+  provider: {
+    isEmpty: true,
+    errorMessage: 'provider has to be empty'
+  },
+  providerId: {
+    isEmpty: true,
+    errorMessage: 'providerId has to be empty'
   }
 };
 
 const verificationSchema: Schema = {
   otp: {
     notEmpty: true,
+    isInt: true,
     errorMessage: 'otp cannot be null'
   }
 };

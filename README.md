@@ -50,9 +50,6 @@ GET /api-docs
 - [Jest](https://jestjs.io/) This is a delightful JavaScript / Typescript **Testing Framework**.
 - [Passport](https://www.passportjs.org/) This is **authentication middleware** for Node.js. Extremely flexible and modular, Passport can be unobtrusively dropped in to any Express-based web application. A comprehensive set of strategies support authentication using a username and password, Facebook, Twitter, and more.
 - [Nodemailer](https://nodemailer.com/about/) This is a module for Node.js applications to allow easy as cake **email sending**. The project got started back in 2010 when there was no sane option to send email messages, today it is the solution most Node.js users turn to by default.
-- [passportjs]()
-- [bcrypt]()
-- [Cookie-Session]()
 
 ### Authors
 - [Florian Hundegger](https://github.com/florianhund)
