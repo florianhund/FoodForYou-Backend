@@ -3,12 +3,11 @@ import { OrderFilterQuery, OrderSearchQuery } from '../interfaces';
 
 import { IOrder } from '../interfaces/models';
 import { PromiseHandler } from '../interfaces/types';
-import { OrderRepository } from '../repositories';
+import OrderRepository from '../repositories/OrderRepository';
 import HttpError from '../utils/HttpError';
 
-// TODO: implememnt DIJ _repo
 export default class OrderService {
-  private _repo = new OrderRepository();
+  constructor(private _repo: OrderRepository) {}
 
   public async getAll(
     sort?: string,

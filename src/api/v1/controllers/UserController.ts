@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { checkSchema } from 'express-validator';
 
 import HttpController from './base/HttpController';
-import { UserService } from '../services';
 import { httpMethods } from '../interfaces/types';
 import { UserQuery, IRoute } from '../interfaces';
 import { userSchema } from '../validators';
@@ -14,8 +13,7 @@ import {
   GOOGLE_REFRESH_TOKEN
 } from '../../../config/constants';
 import HttpError from '../utils/HttpError';
-
-const usersrv = new UserService();
+import UserService from '../services/UserService';
 
 // TODO: implement regex username search
 export default class UserController extends HttpController {
@@ -32,7 +30,6 @@ export default class UserController extends HttpController {
       method: httpMethods.POST,
       handler: this.createUser,
       validator: validate(checkSchema(userSchema.create))
-      // ? check optional -> checkFalsy
     },
     {
       path: '/:id',
@@ -71,20 +68,25 @@ export default class UserController extends HttpController {
     }
   ];
 
+  constructor(private _usersrv: UserService) {
+    super();
+    super.bindHandlers(this)
+  }
+
   // query.username returns ONE document
   private async getUsers(req: Request, res: Response): Promise<Response> {
     const { email, sort_by: sort, fields } = req.query as unknown as UserQuery;
 
     const [users, error] = email
-      ? await usersrv.getByEmail(email, fields)
-      : await usersrv.getAll(sort, fields);
+      ? await this._usersrv.getByEmail(email, fields)
+      : await this._usersrv.getAll(sort, fields);
 
     if (!users) return super.sendError(res, error);
     return super.sendSuccess(res, users);
   }
 
   private async createUser(req: Request, res: Response): Promise<Response> {
-    const [user, error] = await usersrv.create(req.body);
+    const [user, error] = await this._usersrv.create(req.body);
     if (!user) return super.sendError(res, error);
     res.setHeader('Location', `/users/${user._id}`);
     return super.sendSuccess(res, {}, 201);
@@ -93,21 +95,21 @@ export default class UserController extends HttpController {
   private async getUserById(req: Request, res: Response): Promise<Response> {
     const { id } = req.params;
     const { fields } = req.query as unknown as UserQuery;
-    const [user, error] = await usersrv.getById(id, fields);
+    const [user, error] = await this._usersrv.getById(id, fields);
     if (!user) return super.sendError(res, error);
     return super.sendSuccess(res, user);
   }
 
   private async updateUser(req: Request, res: Response): Promise<Response> {
     const { id } = req.params;
-    const [user, error] = await usersrv.update(id, req.body);
+    const [user, error] = await this._usersrv.update(id, req.body);
     if (!user) return super.sendError(res, error);
     return super.sendSuccess(res, {}, 204);
   }
 
   private async deleteUser(req: Request, res: Response): Promise<Response> {
     const { id } = req.params;
-    const [user, error] = await usersrv.delete(id);
+    const [user, error] = await this._usersrv.delete(id);
     if (!user) return super.sendError(res, error);
     return super.sendSuccess(res, {}, 204);
   }
@@ -126,7 +128,7 @@ export default class UserController extends HttpController {
       GOOGLE_REFRESH_TOKEN
     );
 
-    const [user, error] = await usersrv.getById(req.params.id);
+    const [user, error] = await this._usersrv.getById(req.params.id);
     if (!user) return super.sendError(res, error);
 
     // eslint-disable-next-line
@@ -138,12 +140,12 @@ export default class UserController extends HttpController {
     const { id } = req.params;
     const { otp } = req.query;
 
-    const [user, error] = await usersrv.getById(id);
+    const [user, error] = await this._usersrv.getById(id);
     if (!user) return super.sendError(res, error);
 
     if (+otp! !== user.otp)
       return super.sendError(res, new HttpError('wrong code', 401));
-    await usersrv.update(id, { isVerified: true, otp: null });
+    await this._usersrv.update(id, { isVerified: true, otp: null });
     return super.sendSuccess(res, {}, 204);
   }
 }

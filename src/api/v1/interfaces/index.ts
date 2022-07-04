@@ -21,12 +21,6 @@ export interface IRoute {
   localMiddleware?: middleware[];
 }
 
-export interface IServer {
-  loadControllers(): any;
-  loadGlobalMiddleware(middleware: RequestHandler[]): any;
-  run(): http.Server;
-}
-
 export interface IRead<T> {
   findAll: (order?: MongooseOrder[]) => Promise<T[]>;
   findById: (id: Types.ObjectId) => Promise<T | null>;

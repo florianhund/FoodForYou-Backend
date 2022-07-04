@@ -3,13 +3,10 @@ import { checkSchema } from 'express-validator';
 import { IRoute, OrderQuery } from '../interfaces';
 import { httpMethods } from '../interfaces/types';
 import { validate } from '../middlewares';
-import { OrderService } from '../services';
+import OrderService from '../services/OrderService';
 import { hasAllNullishValues } from '../utils';
 import { orderSchema } from '../validators';
 import HttpController from './base/HttpController';
-
-// ? if class member: bind this
-const ordersrv = new OrderService();
 
 export default class OrderController extends HttpController {
   path = '/orders';
@@ -49,6 +46,11 @@ export default class OrderController extends HttpController {
     }
   ];
 
+  constructor(private _ordersrv: OrderService) {
+    super();
+    super.bindHandlers(this);
+  }
+
   private async getOrders(req: Request, res: Response): Promise<Response> {
     const {
       sort_by: sort,
@@ -77,15 +79,15 @@ export default class OrderController extends HttpController {
     };
 
     const [order, error] = !hasAllNullishValues(filter)
-      ? await ordersrv.get(filter, sort, fields)
-      : await ordersrv.getAll(sort, fields);
+      ? await this._ordersrv.get(filter, sort, fields)
+      : await this._ordersrv.getAll(sort, fields);
 
     if (!order) return super.sendError(res, error);
     return super.sendSuccess(res, order);
   }
 
   private async createOrder(req: Request, res: Response): Promise<Response> {
-    const [user, error] = await ordersrv.create(req.body);
+    const [user, error] = await this._ordersrv.create(req.body);
     if (!user) return super.sendError(res, error);
     res.setHeader('Location', `/users/${user._id}`);
     return super.sendSuccess(res, {}, 201);
@@ -94,21 +96,21 @@ export default class OrderController extends HttpController {
   private async getOrderById(req: Request, res: Response): Promise<Response> {
     const { id } = req.params;
     const { fields } = req.query as unknown as OrderQuery;
-    const [user, error] = await ordersrv.getById(id, fields);
+    const [user, error] = await this._ordersrv.getById(id, fields);
     if (!user) return super.sendError(res, error);
     return super.sendSuccess(res, user);
   }
 
   private async updateOrder(req: Request, res: Response): Promise<Response> {
     const { id } = req.params;
-    const [user, error] = await ordersrv.update(id, req.body);
+    const [user, error] = await this._ordersrv.update(id, req.body);
     if (!user) return super.sendError(res, error);
     return super.sendSuccess(res, {}, 204);
   }
 
   private async deleteOrder(req: Request, res: Response): Promise<Response> {
     const { id } = req.params;
-    const [user, error] = await ordersrv.delete(id);
+    const [user, error] = await this._ordersrv.delete(id);
     if (!user) return super.sendError(res, error);
     return super.sendSuccess(res, {}, 204);
   }

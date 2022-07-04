@@ -3,11 +3,11 @@ import { MealFilterQuery, MealSearchQuery } from '../interfaces';
 
 import { IMeal } from '../interfaces/models';
 import { PromiseHandler, MongooseOrder } from '../interfaces/types';
-import { MealRepository } from '../repositories';
+import MealRepository from '../repositories/MealRepository';
 import HttpError from '../utils/HttpError';
 
 export default class MealService {
-  private _repo = new MealRepository();
+  constructor(private _repo: MealRepository) {}
 
   public async getById(id: string, fields?: string): PromiseHandler<IMeal> {
     const objectId = MealRepository.createIdFromString(id);

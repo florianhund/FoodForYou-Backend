@@ -7,6 +7,7 @@ import Database from '../../../../config/Database';
 import { DATABASE_URL } from '../../../../config/constants';
 import { Meal } from '../../models';
 import { IMeal } from '../../interfaces/models';
+import { MealRepository } from '../../repositories';
 
 const db = new Database(DATABASE_URL, {
   useNewUrlParser: true
@@ -15,7 +16,7 @@ const db = new Database(DATABASE_URL, {
 const server: Server = Server.instantiate(3000);
 let app: Application;
 
-const mealsrv = new MealService();
+const mealsrv = new MealService(new MealRepository());
 
 const fakeId = '123456789123123456789123';
 const realId = new Types.ObjectId();

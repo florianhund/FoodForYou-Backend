@@ -5,11 +5,10 @@ import * as swaggerUi from 'swagger-ui-express';
 import router, { defaultHandler } from './api/v1/routes';
 import Logger from './config/Logger';
 import docs from './config/docs';
-import { IServer } from './api/v1/interfaces';
 
 const logger = new Logger(__filename);
 
-export default class Server implements IServer {
+export default class Server {
   // eslint-disable-next-line no-use-before-define
   private static _server: Server;
 

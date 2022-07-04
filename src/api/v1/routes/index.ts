@@ -6,10 +6,22 @@ import {
   OrderController,
   AuthController
 } from '../controllers';
+import { MealService, UserService, OrderService } from '../services';
+import {
+  MealRepository,
+  OrderRepository,
+  UserRepository
+} from '../repositories';
 
-const mealController = new MealController();
-const userController = new UserController();
-const orderController = new OrderController();
+const mealController = new MealController(
+  new MealService(new MealRepository())
+);
+const userController = new UserController(
+  new UserService(new UserRepository())
+);
+const orderController = new OrderController(
+  new OrderService(new OrderRepository())
+);
 const authController = new AuthController();
 
 const router = Router();

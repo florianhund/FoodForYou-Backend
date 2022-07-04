@@ -35,6 +35,14 @@ export default abstract class HttpController {
     res: Response,
     err: HttpError = new HttpError()
   ): Response {
-    return res.status(err.code).json({ message: err.message });
+    return res.status(err.code).json({ message: err.message, code: err.code });
+  }
+
+  protected bindHandlers(self: HttpController) {
+    this.routes = this.routes.map(route => {
+      // eslint-disable-next-line no-param-reassign
+      route.handler = route.handler.bind(self);
+      return route;
+    });
   }
 }

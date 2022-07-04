@@ -3,12 +3,12 @@ import bcrypt from 'bcrypt';
 
 import { IUser } from '../interfaces/models';
 import { PromiseHandler } from '../interfaces/types';
-import { UserRepository } from '../repositories';
 import HttpError from '../utils/HttpError';
 import { User } from '../models';
+import UserRepository from '../repositories/UserRepository';
 
 export default class UserService {
-  private _repo = new UserRepository();
+  constructor(private _repo: UserRepository) {}
 
   public async getAll(sort?: string, fields?: string): PromiseHandler<IUser[]> {
     try {

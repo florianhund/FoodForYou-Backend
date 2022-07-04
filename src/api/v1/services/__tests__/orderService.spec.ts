@@ -2,6 +2,7 @@ import { ConnectOptions, Types } from 'mongoose';
 import express, { Application } from 'express';
 
 import { OrderService } from '..';
+import { OrderRepository } from '../../repositories';
 import Server from '../../../../Server';
 import Database from '../../../../config/Database';
 import { DATABASE_URL } from '../../../../config/constants';
@@ -15,7 +16,7 @@ const db = new Database(DATABASE_URL, {
 const server: Server = Server.instantiate(3000);
 let app: Application;
 
-const ordersrv = new OrderService();
+const ordersrv = new OrderService(new OrderRepository());
 
 const fakeId = '123456789123123456789123';
 const realId = new Types.ObjectId();
