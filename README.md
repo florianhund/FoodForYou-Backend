@@ -1,10 +1,17 @@
-# FoodForYou v1.0.0-alpha.2
+# FoodForYou v1.0.0-rc
+
+![APM](https://img.shields.io/apm/l/vim-mode)
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/florianhund/FoodForYou)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/florianhund/FoodForYou)
+![GitHub Release Date](https://img.shields.io/github/release-date/florianhund/FoodForYou)
 
 ### Introduction
+
 FoodForYou API is an open source **food-delivery system API** which allows users to find and create meals, create orders and includes a full user login system.
 <br>
 
 ### Project Support Features
+
 - find / create / update / delete meals
 - find / create / update / delete orders
 - full user authentication system
@@ -12,34 +19,43 @@ FoodForYou API is an open source **food-delivery system API** which allows users
 - payment functionality (not implementet yet)
 
 ### Prerequisites
+
 You need to have **NodeJS** (v14.17.6 or higher) installed on your system in order to install and run the application.
 
 ### Installation Guide
+
 - clone this repository [here](https://github.com/florianhund/FoodForYou)
 - navigate into the repository
 - install all dependencies
+
 ```bash
 git clone https://github.com/florianhund/FoodForYou
 cd FoodForYou
 npm i
 ```
+
 - Create a **.env file in your project root folder** and add your variables. See .env.example for assistance.
   <br>
   Set NODE_ENV to DEVELOPMENT if you are not running the application in production mode.
 
 ### Usage
+
 Run the following command in the root directory to start the application.
+
 ```bash
 npm start
 ```
+
 The server will run at the port specified in .env file.
 
 ### Documentation
+
 The following route provides information about all **API-Endpoints, schemas, servers** and the whole project itselves. You should access this route via any browser.
 <br>
 GET /api-docs
 
 ### Technologies Used
+
 - [NodeJS](https://nodejs.org) This is a **cross-platform runtime environment** built on Chrome's V8 JavaScript engine used in running JavaScript codes on the server. It allows for installation and managing of dependencies and communication with databases.
 - [ExpressJS](https://expressjs.com) This is a **NodeJS web application framework**.
 - [MongoDB](https://mongodb.com) This is a free open source **NoSQL Document database** with scalability and flexibility where data is stored in JSON-like documents.
@@ -52,7 +68,9 @@ GET /api-docs
 - [Nodemailer](https://nodemailer.com/about/) This is a module for Node.js applications to allow easy as cake **email sending**. The project got started back in 2010 when there was no sane option to send email messages, today it is the solution most Node.js users turn to by default.
 
 ### Authors
+
 - [Florian Hundegger](https://github.com/florianhund)
 
 ### License
+
 This project is available for use under the **MIT License**. Click [here](https://opensource.org/licenses/MIT) for further information.

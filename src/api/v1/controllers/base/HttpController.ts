@@ -35,7 +35,9 @@ export default abstract class HttpController {
     res: Response,
     err: HttpError = new HttpError()
   ): Response {
-    return res.status(err.code).json({ message: err.message, code: err.code });
+    return res
+      .status(err.code)
+      .json({ message: err.message, code: err.code, status: err.status });
   }
 
   protected bindHandlers(self: HttpController) {

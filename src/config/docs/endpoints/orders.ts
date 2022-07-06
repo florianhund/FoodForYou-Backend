@@ -136,20 +136,13 @@ export default {
               }
             }
           }
-        }
-      },
-      500: {
-        description: '500 Internal Server Error',
-        content: {
-          'application/json': {
-            schema: {
-              type: 'object',
-              properties: {
-                message: {
-                  type: 'string',
-                  example: 'Internal Server Error',
-                  description: 'error message'
-                }
+        },
+        500: {
+          description: '500 Internal Server Error',
+          content: {
+            'application/json': {
+              schema: {
+                $ref: '#/components/schemas/HttpError'
               }
             }
           }
@@ -220,14 +213,7 @@ export default {
           content: {
             'application/json': {
               schema: {
-                type: 'object',
-                properties: {
-                  message: {
-                    type: 'string',
-                    example: 'Internal Server Error',
-                    description: 'error message'
-                  }
-                }
+                $ref: '#/components/schemas/HttpError'
               }
             }
           }
@@ -286,14 +272,7 @@ export default {
           content: {
             'application/json': {
               schema: {
-                type: 'object',
-                properties: {
-                  message: {
-                    type: 'string',
-                    example: 'Invalid Id',
-                    description: 'error message'
-                  }
-                }
+                $ref: '#/components/schemas/HttpError'
               }
             }
           }
@@ -303,14 +282,7 @@ export default {
           content: {
             'application/json': {
               schema: {
-                type: 'object',
-                properties: {
-                  message: {
-                    type: 'string',
-                    example: 'Internal Server Error',
-                    description: 'error message'
-                  }
-                }
+                $ref: '#/components/schemas/HttpError'
               }
             }
           }
@@ -404,14 +376,7 @@ export default {
           content: {
             'application/json': {
               schema: {
-                type: 'object',
-                properties: {
-                  message: {
-                    type: 'string',
-                    example: 'Invalid Id',
-                    description: 'error message'
-                  }
-                }
+                $ref: '#/components/schemas/HttpError'
               }
             }
           }
@@ -421,14 +386,7 @@ export default {
           content: {
             'application/json': {
               schema: {
-                type: 'object',
-                properties: {
-                  message: {
-                    type: 'string',
-                    example: 'Internal Server Error',
-                    description: 'error message'
-                  }
-                }
+                $ref: '#/components/schemas/HttpError'
               }
             }
           }
@@ -468,14 +426,7 @@ export default {
           content: {
             'application/json': {
               schema: {
-                type: 'object',
-                properties: {
-                  message: {
-                    type: 'string',
-                    example: 'Invalid Id',
-                    description: 'error message'
-                  }
-                }
+                $ref: '#/components/schemas/HttpError'
               }
             }
           }
@@ -485,14 +436,7 @@ export default {
           content: {
             'application/json': {
               schema: {
-                type: 'object',
-                properties: {
-                  message: {
-                    type: 'string',
-                    example: 'Internal Server Error',
-                    description: 'error message'
-                  }
-                }
+                $ref: '#/components/schemas/HttpError'
               }
             }
           }

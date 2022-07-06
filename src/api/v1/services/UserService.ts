@@ -27,7 +27,15 @@ export default class UserService {
     const objectId = UserRepository.createIdFromString(id);
     try {
       const user = await this._repo.findById(objectId, fields?.split(','));
-      if (!user) return [null, new HttpError('Invalid Id', 404)];
+      if (!user)
+        return [
+          null,
+          new HttpError(
+            'User with specified id was not found.',
+            404,
+            'INVALID ID'
+          )
+        ];
       return [user, undefined];
     } catch (err) {
       return [null, new HttpError()];
@@ -40,7 +48,15 @@ export default class UserService {
   ): PromiseHandler<IUser> {
     try {
       const [user] = await this._repo.find({ email }, [], fields?.split(','));
-      if (!user) return [null, new HttpError('No User found!', 404)];
+      if (!user)
+        return [
+          null,
+          new HttpError(
+            'User with specified id was not found.',
+            404,
+            'INVALID ID'
+          )
+        ];
       return [user, undefined];
     } catch (err) {
       return [null, new HttpError()];
@@ -77,7 +93,15 @@ export default class UserService {
     const objectId = UserRepository.createIdFromString(id);
     try {
       const user = await this._repo.update(objectId, data);
-      if (!user) return [null, new HttpError('Invalid id', 404)];
+      if (!user)
+        return [
+          null,
+          new HttpError(
+            'User with specified id was not found.',
+            404,
+            'INVALID ID'
+          )
+        ];
       return [user, undefined];
     } catch (err) {
       return [null, new HttpError()];
@@ -88,7 +112,15 @@ export default class UserService {
     const objectId = UserRepository.createIdFromString(id);
     try {
       const user = await this._repo.delete(objectId);
-      if (!user) return [null, new HttpError('Invalid id', 404)];
+      if (!user)
+        return [
+          null,
+          new HttpError(
+            'User with specified id was not found.',
+            404,
+            'INVALID ID'
+          )
+        ];
       return [user, undefined];
     } catch (err) {
       return [null, new HttpError()];

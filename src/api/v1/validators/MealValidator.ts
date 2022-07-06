@@ -132,7 +132,8 @@ const updateSchema: Schema = {
       options: { min: 10, max: 40 }
     },
     isString: true,
-    errorMessage: 'Description must be between 10 and 40 characters and must be string'
+    errorMessage:
+      'Description must be between 10 and 40 characters and must be string'
   },
   allergenics: {
     optional: {

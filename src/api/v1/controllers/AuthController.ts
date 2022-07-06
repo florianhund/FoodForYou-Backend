@@ -27,9 +27,9 @@ export default class AuthController extends HttpController {
       method: httpMethods.GET,
       localMiddleware: [
         // ! causes error
-        // passport.authenticate('google', {
-        //   failureRedirect: '/api/v1/auth/login/failed'
-        // })
+        passport.authenticate('google', {
+          failureRedirect: '/api/v1/auth/login/failed'
+        })
       ],
       handler: this.successCallback
     },
@@ -49,9 +49,9 @@ export default class AuthController extends HttpController {
       method: httpMethods.GET,
       localMiddleware: [
         // ! causes error
-        // passport.authenticate('facebook', {
-        //   failureRedirect: '/api/v1/auth/login/failed'
-        // })
+        passport.authenticate('facebook', {
+          failureRedirect: '/api/v1/auth/login/failed'
+        })
       ],
       handler: this.successCallback
     },

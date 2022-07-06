@@ -28,7 +28,15 @@ export default class OrderService {
     const objectId = OrderRepository.createIdFromString(id);
     try {
       const order = await this._repo.findById(objectId, fields?.split(','));
-      if (!order) return [null, new HttpError('Invalid Id', 404)];
+      if (!order)
+        return [
+          null,
+          new HttpError(
+            'Order with specified id was not found.',
+            404,
+            'INVALID ID'
+          )
+        ];
       return [order, undefined];
     } catch (err) {
       return [null, new HttpError()];
@@ -103,7 +111,15 @@ export default class OrderService {
     const objectId = OrderRepository.createIdFromString(id);
     try {
       const order = await this._repo.update(objectId, data);
-      if (!order) return [null, new HttpError('Invalid id', 404)];
+      if (!order)
+        return [
+          null,
+          new HttpError(
+            'Order with specified id was not found.',
+            404,
+            'INVALID ID'
+          )
+        ];
       return [order, undefined];
     } catch (err) {
       return [null, new HttpError()];
@@ -114,7 +130,15 @@ export default class OrderService {
     const objectId = OrderRepository.createIdFromString(id);
     try {
       const order = await this._repo.delete(objectId);
-      if (!order) return [null, new HttpError('Invalid id', 404)];
+      if (!order)
+        return [
+          null,
+          new HttpError(
+            'Order with specified id was not found.',
+            404,
+            'INVALID ID'
+          )
+        ];
       return [order, undefined];
     } catch (err) {
       return [null, new HttpError()];

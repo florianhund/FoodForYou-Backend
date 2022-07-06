@@ -2,7 +2,7 @@ import { UpdateQuery } from 'mongoose';
 import { MealFilterQuery, MealSearchQuery } from '../interfaces';
 
 import { IMeal } from '../interfaces/models';
-import { PromiseHandler, MongooseOrder } from '../interfaces/types';
+import { PromiseHandler } from '../interfaces/types';
 import MealRepository from '../repositories/MealRepository';
 import HttpError from '../utils/HttpError';
 
@@ -13,7 +13,15 @@ export default class MealService {
     const objectId = MealRepository.createIdFromString(id);
     try {
       const meal = await this._repo.findById(objectId, fields?.split(','));
-      if (!meal) return [null, new HttpError('Invalid Id', 404)];
+      if (!meal)
+        return [
+          null,
+          new HttpError(
+            'Meal with specified id was not found.',
+            404,
+            'INVALID ID'
+          )
+        ];
       return [meal, undefined];
     } catch (err) {
       return [null, new HttpError()];
@@ -98,7 +106,15 @@ export default class MealService {
     const objectId = MealRepository.createIdFromString(id);
     try {
       const meal = await this._repo.update(objectId, data);
-      if (!meal) return [null, new HttpError('Invalid id', 404)];
+      if (!meal)
+        return [
+          null,
+          new HttpError(
+            'Meal with specified id was not found.',
+            404,
+            'INVALID ID'
+          )
+        ];
       return [meal, undefined];
     } catch (err) {
       return [null, new HttpError()];
@@ -109,7 +125,15 @@ export default class MealService {
     const objectId = MealRepository.createIdFromString(id);
     try {
       const meal = await this._repo.delete(objectId);
-      if (!meal) return [null, new HttpError('Invalid Id', 404)];
+      if (!meal)
+        return [
+          null,
+          new HttpError(
+            'Meal with specified id was not found.',
+            404,
+            'INVALID ID'
+          )
+        ];
       return [meal, undefined];
     } catch (err) {
       return [null, new HttpError()];

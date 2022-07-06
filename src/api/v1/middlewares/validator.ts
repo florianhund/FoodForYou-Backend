@@ -17,7 +17,9 @@ export default (validations: ValidationChain[]) =>
     await Promise.all(validations.map(validation => validation.run(req)));
     const errors = validation(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res
+        .status(400)
+        .json({ code: 400, status: 'INVALID INPUT', errors: errors.array() });
     }
     next();
   };

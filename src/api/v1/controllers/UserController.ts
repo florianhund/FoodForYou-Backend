@@ -70,7 +70,7 @@ export default class UserController extends HttpController {
 
   constructor(private _usersrv: UserService) {
     super();
-    super.bindHandlers(this)
+    super.bindHandlers(this);
   }
 
   // query.username returns ONE document
@@ -136,6 +136,7 @@ export default class UserController extends HttpController {
     return super.sendSuccess(res, {}, 204);
   }
 
+  // TODO: implement service method
   private async verifyUser(req: Request, res: Response): Promise<Response> {
     const { id } = req.params;
     const { otp } = req.query;

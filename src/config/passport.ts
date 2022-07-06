@@ -37,9 +37,9 @@ const initialize = (passport: PassportStatic) => {
             otp: null,
             isAdmin: false
           });
-          done(null, newUser);
+          return done(null, newUser);
         } catch (err) {
-          done(err as Error, undefined);
+          return done(err as Error, undefined);
         }
       }
     )
@@ -69,9 +69,9 @@ const initialize = (passport: PassportStatic) => {
             otp: null,
             isAdmin: false
           });
-          done(null, newUser);
+          return done(null, newUser);
         } catch (err) {
-          done(err as Error, undefined);
+          return done(err as Error, undefined);
         }
       }
     )

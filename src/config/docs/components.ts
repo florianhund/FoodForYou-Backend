@@ -215,6 +215,16 @@ export default {
       ValidationError: {
         type: 'object',
         properties: {
+          code: {
+            type: 'number',
+            example: 400,
+            description: 'Http statuscode'
+          },
+          status: {
+            type: 'string',
+            example: 'INVALID INPUT',
+            description: 'short error description'
+          },
           errors: {
             type: 'array',
             items: {
@@ -242,6 +252,26 @@ export default {
                 }
               }
             }
+          }
+        }
+      },
+      HttpError: {
+        type: 'object',
+        properties: {
+          code: {
+            type: 'number',
+            example: 500,
+            description: 'Http statuscode'
+          },
+          status: {
+            type: 'string',
+            example: 'INTERNAL SERVER ERROR',
+            description: 'short error description'
+          },
+          message: {
+            type: 'string',
+            example: 'Something went wrong.',
+            description: 'error message'
           }
         }
       }
