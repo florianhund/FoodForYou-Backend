@@ -8,6 +8,8 @@ All notable changes to this project are documented in this file following the [K
 
 - Implement Payments
 
+## [1.0.0] - 2022-xx-xx
+
 ### Fixed
 
 - Fix google / facebook login
@@ -17,7 +19,7 @@ All notable changes to this project are documented in this file following the [K
 ### Added
 
 - Implement Payments
-- Added status propery on HttpError
+- Added status property on HttpError
 
 ### Changed
 
