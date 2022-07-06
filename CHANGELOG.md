@@ -8,6 +8,10 @@ All notable changes to this project are documented in this file following the [K
 
 - Implement Payments
 
+### Fixed
+
+- Fix google / facebook login
+
 ## [1.0.0-rc] - 2022-07-06
 
 ### Added
