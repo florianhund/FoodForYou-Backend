@@ -1,4 +1,4 @@
-# FoodForYou v1.0.0-rc
+# FoodForYou
 
 ![APM](https://img.shields.io/apm/l/vim-mode)
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/florianhund/FoodForYou)

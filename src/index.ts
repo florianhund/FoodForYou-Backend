@@ -1,24 +1,25 @@
 import { ConnectOptions } from 'mongoose';
 import express from 'express';
 import passport from 'passport';
-import cookieSession from 'cookie-session';
+import session from 'express-session';
 
 import { PORT, DATABASE_URL, COOKIE_KEY } from './config/constants';
 import Database from './config/Database';
 import Server from './Server';
-import initializePassport from './config/passport';
+import initialize from './config/passport';
 
 const server: Server = Server.instantiate(PORT);
 const database: Database = new Database(DATABASE_URL, {
   useNewUrlParser: true
 } as ConnectOptions);
 
-initializePassport(passport);
+initialize(passport);
 
 const middleware = [
-  cookieSession({
-    maxAge: 10 * 60 * 60 * 1000,
-    keys: [COOKIE_KEY as string]
+  session({
+    secret: COOKIE_KEY!,
+    resave: false,
+    saveUninitialized: false
   }),
   express.urlencoded({ extended: false }),
   express.json(),

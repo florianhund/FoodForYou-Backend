@@ -6,14 +6,14 @@ import { hasAllNullishValues } from '../utils';
 import { httpMethods } from '../interfaces/types';
 import { validate } from '../middlewares';
 import { mealSchema } from '../validators';
-import { MealQuery } from '../interfaces';
+import { IRoute, MealQuery } from '../interfaces';
 import MealService from '../services/MealService';
 
 export default class MealController extends HttpController {
   path = '/meals';
 
   // gets assigned before constructor is called
-  routes = [
+  routes: IRoute[] = [
     {
       path: '/',
       method: httpMethods.GET,

@@ -25,13 +25,7 @@ export default class AuthController extends HttpController {
     {
       path: '/google/redirect',
       method: httpMethods.GET,
-      localMiddleware: [
-        // ! causes error
-        passport.authenticate('google', {
-          failureRedirect: '/api/v1/auth/login/failed'
-        })
-      ],
-      handler: this.successCallback
+      handler: this.handleGoogleLogin
     },
     {
       path: '/facebook',
@@ -47,13 +41,7 @@ export default class AuthController extends HttpController {
     {
       path: '/facebook/redirect',
       method: httpMethods.GET,
-      localMiddleware: [
-        // ! causes error
-        passport.authenticate('facebook', {
-          failureRedirect: '/api/v1/auth/login/failed'
-        })
-      ],
-      handler: this.successCallback
+      handler: this.handleFacebookLogin
     },
     {
       path: '/login',
@@ -81,13 +69,23 @@ export default class AuthController extends HttpController {
     }
   ];
 
+  private handleFacebookLogin(req: Request, res: Response) {
+    passport.authenticate('facebook', {
+      failureRedirect: '/api/v1/auth/login/failed'
+    });
+    res.status(200).json({ message: 'logged in', user: req.user });
+  }
+
+  private handleGoogleLogin(req: Request, res: Response) {
+    passport.authenticate('google', {
+      failureRedirect: '/api/v1/auth/login/failed'
+    });
+    res.status(200).json({ message: 'logged in', user: req.user });
+  }
+
   private handleLogout(req: Request, res: Response) {
     req.logOut();
     res.sendStatus(204);
-  }
-
-  private successCallback(req: Request, res: Response) {
-    res.status(200).json({ message: 'logged in', user: req.user });
   }
 
   private failureCallback(req: Request, res: Response) {
