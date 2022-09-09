@@ -35,7 +35,7 @@ export default class MealService {
   ): PromiseHandler<IMeal[]> {
     try {
       const meals = await this._repo.findAll(
-        MealRepository.getSortQuery(sortQuery || ''),
+        sortQuery?.split(',').join(' ') || '',
         fields?.split(',')
       );
       return [meals, undefined];
@@ -81,7 +81,7 @@ export default class MealService {
     try {
       const meals = await this._repo.find(
         filterQuery,
-        MealRepository.getSortQuery(sortQuery || ''),
+        sortQuery?.split(',').join(' ') || '',
         fields?.split(',')
       );
       return [meals, undefined];

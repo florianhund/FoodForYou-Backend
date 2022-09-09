@@ -12,10 +12,7 @@ export default class UserService {
 
   public async getAll(sort?: string, fields?: string): PromiseHandler<IUser[]> {
     try {
-      const users = await this._repo.findAll(
-        UserRepository.getSortQuery(sort || ''),
-        fields?.split(',')
-      );
+      const users = await this._repo.findAll(sort || '', fields?.split(','));
 
       return [users, undefined];
     } catch (err) {
@@ -47,7 +44,7 @@ export default class UserService {
     fields?: string
   ): PromiseHandler<IUser> {
     try {
-      const [user] = await this._repo.find({ email }, [], fields?.split(','));
+      const [user] = await this._repo.find({ email }, '', fields?.split(','));
       if (!user)
         return [
           null,

@@ -1,6 +1,5 @@
 import { Request, RequestHandler, Response } from 'express';
 import { Types, UpdateQuery } from 'mongoose';
-import http from 'http';
 
 import { httpMethods, middleware, MongooseOrder } from './types';
 
@@ -22,9 +21,9 @@ export interface IRoute {
 }
 
 export interface IRead<T> {
-  findAll: (order?: MongooseOrder[]) => Promise<T[]>;
+  findAll: (order?: string) => Promise<T[]>;
   findById: (id: Types.ObjectId) => Promise<T | null>;
-  find: (query: any, order?: MongooseOrder[]) => Promise<T[]>;
+  find: (query: any, order?: string) => Promise<T[]>;
 }
 
 export interface IWrite<T> {

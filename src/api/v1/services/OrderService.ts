@@ -15,7 +15,7 @@ export default class OrderService {
   ): PromiseHandler<IOrder[]> {
     try {
       const orders = await this._repo.findAll(
-        OrderRepository.getSortQuery(sort || ''),
+        sort || '',
         fields?.split(',')
       );
       return [orders, undefined];
@@ -81,7 +81,7 @@ export default class OrderService {
     try {
       const orders = await this._repo.find(
         filterQuery,
-        OrderRepository.getSortQuery(sortQuery || ''),
+        sortQuery || '',
         fields?.split(',')
       );
       return [orders, undefined];
