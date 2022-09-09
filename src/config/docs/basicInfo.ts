@@ -3,7 +3,7 @@ export default {
   info: {
     title: 'FoodForYou',
     description: 'Food Delivery App',
-    version: '1.0.0',
+    version: '1.0.1',
     contact: {
       name: 'Florian Hundegger',
       email: 'flo.hundegger@gmail.com',
