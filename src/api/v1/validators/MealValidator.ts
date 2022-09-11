@@ -43,6 +43,25 @@ const createSchema: Schema = {
     },
     errorMessage: 'isVegan cannot be empty'
   },
+  rating: {
+    notEmpty: true,
+    isInt: {
+      options: { min: 0, max: 10 },
+      errorMessage: 'Rating has to be a int number between 0 and 10'
+    },
+    errorMessage: 'Rating cannot be empty',
+    toInt: true
+  },
+  calories: {
+    notEmpty: true,
+    isInt: {
+      options: { min: 0, max: 2000 },
+      errorMessage:
+        'Calories has to be a positive int number and less than 2000'
+    },
+    errorMessage: 'Calories cannot be empty',
+    toInt: true
+  },
   description: {
     optional: {
       options: { checkFalsy: true }
@@ -123,6 +142,29 @@ const updateSchema: Schema = {
     optional: {
       options: { checkFalsy: true }
     }
+  },
+  rating: {
+    optional: {
+      options: { checkFalsy: true }
+    },
+    isInt: {
+      options: { min: 0, max: 10 },
+      errorMessage: 'Rating has to be a int number between 0 and 10'
+    },
+    errorMessage: 'Rating cannot be empty',
+    toInt: true
+  },
+  calories: {
+    optional: {
+      options: { checkFalsy: true }
+    },
+    isInt: {
+      options: { min: 0, max: 2000 },
+      errorMessage:
+        'Calories has to be a positive int number and less than 2000'
+    },
+    errorMessage: 'Calories cannot be empty',
+    toInt: true
   },
   description: {
     optional: {

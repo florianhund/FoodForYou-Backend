@@ -38,6 +38,8 @@ export interface MealQuery {
   max_price?: number;
   isVegetarian?: boolean;
   isVegan?: boolean;
+  min_rating?: number;
+  max_calories?: number;
   without_allergenics?: string;
   sort_by?: string;
   tags?: string;
@@ -50,6 +52,8 @@ export interface MealSearchQuery {
   maxPrice?: number;
   isVegetarian?: boolean;
   isVegan?: boolean;
+  minRating?: number;
+  maxCalories?: number;
   allergenics?: string;
   tags?: string;
 }
@@ -64,6 +68,12 @@ export interface MealFilterQuery {
     $not: {
       $in: string[];
     };
+  };
+  rating: {
+    $gte: number;
+  };
+  calories: {
+    $lte: number;
   };
   tags?: {
     $in: string[];

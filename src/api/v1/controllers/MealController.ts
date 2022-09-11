@@ -62,6 +62,8 @@ export default class MealController extends HttpController {
       sort_by: sort,
       isVegetarian,
       isVegan,
+      min_rating: minRating,
+      max_calories: maxCalories,
       tags,
       fields
     } = req.query as unknown as MealQuery;
@@ -73,6 +75,8 @@ export default class MealController extends HttpController {
       allergenics,
       isVegetarian,
       isVegan,
+      minRating,
+      maxCalories,
       tags
     };
 

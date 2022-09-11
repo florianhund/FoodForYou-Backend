@@ -51,6 +51,8 @@ export default class MealService {
       maxPrice,
       isVegetarian,
       isVegan,
+      minRating,
+      maxCalories,
       allergenics,
       tags
     }: MealSearchQuery,
@@ -63,7 +65,13 @@ export default class MealService {
         $lte: maxPrice || 50
       },
       name: new RegExp(name || '', 'i'),
-      allergenics: { $not: { $in: allergenics?.split(',') || [] } }
+      allergenics: { $not: { $in: allergenics?.split(',') || [] } },
+      rating: {
+        $gte: minRating || 0
+      },
+      calories: {
+        $lte: maxCalories || 2000
+      }
     };
 
     if (tags && tags.length > 0) {

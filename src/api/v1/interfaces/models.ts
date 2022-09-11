@@ -6,6 +6,8 @@ export interface IMeal extends Document {
   price: number;
   isVegetarian: boolean;
   isVegan: boolean;
+  rating: number;
+  calories: number;
   description?: string;
   allergenics?: Allergenics[];
   tags?: string[];
