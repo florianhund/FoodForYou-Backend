@@ -79,6 +79,24 @@ export default {
           description: 'true if meal is vegan'
         },
         {
+          name: 'min_rating',
+          in: 'query',
+          schema: {
+            type: 'number',
+            example: '6'
+          },
+          description: 'show meals with given rating or higher'
+        },
+        {
+          name: 'max_calories',
+          in: 'query',
+          schema: {
+            type: 'number',
+            example: '400'
+          },
+          description: 'show meals with 400 calories or lower'
+        },
+        {
           name: 'fields',
           in: 'query',
           schema: {
@@ -312,6 +330,19 @@ export default {
                 type: 'boolean',
                 description: 'true if meal is vegan',
                 example: 'false'
+              },
+              rating: {
+                type: 'number',
+                description: 'Rating of meal, must be int',
+                min: 0,
+                max: 10,
+                example: '8'
+              },
+              calories: {
+                type: 'number',
+                description: 'Calories of meal',
+                min: 0,
+                example: '330'
               },
               description: {
                 type: 'string',

@@ -8,7 +8,14 @@ export default {
       },
       Meal: {
         type: 'object',
-        required: ['name, price', 'isVegetarian', 'isVegan'],
+        required: [
+          'name',
+          'price',
+          'isVegetarian',
+          'isVegan',
+          'rating',
+          'calories'
+        ],
         properties: {
           _id: {
             type: 'string',
@@ -25,7 +32,7 @@ export default {
           },
           price: {
             type: 'number',
-            description: 'Price of Meal',
+            description: 'Price of meal',
             min: 0,
             max: 50,
             example: '8.5'
@@ -39,6 +46,19 @@ export default {
             type: 'boolean',
             description: 'true if meal is vegan',
             example: 'false'
+          },
+          rating: {
+            type: 'number',
+            description: 'Rating of meal, must be int',
+            min: 0,
+            max: 10,
+            example: '8'
+          },
+          calories: {
+            type: 'number',
+            description: 'Calories of meal',
+            min: 0,
+            example: '330'
           },
           description: {
             type: 'string',
