@@ -21,6 +21,8 @@ const meal = {
   price: 8,
   isVegetarian: false,
   isVegan: false,
+  rating: 3,
+  calories: 600,
   description: 'tasty pizza'
 };
 
@@ -95,7 +97,9 @@ describe('POST /meals', () => {
       name: 'pizza',
       price: 8,
       isVegetarian: true,
-      isVegan: false
+      isVegan: false,
+      rating: 3,
+      calories: 600
     };
 
     const response = await superTest.post('', data);

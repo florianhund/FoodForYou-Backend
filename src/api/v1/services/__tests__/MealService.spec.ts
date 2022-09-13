@@ -26,6 +26,8 @@ const testMeal = {
   price: 8,
   isVegetarian: false,
   isVegan: false,
+  rating: 3,
+  calories: 600,
   description: 'tasty pizza'
 };
 
@@ -92,7 +94,9 @@ describe('create meal', () => {
       name: 'spaghetti',
       price: 9,
       isVegetarian: false,
-      isVegan: false
+      isVegan: false,
+      rating: 3,
+      calories: 600
     } as IMeal);
     expect(meal).toBeTruthy();
     expect(meal?.price).toBe(9);

@@ -44,6 +44,8 @@ beforeAll(async () => {
     price: 8,
     isVegetarian: false,
     isVegan: false,
+    rating: 4,
+    calories: 400,
     description: 'tasty pizza'
   });
 });
