@@ -1,7 +1,7 @@
 import { Schema, model } from 'mongoose';
 
 import { IMeal } from '../interfaces/models';
-import { Allergenics } from '../interfaces/types';
+import { Allergenics, MealTag } from '../interfaces/types';
 
 const meal = new Schema<IMeal>({
   name: { type: String, required: true },
@@ -20,7 +20,12 @@ const meal = new Schema<IMeal>({
       enum: Allergenics
     }
   ],
-  tags: [String]
+  tags: [
+    {
+      type: String,
+      enum: MealTag
+    }
+  ]
 });
 
 export default model<IMeal>('Meal', meal);
