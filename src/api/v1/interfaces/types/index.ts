@@ -28,7 +28,28 @@ export enum Allergenics {
 
 export type PromiseHandler<T> = Promise<[T | null, HttpError | undefined]>;
 
-export type MongooseOrder = [string, -1 | 1];
+// export type MealTag =
+//   | 'Fast Food'
+//   | 'Burger'
+//   | 'Pizza'
+//   | 'Asian'
+//   | 'Dessert'
+//   | 'Breakfast'
+//   | 'Vegetarian'
+//   | 'Vegan'
+//   | 'Mexican';
+export enum MealTag {
+  FAST_FOOD = 'Fast Food',
+  BURGER = 'Burger',
+  PIZZA = 'Pizza',
+  ASIAN = 'Asian',
+  DESSERT = 'Dessert',
+  BREAKFAST = 'Breakfast',
+  VEGETARIAN = 'Vegetarian',
+  VEGAN = 'Vegan',
+  MEXICAN = 'Mexican',
+  ITALIAN = 'Italian'
+}
 
 export type middleware = (
   req: Request,

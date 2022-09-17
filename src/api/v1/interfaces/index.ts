@@ -1,7 +1,7 @@
-import { Request, RequestHandler, Response } from 'express';
+import { Request, Response } from 'express';
 import { Types, UpdateQuery } from 'mongoose';
 
-import { httpMethods, middleware, MongooseOrder } from './types';
+import { httpMethods, middleware } from './types';
 
 export interface ILog {
   message: any;

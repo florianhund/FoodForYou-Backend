@@ -1,5 +1,5 @@
 import { Document, ObjectId } from 'mongoose';
-import { Allergenics, UserProvider } from './types';
+import { Allergenics, MealTag, UserProvider } from './types';
 
 export interface IMeal extends Document {
   name: string;
@@ -10,7 +10,7 @@ export interface IMeal extends Document {
   calories: number;
   description?: string;
   allergenics?: Allergenics[];
-  tags?: string[];
+  tags?: MealTag[];
 }
 
 // add phone number

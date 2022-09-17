@@ -1,5 +1,5 @@
 import { Schema } from 'express-validator';
-import { Allergenics } from '../interfaces/types';
+import { Allergenics, MealTag } from '../interfaces/types';
 
 const idSchema: Schema = {
   id: {
@@ -98,6 +98,10 @@ const createSchema: Schema = {
   'tags.*': {
     isString: true,
     notEmpty: true,
+    isIn: {
+      options: [Object.values(MealTag)],
+      errorMessage: 'Invalid Tag'
+    },
     isLength: {
       options: { min: 1, max: 15 }
     },
@@ -201,6 +205,10 @@ const updateSchema: Schema = {
   },
   'tags.*': {
     notEmpty: true,
+    isIn: {
+      options: [Object.values(MealTag)],
+      errorMessage: 'Invalid Tag'
+    },
     isLength: {
       options: { min: 1, max: 15 }
     },

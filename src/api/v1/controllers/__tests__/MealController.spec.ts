@@ -118,12 +118,30 @@ describe('POST /meals', () => {
     expect(response.statusCode).toBe(400);
     expect(response.headers['content-type']).toMatch(/application\/json/g);
   });
+
+  it('should retun 400 if wrong tag', async () => {
+    const data = {
+      name: 'pizza',
+      price: 8,
+      isVegetarian: true,
+      isVegan: false,
+      rating: 3,
+      calories: 600,
+      tags: ['something']
+    };
+
+    const response = await superTest.post('', data);
+
+    expect(response.statusCode).toBe(400);
+    expect(response.headers['content-type']).toMatch(/application\/json/g);
+  });
 });
 
 describe('PATCH /meals/:id', () => {
   it('should return 204 and update data with valid id', async () => {
     const data = {
-      price: 6
+      price: 6,
+      tags: ['Burger']
     };
     const response = await superTest.patch(`/${realId}`, data);
 
@@ -157,6 +175,17 @@ describe('PATCH /meals/:id', () => {
     };
 
     const response = await superTest.patch('/123', data);
+
+    expect(response.statusCode).toBe(400);
+    expect(response.headers['content-type']).toMatch(/application\/json/g);
+  });
+
+  it('should retun 400 if wrong tag', async () => {
+    const data = {
+      tags: ['something']
+    };
+
+    const response = await superTest.patch(`/${realId}`, data);
 
     expect(response.statusCode).toBe(400);
     expect(response.headers['content-type']).toMatch(/application\/json/g);
