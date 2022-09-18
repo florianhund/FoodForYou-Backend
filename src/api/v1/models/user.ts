@@ -15,7 +15,7 @@ const user = new Schema<IUser>(
     providerId: { type: String, required: true },
     isAdmin: { type: Boolean, default: false }
   },
-  { toJSON: { virtuals: true } }
+  { toJSON: { virtuals: true }, id: false }
 );
 
 user.virtual('fullName').get(function (this: IUser) {
