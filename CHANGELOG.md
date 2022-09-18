@@ -2,11 +2,12 @@
 
 All notable changes to this project are documented in this file following the [Keep a CHANGELOG](https://keepachangelog.com/en/1.0.0/) conventions.
 
-## [Unreleased]
+## [1.0.2] - 2022-09-18
 
-### Added
+### Fixed
 
-- Implement Payments
+- Fixed additional id in user model
+([7be54bd](https://github.com/florianhund/FoodForYou-Backend/commit/7be54bd))
 
 ## [1.0.1] - 2022-09-09
 
