@@ -1,6 +1,6 @@
 {
   "name": "foodforyou-api",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Food Delivery API",
   "main": "./src/index.ts",
   "scripts": {
