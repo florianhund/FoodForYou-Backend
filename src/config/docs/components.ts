@@ -1,3 +1,5 @@
+import { MealTag } from '../../api/v1/interfaces/types';
+
 export default {
   components: {
     schemas: {
@@ -39,12 +41,12 @@ export default {
           },
           isVegetarian: {
             type: 'boolean',
-            description: 'true if meal is vegetarian',
+            description: 'true if vegetarian tag',
             example: 'false'
           },
           isVegan: {
             type: 'boolean',
-            description: 'true if meal is vegan',
+            description: 'true if vegan tag',
             example: 'false'
           },
           rating: {
@@ -95,11 +97,10 @@ export default {
             type: 'array',
             items: {
               type: 'string',
-              minLength: 1,
-              maxLength: 15
+              enum: Object.values(MealTag)
             },
             description: 'tags',
-            example: ['steak, tasty, good']
+            example: ['Italian', 'Fast Food']
           },
           __v: {
             type: 'number',

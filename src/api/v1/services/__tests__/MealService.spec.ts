@@ -24,8 +24,6 @@ const testMeal = {
   _id: realId,
   name: 'pizza',
   price: 8,
-  isVegetarian: false,
-  isVegan: false,
   rating: 3,
   calories: 600,
   description: 'tasty pizza'
@@ -93,13 +91,24 @@ describe('create meal', () => {
       _id: id,
       name: 'spaghetti',
       price: 9,
-      isVegetarian: false,
-      isVegan: false,
       rating: 3,
       calories: 600
     } as IMeal);
     expect(meal).toBeTruthy();
     expect(meal?.price).toBe(9);
+  });
+
+  it('should set isVegetarian true if vegetarian tag', async () => {
+    const [meal] = await mealsrv.create({
+      name: 'pizza',
+      price: 8,
+      rating: 3,
+      calories: 600,
+      tags: ['Vegetarian']
+    } as IMeal);
+
+    expect(meal).toBeTruthy();
+    expect(meal?.isVegetarian).toBeTruthy();
   });
 });
 
@@ -117,6 +126,15 @@ describe('update meal', () => {
     expect(meal).toBeFalsy();
     expect(error).toBeTruthy();
     expect(error?.code).toBe(404);
+  });
+
+  it('should set isVegetarian true if vegetarian tag', async () => {
+    const [meal] = await mealsrv.update(`${realId}`, {
+      tags: ['Vegetarian']
+    });
+
+    expect(meal).toBeTruthy();
+    expect(meal?.isVegetarian).toBeTruthy();
   });
 });
 

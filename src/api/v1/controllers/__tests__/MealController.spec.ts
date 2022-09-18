@@ -19,8 +19,6 @@ const meal = {
   _id: realId,
   name: 'pizza',
   price: 8,
-  isVegetarian: false,
-  isVegan: false,
   rating: 3,
   calories: 600,
   description: 'tasty pizza'
@@ -96,8 +94,6 @@ describe('POST /meals', () => {
     const data = {
       name: 'pizza',
       price: 8,
-      isVegetarian: true,
-      isVegan: false,
       rating: 3,
       calories: 600
     };
@@ -123,8 +119,6 @@ describe('POST /meals', () => {
     const data = {
       name: 'pizza',
       price: 8,
-      isVegetarian: true,
-      isVegan: false,
       rating: 3,
       calories: 600,
       tags: ['something']

@@ -1,4 +1,5 @@
 import { Schema } from 'express-validator';
+
 import { Allergenics, MealTag } from '../interfaces/types';
 
 const idSchema: Schema = {
@@ -29,20 +30,6 @@ const createSchema: Schema = {
     errorMessage: 'Price cannot be empty',
     toInt: true
   },
-  isVegetarian: {
-    notEmpty: true,
-    isBoolean: {
-      errorMessage: 'isVegetarian has to be boolean value'
-    },
-    errorMessage: 'isVegetarian cannot be empty'
-  },
-  isVegan: {
-    notEmpty: true,
-    isBoolean: {
-      errorMessage: 'isVegan has to be boolean value'
-    },
-    errorMessage: 'isVegan cannot be empty'
-  },
   rating: {
     notEmpty: true,
     isInt: {
@@ -51,6 +38,14 @@ const createSchema: Schema = {
     },
     errorMessage: 'Rating cannot be empty',
     toInt: true
+  },
+  isVegan: {
+    isEmpty: true,
+    errorMessage: 'isVegan has to be empty'
+  },
+  isVegetarian: {
+    isEmpty: true,
+    errorMessage: 'isVegetarian has to be empty'
   },
   calories: {
     notEmpty: true,
@@ -131,22 +126,6 @@ const updateSchema: Schema = {
     errorMessage: 'Price has to be a floating point number between 0 and 50.0',
     toInt: true
   },
-  isVegetarian: {
-    isBoolean: {
-      errorMessage: 'isVegetarian has to be boolean value'
-    },
-    optional: {
-      options: { checkFalsy: true }
-    }
-  },
-  isVegan: {
-    isBoolean: {
-      errorMessage: 'isVegan has to be boolean value'
-    },
-    optional: {
-      options: { checkFalsy: true }
-    }
-  },
   rating: {
     optional: {
       options: { checkFalsy: true }
@@ -157,6 +136,14 @@ const updateSchema: Schema = {
     },
     errorMessage: 'Rating cannot be empty',
     toInt: true
+  },
+  isVegan: {
+    isEmpty: true,
+    errorMessage: 'isVegan has to be empty'
+  },
+  isVegetarian: {
+    isEmpty: true,
+    errorMessage: 'isVegetarian has to be empty'
   },
   calories: {
     optional: {
