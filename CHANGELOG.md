@@ -2,6 +2,19 @@
 
 All notable changes to this project are documented in this file following the [Keep a CHANGELOG](https://keepachangelog.com/en/1.0.0/) conventions.
 
+## [2.0.0-alpha.1] - 2022-xx-xx
+
+### Added
+
+- Added meal rating and calories
+
+### Changed
+
+- Only specific values can be used as meal tags
+- Renamed a few capitalized files
+- Use ~ in package.json
+- Use vegan and vegetarian tags instead of isVegan and isVegetarian props in meal
+
 ## [1.0.2] - 2022-09-18
 
 ### Fixed
