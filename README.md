@@ -33,7 +33,7 @@ You need to have **NodeJS** (v14.17.6 or higher) installed on your system in ord
 
 ```bash
 git clone https://github.com/florianhund/FoodForYou-Backend
-cd FoodForYou
+cd FoodForYou-Backend
 npm i
 ```
 
