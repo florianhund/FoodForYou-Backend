@@ -7,14 +7,12 @@ All notable changes to this project are documented in this file following the [K
 ### Fixed
 
 - Fixed additional id in user model
-([7be54bd](https://github.com/florianhund/FoodForYou-Backend/commit/7be54bd))
 
 ## [1.0.1] - 2022-09-09
 
 ### Fixed
 
 - Fixed crashing app when sorting database
-([d7aff49](https://github.com/florianhund/FoodForYou-Backend/commit/d7aff49ff3123a6c80b682d2cb3560a8df0b2375))
 
 ## [1.0.0] - 2022-08-21
 
