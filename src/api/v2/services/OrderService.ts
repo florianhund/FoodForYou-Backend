@@ -14,10 +14,7 @@ export default class OrderService {
     fields?: string
   ): PromiseHandler<IOrder[]> {
     try {
-      const orders = await this._repo.findAll(
-        sort || '',
-        fields?.split(',')
-      );
+      const orders = await this._repo.findAll(sort || '', fields?.split(','));
       return [orders, undefined];
     } catch (err) {
       return [null, new HttpError()];
