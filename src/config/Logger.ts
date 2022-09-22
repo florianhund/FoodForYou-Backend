@@ -1,4 +1,4 @@
-import { ILog } from '../api/v1/interfaces';
+import { ILog } from '../api/v2/interfaces';
 
 export default class Logger {
   private _logs: ILog[] = [];

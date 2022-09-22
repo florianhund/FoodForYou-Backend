@@ -10,7 +10,7 @@ import SuperTest from '../../../../../__tests__/utils/SuperTest';
 const db = new Database(DATABASE_URL, {
   useNewUrlParser: true
 } as ConnectOptions);
-const superTest = new SuperTest('/api/v1/meals');
+const superTest = new SuperTest('/api/v2/meals');
 
 const fakeId = '123456789123456789123456';
 const realId = new Types.ObjectId();

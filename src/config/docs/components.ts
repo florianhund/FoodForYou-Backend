@@ -1,4 +1,4 @@
-import { MealTag } from '../../api/v1/interfaces/types';
+import { MealTag } from '../../api/v2/interfaces/types';
 
 export default {
   components: {
