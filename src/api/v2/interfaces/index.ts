@@ -88,6 +88,31 @@ export interface UserQuery {
   fields?: string;
 }
 
+export interface RestaurantQuery {
+  sort_by?: string;
+  fields?: string;
+  name?: string;
+  min_rating?: number;
+  address?: string;
+  postal_code?: number;
+}
+
+export interface RestaurantSearchQuery {
+  name?: string;
+  minRating?: number;
+  address?: string;
+  postalCode?: number;
+}
+
+export interface RestaurantFilterQuery {
+  name: RegExp;
+  address: RegExp;
+  rating: {
+    $gte: number;
+  };
+  postalCode?: number;
+}
+
 export interface OrderQuery {
   sort_by?: string;
   fields?: string;

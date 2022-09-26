@@ -50,7 +50,7 @@ export default class AuthController extends HttpController {
       localMiddleware: [
         checkUser.isNotAuthenticated,
         passport.authenticate('local', {
-          failureRedirect: '/api/v1/auth/login/failed',
+          failureRedirect: '/api/v2/auth/login/failed',
           successRedirect: '/'
         })
       ]
@@ -71,14 +71,14 @@ export default class AuthController extends HttpController {
 
   private handleFacebookLogin(req: Request, res: Response) {
     passport.authenticate('facebook', {
-      failureRedirect: '/api/v1/auth/login/failed'
+      failureRedirect: '/api/v2/auth/login/failed'
     });
     res.status(200).json({ message: 'logged in', user: req.user });
   }
 
   private handleGoogleLogin(req: Request, res: Response) {
     passport.authenticate('google', {
-      failureRedirect: '/api/v1/auth/login/failed'
+      failureRedirect: '/api/v2/auth/login/failed'
     });
     res.status(200).json({ message: 'logged in', user: req.user });
   }

@@ -4,12 +4,19 @@ import {
   MealController,
   UserController,
   OrderController,
-  AuthController
+  AuthController,
+  RestaurantController
 } from '../controllers';
-import { MealService, UserService, OrderService } from '../services';
+import {
+  MealService,
+  UserService,
+  OrderService,
+  RestaurantService
+} from '../services';
 import {
   MealRepository,
   OrderRepository,
+  RestaurantRepository,
   UserRepository
 } from '../repositories';
 
@@ -19,6 +26,11 @@ const mealController = new MealController(
 const userController = new UserController(
   new UserService(new UserRepository())
 );
+
+const restaurantController = new RestaurantController(
+  new RestaurantService(new RestaurantRepository())
+);
+
 const orderController = new OrderController(
   new OrderService(new OrderRepository())
 );
@@ -28,6 +40,7 @@ const router = Router();
 
 router.use(mealController.path, mealController.setRoutes());
 router.use(userController.path, userController.setRoutes());
+router.use(restaurantController.path, restaurantController.setRoutes());
 router.use(orderController.path, orderController.setRoutes());
 router.use(authController.path, authController.setRoutes());
 

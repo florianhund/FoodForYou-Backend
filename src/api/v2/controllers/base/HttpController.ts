@@ -40,10 +40,10 @@ export default abstract class HttpController {
       .json({ message: err.message, code: err.code, status: err.status });
   }
 
-  protected bindHandlers(self: HttpController) {
+  protected bindHandlers(context: HttpController) {
     this.routes = this.routes.map(route => {
       // eslint-disable-next-line no-param-reassign
-      route.handler = route.handler.bind(self);
+      route.handler = route.handler.bind(context);
       return route;
     });
   }

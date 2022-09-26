@@ -4,7 +4,7 @@ import { Strategy as FacebookStrategy } from 'passport-facebook';
 import { Strategy as LocalStrategy } from 'passport-local';
 import bcrypt from 'bcrypt';
 
-import { User } from '../api/v1/models';
+import { User } from '../api/v2/models';
 import {
   FACEBOOK_CLIENT_ID,
   FACEBOOK_CLIENT_SECRET,
@@ -19,7 +19,7 @@ const initialize = (passport: PassportStatic) => {
       {
         clientID: GOOGLE_CLIENT_ID!,
         clientSecret: GOOGLE_CLIENT_SECRET!,
-        callbackURL: '/api/v1/auth/google/redirect'
+        callbackURL: '/api/v2/auth/google/redirect'
       },
       async (accessToken, refreshToken, profile, done) => {
         const user = await User.findOne({ email: profile.emails?.[0].value });
@@ -50,7 +50,7 @@ const initialize = (passport: PassportStatic) => {
       {
         clientID: FACEBOOK_CLIENT_ID!,
         clientSecret: FACEBOOK_CLIENT_SECRET!,
-        callbackURL: '/api/v1/auth/facebook/redirect',
+        callbackURL: '/api/v2/auth/facebook/redirect',
         profileFields: ['id', 'emails', 'name'],
         enableProof: true
       },

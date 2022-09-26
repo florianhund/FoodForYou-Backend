@@ -28,6 +28,13 @@ export interface IUser extends Document {
   fullName: string;
 }
 
+export interface IRestaurant extends Document {
+  name: string;
+  rating: number;
+  address: string;
+  postalCode: number;
+}
+
 export interface IOrder extends Document {
   orderTime: Date;
   deliveryTime: Date;

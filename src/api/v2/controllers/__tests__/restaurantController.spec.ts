@@ -1,27 +1,24 @@
-import express, { Application } from 'express';
 import { ConnectOptions, Types } from 'mongoose';
 
-import Server from '../../../../Server';
 import Database from '../../../../config/Database';
 import { DATABASE_URL } from '../../../../config/constants';
-import { Meal } from '../../models';
+import { Restaurant } from '../../models';
 import SuperTest from '../../../../../__tests__/utils/SuperTest';
 
 const db = new Database(DATABASE_URL, {
   useNewUrlParser: true
 } as ConnectOptions);
-const superTest = new SuperTest('/api/v2/meals');
+const superTest = new SuperTest('/api/v2/restaurants');
 
 const fakeId = '123456789123456789123456';
 const realId = new Types.ObjectId();
 
-const meal = {
+const restaurant = {
   _id: realId,
-  name: 'pizza',
-  price: 8,
-  rating: 3,
-  calories: 600,
-  description: 'tasty pizza'
+  name: 'il mondo',
+  rating: 7,
+  postalCode: 6060,
+  address: 'hallstraße'
 };
 
 beforeAll(() => {
@@ -33,14 +30,14 @@ afterAll(() => {
 });
 
 beforeEach(async () => {
-  await new Meal(meal).save();
+  await new Restaurant(restaurant).save();
 });
 
 afterEach(async () => {
-  await Meal.deleteMany({});
+  await Restaurant.deleteMany({});
 });
 
-describe('GET /meals', () => {
+describe('GET /restaurants', () => {
   it('should return 200 & array if query object is empty', async () => {
     const response = await superTest.get('');
 
@@ -50,22 +47,15 @@ describe('GET /meals', () => {
   });
 
   it('should return 200 & array if query object is not empty', async () => {
-    const response = await superTest.get('?name=pizza');
+    const response = await superTest.get('?postal_code=6034');
 
     expect(response.statusCode).toBe(200);
     expect(response.headers['content-type']).toMatch(/application\/json/g);
     expect(Array.isArray(response.body.data)).toBeTruthy();
   });
-
-  it('should return 400 if query[without_allergenics] is no allergenic', async () => {
-    const response = await superTest.get('?without_allergenics=Z');
-
-    expect(response.statusCode).toBe(400);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
-  });
 });
 
-describe('GET /meals/:id', () => {
+describe('GET /restaurants/:id', () => {
   it('should return 200 & object if valid id', async () => {
     const response = await superTest.get(`/${realId}`);
 
@@ -89,13 +79,13 @@ describe('GET /meals/:id', () => {
   });
 });
 
-describe('POST /meals', () => {
+describe('POST /restaurants', () => {
   it('should create post & return 201', async () => {
     const data = {
-      name: 'pizza',
-      price: 8,
-      rating: 3,
-      calories: 600
+      name: 'il mondo',
+      rating: 7,
+      postalCode: 6060,
+      address: 'hallstraße'
     };
 
     const response = await superTest.post('', data);
@@ -106,22 +96,7 @@ describe('POST /meals', () => {
 
   it('should return 400 with invalid input', async () => {
     const data = {
-      name: 'pizza'
-    };
-
-    const response = await superTest.post('', data);
-
-    expect(response.statusCode).toBe(400);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
-  });
-
-  it('should retun 400 if wrong tag', async () => {
-    const data = {
-      name: 'pizza',
-      price: 8,
-      rating: 3,
-      calories: 600,
-      tags: ['something']
+      name: 'pizza restaurant'
     };
 
     const response = await superTest.post('', data);
@@ -131,11 +106,10 @@ describe('POST /meals', () => {
   });
 });
 
-describe('PATCH /meals/:id', () => {
+describe('PATCH /restaurants/:id', () => {
   it('should return 204 and update data with valid id', async () => {
     const data = {
-      price: 6,
-      tags: ['Burger']
+      rating: 5
     };
     const response = await superTest.patch(`/${realId}`, data);
 
@@ -164,8 +138,7 @@ describe('PATCH /meals/:id', () => {
 
   it('should return 400 if wrong input data', async () => {
     const data = {
-      name: 'burger',
-      price: 1000
+      rating: 'sdome'
     };
 
     const response = await superTest.patch('/123', data);
@@ -173,20 +146,9 @@ describe('PATCH /meals/:id', () => {
     expect(response.statusCode).toBe(400);
     expect(response.headers['content-type']).toMatch(/application\/json/g);
   });
-
-  it('should retun 400 if wrong tag', async () => {
-    const data = {
-      tags: ['something']
-    };
-
-    const response = await superTest.patch(`/${realId}`, data);
-
-    expect(response.statusCode).toBe(400);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
-  });
 });
 
-describe('DELETE /meals/:id', () => {
+describe('DELETE /restaurants/:id', () => {
   it('should return 204 if valid id', async () => {
     const response = await superTest.delete(`/${realId}`);
 

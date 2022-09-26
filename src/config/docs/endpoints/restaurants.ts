@@ -1,9 +1,9 @@
 export default {
   base: {
     get: {
-      tags: ['Meal Endpoints'],
-      description: 'Get meals. Returns all meals if query is empty',
-      operationId: 'getMeals',
+      tags: ['Restaurant Endpoints'],
+      description: 'Get restaurants. Returns all restaurants if query is empty',
+      operationId: 'getRestaurants',
       parameters: [
         {
           name: 'sort_by',
@@ -20,7 +20,7 @@ export default {
           in: 'query',
           schema: {
             type: 'string',
-            example: 'name,price'
+            example: 'name, rating'
           },
           description: 'list of fields'
         },
@@ -29,81 +29,36 @@ export default {
           in: 'query',
           schema: {
             type: 'string',
-            example: 'pizza'
+            example: 'il mondo'
           },
-          description: 'filter meals by given name'
-        },
-        {
-          name: 'min_price',
-          in: 'query',
-          schema: {
-            type: 'number',
-            example: 3
-          },
-          description: 'filter meals by minprice'
-        },
-        {
-          name: 'max_price',
-          in: 'query',
-          schema: {
-            type: 'number',
-            example: 10
-          },
-          description: 'filter meals by maxprice'
-        },
-        {
-          name: 'without_allergenics',
-          in: 'query',
-          schema: {
-            type: 'string',
-            example: 'B,C,H'
-          },
-          description: 'filter meals by excluding allergenics'
-        },
-        {
-          name: 'isVegetarian',
-          in: 'query',
-          schema: {
-            type: 'boolean',
-            example: 'false'
-          },
-          description: 'true if meal is vegetarian'
-        },
-        {
-          name: 'isVegan',
-          in: 'query',
-          schema: {
-            type: 'boolean',
-            example: 'false'
-          },
-          description: 'true if meal is vegan'
+          description: 'filter restaurants by given name'
         },
         {
           name: 'min_rating',
           in: 'query',
           schema: {
             type: 'number',
-            example: '6'
+            example: 5
           },
-          description: 'show meals with given rating or higher'
+          description: 'filter restaurants by rating'
         },
         {
-          name: 'max_calories',
+          name: 'address',
           in: 'query',
           schema: {
             type: 'number',
-            example: '400'
+            example: 'teststreet'
           },
-          description: 'show meals with 400 calories or lower'
+          description: 'filter restaurants by address'
         },
         {
-          name: 'tags',
+          name: 'postal_code',
           in: 'query',
           schema: {
-            type: 'string',
-            example: 'steak, tasty'
+            type: 'number',
+            example: 6060
           },
-          description: 'search meals by tags one or more tags'
+          description: 'filter restaurants by postal code'
         }
       ],
       responses: {
@@ -117,7 +72,7 @@ export default {
                   data: {
                     type: 'array',
                     items: {
-                      $ref: '#/components/schemas/Meal'
+                      $ref: '#/components/schemas/Restaurant'
                     }
                   }
                 }
@@ -148,16 +103,16 @@ export default {
       }
     },
     post: {
-      tags: ['Meal Endpoints'],
-      description: 'create a meal',
-      operationId: 'postMeal',
+      tags: ['Restaurant Endpoints'],
+      description: 'create a Restaurant',
+      operationId: 'postRestaurant',
       parameters: [
         {
           in: 'body',
-          name: 'meal',
-          description: 'meal to create',
+          name: 'restaurant',
+          description: 'restaurant to create',
           schema: {
-            $ref: '#/components/schemas/Meal'
+            $ref: '#/components/schemas/Restaurant'
           }
         }
       ],
@@ -166,7 +121,7 @@ export default {
           description: '201 Created',
           headers: {
             Location: {
-              description: 'Location of created meal',
+              description: 'Location of created restaurant',
               type: 'string'
             }
           }
@@ -196,9 +151,9 @@ export default {
   },
   id: {
     get: {
-      tags: ['Meal Endpoints'],
-      description: 'get meal by id',
-      operationId: 'getMealById',
+      tags: ['Restaurant Endpoints'],
+      description: 'get Restaurant by id',
+      operationId: 'getRestaurantById',
       parameters: [
         {
           name: 'id',
@@ -218,7 +173,7 @@ export default {
                 type: 'object',
                 properties: {
                   data: {
-                    $ref: '#/components/schemas/Meal'
+                    $ref: '#/components/schemas/Restaurant'
                   }
                 }
               }
@@ -263,9 +218,9 @@ export default {
       }
     },
     patch: {
-      tags: ['Meal Endpoints'],
-      description: 'update meal',
-      operationId: 'updateMeal',
+      tags: ['Restaurant Endpoints'],
+      description: 'update restaurant',
+      operationId: 'updateRestaurant',
       parameters: [
         {
           name: 'id',
@@ -276,102 +231,11 @@ export default {
           description: 'id to update'
         },
         {
+          name: 'restaurant',
           in: 'body',
-          name: 'meal',
           description: 'update body',
           schema: {
-            type: 'object',
-            properties: {
-              id: {
-                type: 'string',
-                description: 'Id of Meal',
-                length: 24,
-                example: '6253f6610d5ef0a5f7cbde76'
-              },
-              name: {
-                type: 'string',
-                description: 'Name of Meal',
-                minLength: 5,
-                maxLength: 25,
-                example: 'burger'
-              },
-              price: {
-                type: 'number',
-                description: 'Price of Meal',
-                min: 0,
-                max: 50,
-                example: '8.5'
-              },
-              isVegetarian: {
-                type: 'boolean',
-                description: 'true if meal is vegetarian',
-                example: 'false'
-              },
-              isVegan: {
-                type: 'boolean',
-                description: 'true if meal is vegan',
-                example: 'false'
-              },
-              rating: {
-                type: 'number',
-                description: 'Rating of meal, must be int',
-                min: 0,
-                max: 10,
-                example: '8'
-              },
-              calories: {
-                type: 'number',
-                description: 'Calories of meal',
-                min: 0,
-                example: '330'
-              },
-              description: {
-                type: 'string',
-                description: 'Description of Meal',
-                minLength: 10,
-                maxLength: 40,
-                example: 'This is a tasty Burger!'
-              },
-              allergenics: {
-                type: 'array',
-                items: {
-                  type: 'string',
-                  enum: [
-                    'A',
-                    'B',
-                    'C',
-                    'D',
-                    'E',
-                    'F',
-                    'G',
-                    'H',
-                    'L',
-                    'M',
-                    'N',
-                    'O',
-                    'P',
-                    'R'
-                  ]
-                },
-                description: 'Allergenics of Meal',
-                example: ['A', 'E']
-              },
-              tags: {
-                type: 'array',
-                items: {
-                  type: 'string',
-                  minLength: 1,
-                  maxLength: 15
-                },
-                description: 'tags',
-                example: ['steak, tasty, good']
-              },
-              __v: {
-                type: 'number',
-                description: 'version of Meal',
-                example: 0
-              }
-            }
+            $ref: '#/components/schemas/Restaurant'
           }
         }
       ],
@@ -412,9 +276,9 @@ export default {
       }
     },
     delete: {
-      tags: ['Meal Endpoints'],
-      description: 'delete meal',
-      operationId: 'deleteMealById',
+      tags: ['Restaurant Endpoints'],
+      description: 'delete restaurant',
+      operationId: 'deleteRestaurantById',
       parameters: [
         {
           name: 'id',
