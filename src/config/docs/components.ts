@@ -104,7 +104,7 @@ export default {
           },
           __v: {
             type: 'number',
-            description: 'version of Meal',
+            description: 'version',
             example: 0
           }
         }
@@ -114,13 +114,13 @@ export default {
         properties: {
           _id: {
             type: 'string',
-            description: 'Id of Meal',
+            description: 'Id',
             length: 24,
             example: '6253f6610d5ef0a5f7cbde76'
           },
           __v: {
             type: 'number',
-            description: 'version of Meal',
+            description: 'version',
             example: 0
           },
           firstName: {
@@ -162,18 +162,54 @@ export default {
           }
         }
       },
-      Order: {
+      Restaurant: {
         type: 'object',
         properties: {
           _id: {
             type: 'string',
-            description: 'Id of Meal',
+            description: 'Id',
             length: 24,
             example: '6253f6610d5ef0a5f7cbde76'
           },
           __v: {
             type: 'number',
-            description: 'version of Meal',
+            description: 'version',
+            example: 0
+          },
+          name: {
+            type: 'string',
+            description: 'Restaurant name',
+            example: 'Il Mondo'
+          },
+          rating: {
+            type: 'number',
+            description: 'Rating between 0 and 10',
+            example: '7'
+          },
+          address: {
+            type: 'string',
+            description: 'Address of restaurant',
+            example: 'teststr. 13'
+          },
+          postalCode: {
+            type: 'number',
+            description: 'Postal code of restaurant',
+            example: '6060'
+          }
+        }
+      },
+      Order: {
+        type: 'object',
+        properties: {
+          _id: {
+            type: 'string',
+            description: 'Id',
+            length: 24,
+            example: '6253f6610d5ef0a5f7cbde76'
+          },
+          __v: {
+            type: 'number',
+            description: 'version',
             example: 0
           },
           orderTime: {

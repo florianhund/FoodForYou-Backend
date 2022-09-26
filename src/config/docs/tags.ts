@@ -7,6 +7,9 @@ export default {
       name: 'User Endpoints'
     },
     {
+      name: 'Restaurant Endpoints'
+    },
+    {
       name: 'Order Endpoints'
     },
     {
