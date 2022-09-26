@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model, Types } from 'mongoose';
 
 import { IMeal } from '../interfaces/models';
 import { Allergenics, MealTag } from '../interfaces/types';
@@ -14,6 +14,7 @@ const meal = new Schema<IMeal>({
   isVegetarian: { type: Boolean, default: false },
   rating: { type: Number, required: true },
   calories: { type: Number, required: true },
+  restaurant: { type: Types.ObjectId, ref: 'Restaurant', required: true },
   allergenics: [
     {
       type: String,

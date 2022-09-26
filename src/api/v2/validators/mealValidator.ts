@@ -1,6 +1,8 @@
 import { Schema } from 'express-validator';
+import { IRestaurant } from '../interfaces/models';
 
 import { Allergenics, MealTag } from '../interfaces/types';
+import { Restaurant } from '../models';
 
 const idSchema: Schema = {
   id: {
@@ -56,6 +58,17 @@ const createSchema: Schema = {
     },
     errorMessage: 'Calories cannot be empty',
     toInt: true
+  },
+  restaurant: {
+    notEmpty: true,
+    custom: {
+      options: async value => {
+        const restaurant: IRestaurant | null = await Restaurant.findById(value);
+        if (!restaurant) throw new Error('No Restaurant with this id');
+        return true;
+      }
+    },
+    errorMessage: 'Restaurant cannot be empty'
   },
   description: {
     optional: {
@@ -156,6 +169,18 @@ const updateSchema: Schema = {
     },
     errorMessage: 'Calories cannot be empty',
     toInt: true
+  },
+  restaurant: {
+    optional: {
+      options: { checkFalsy: true }
+    },
+    custom: {
+      options: async value => {
+        const restaurant: IRestaurant | null = await Restaurant.findById(value);
+        if (!restaurant) throw new Error('No Restaurant with this id');
+        return true;
+      }
+    }
   },
   description: {
     optional: {

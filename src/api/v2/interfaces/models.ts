@@ -8,6 +8,7 @@ export interface IMeal extends Document {
   isVegan: boolean;
   rating: number;
   calories: number;
+  restaurant: ObjectId;
   description?: string;
   allergenics?: Allergenics[];
   tags?: MealTag[];

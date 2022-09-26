@@ -62,6 +62,11 @@ export default {
             min: 0,
             example: '330'
           },
+          restaurant: {
+            type: 'string',
+            description: "Restaurant's id",
+            example: '6293cd8bec9db4c3cbb85155'
+          },
           description: {
             type: 'string',
             description: 'Description of Meal',

@@ -167,9 +167,7 @@ const updateSchema: Schema = {
     errorMessage: 'Meals has to be array'
   },
   'meals.*': {
-    optional: {
-      options: { checkFalsy: true }
-    },
+    notEmpty: true,
     isLength: {
       options: { min: 24, max: 24 },
       errorMessage: 'Id must be 24 characters long'
