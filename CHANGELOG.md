@@ -2,6 +2,16 @@
 
 All notable changes to this project are documented in this file following the [Keep a CHANGELOG](https://keepachangelog.com/en/1.0.0/) conventions.
 
+## [2.0.0-alpha.2] - 2022-09-26
+
+### Added
+
+- Added restaurant entity
+
+### Changed
+
+- Required property restaurant in meal model
+
 ## [2.0.0-alpha.1] - 2022-09-21
 
 ### Added
