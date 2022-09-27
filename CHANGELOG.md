@@ -2,19 +2,23 @@
 
 All notable changes to this project are documented in this file following the [Keep a CHANGELOG](https://keepachangelog.com/en/1.0.0/) conventions.
 
+## [1.0.3] - 2022-09-27
+
+### Fixed
+
+- Fixed login 500 error
+
 ## [1.0.2] - 2022-09-18
 
 ### Fixed
 
 - Fixed additional id in user model
-([7be54bd](https://github.com/florianhund/FoodForYou-Backend/commit/7be54bd))
 
 ## [1.0.1] - 2022-09-09
 
 ### Fixed
 
 - Fixed crashing app when sorting database
-([d7aff49ff3123a6c80b682d2cb3560a8df0b2375](https://github.com/florianhund/FoodForYou-Backend/commits/d7aff49ff3123a6c80b682d2cb3560a8df0b2375))
 
 ## [1.0.0] - 2022-08-21
 
