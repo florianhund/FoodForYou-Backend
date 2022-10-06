@@ -1,4 +1,5 @@
-import { Document, ObjectId } from 'mongoose';
+import { Document } from 'mongoose';
+import { Link } from '.';
 import { Allergenics, MealTag, UserProvider } from './types';
 
 export interface IMeal extends Document {
@@ -8,7 +9,7 @@ export interface IMeal extends Document {
   isVegan: boolean;
   rating: number;
   calories: number;
-  restaurant: ObjectId;
+  restaurant: Link;
   description?: string;
   allergenics?: Allergenics[];
   tags?: MealTag[];
@@ -45,6 +46,6 @@ export interface IOrder extends Document {
   status: 'in progress' | 'in delivery' | 'delivered';
   isPaid: boolean;
   totalPrice: number;
-  userId: ObjectId;
-  meals: ObjectId[];
+  user: Link;
+  meals: Link[];
 }

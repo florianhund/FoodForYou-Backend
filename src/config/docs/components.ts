@@ -63,9 +63,24 @@ export default {
             example: '330'
           },
           restaurant: {
-            type: 'string',
-            description: "Restaurant's id",
-            example: '6293cd8bec9db4c3cbb85155'
+            type: 'object',
+            properties: {
+              ref: {
+                type: 'string',
+                description: 'model that id refers to',
+                example: 'Restaurant'
+              },
+              href: {
+                type: 'string',
+                description: 'link to model',
+                example: '/restaurants/6293cd8bec9db4c3cbb85155'
+              },
+              id: {
+                type: 'string',
+                description: "Restaurant's id",
+                example: '6293cd8bec9db4c3cbb85155'
+              }
+            }
           },
           description: {
             type: 'string',
@@ -259,15 +274,47 @@ export default {
             example: '17.3',
             description: 'total price'
           },
-          userId: {
-            type: 'string',
-            example: '6293cd8bec9db4c3cbb85155',
-            description: 'user id'
+          user: {
+            type: 'object',
+            properties: {
+              ref: {
+                type: 'string',
+                description: 'model that id refers to',
+                example: 'User'
+              },
+              href: {
+                type: 'string',
+                description: 'link to model',
+                example: '/users/6293cd8bec9db4c3cbb85155'
+              },
+              id: {
+                type: 'string',
+                description: "User's id",
+                example: '6293cd8bec9db4c3cbb85155'
+              }
+            }
           },
           meals: {
             type: 'array',
             items: {
-              type: 'string'
+              type: 'object',
+              properties: {
+                ref: {
+                  type: 'string',
+                  description: 'model that id refers to',
+                  example: 'Meal'
+                },
+                href: {
+                  type: 'string',
+                  description: 'link to model',
+                  example: '/meals/6293cd8bec9db4c3cbb85155'
+                },
+                id: {
+                  type: 'string',
+                  description: "Meal's id",
+                  example: '6293cd8bec9db4c3cbb85155'
+                }
+              }
             },
             example: ['6293cd8bec9db4c3cbb85155'],
             description: 'ids of ordered meals'

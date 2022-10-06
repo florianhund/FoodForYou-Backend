@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { Types, UpdateQuery } from 'mongoose';
+import { Types, UpdateQuery, ObjectId } from 'mongoose';
 
 import { httpMethods, middleware } from './types';
 
@@ -30,6 +30,12 @@ export interface IWrite<T> {
   create: (data: T) => Promise<T>;
   update: (id: Types.ObjectId, data: UpdateQuery<T>) => Promise<T | null>;
   delete: (id: Types.ObjectId) => Promise<T | null>;
+}
+
+export interface Link {
+  ref: string;
+  href: string;
+  id: ObjectId;
 }
 
 export interface MealQuery {

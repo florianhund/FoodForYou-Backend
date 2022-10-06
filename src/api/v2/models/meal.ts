@@ -14,7 +14,11 @@ const meal = new Schema<IMeal>({
   isVegetarian: { type: Boolean, default: false },
   rating: { type: Number, required: true },
   calories: { type: Number, required: true },
-  restaurant: { type: Types.ObjectId, ref: 'Restaurant', required: true },
+  restaurant: {
+    ref: { type: String, required: true },
+    href: { type: String, required: true },
+    id: { type: Types.ObjectId, ref: 'Restaurant', required: true }
+  },
   allergenics: [
     {
       type: String,

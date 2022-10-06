@@ -1,5 +1,5 @@
 import { Schema, model, Types } from 'mongoose';
-import { Meal, Order } from '.';
+import { Meal } from '.';
 
 import { IMeal, IOrder } from '../interfaces/models';
 
@@ -13,16 +13,16 @@ const order = new Schema<IOrder>({
   address: { type: String, required: true },
   postalCode: { type: Number, required: true },
   totalPrice: { type: Number, required: true },
-  userId: {
-    type: Types.ObjectId,
-    ref: 'User',
-    required: true
+  user: {
+    ref: { type: String, required: true },
+    href: { type: String, required: true },
+    id: { type: Types.ObjectId, ref: 'User', required: true }
   },
   meals: [
     {
-      type: Types.ObjectId,
-      ref: 'Meal',
-      required: true
+      ref: { type: String, required: true },
+      href: { type: String, required: true },
+      id: { type: Types.ObjectId, ref: 'Meal', required: true }
     }
   ]
 });
