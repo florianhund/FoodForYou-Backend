@@ -6,7 +6,11 @@ export enum httpMethods {
   POST = 'post',
   PUT = 'put',
   PATCH = 'patch',
-  DELETE = 'delete'
+  DELETE = 'delete',
+  HEAD = 'head',
+  OPTIONS = 'options',
+  TRACE = 'trace',
+  CONNECT = 'connect'
 }
 
 export enum Allergenics {

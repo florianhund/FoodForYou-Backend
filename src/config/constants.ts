@@ -22,7 +22,10 @@ export const {
   GOOGLE_REFRESH_TOKEN,
   FACEBOOK_CLIENT_ID,
   FACEBOOK_CLIENT_SECRET,
-  COOKIE_KEY
+  COOKIE_KEY,
+  CLOUDINARY_NAME,
+  CLOUDINARY_KEY,
+  CLOUDINARY_SECRET
 } = process.env;
 export const PORT = process.env.PORT ? +process.env.PORT : 5000;
 export const DATABASE_URL = getDbUrl();

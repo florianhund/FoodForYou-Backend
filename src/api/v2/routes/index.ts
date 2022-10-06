@@ -5,7 +5,8 @@ import {
   UserController,
   OrderController,
   AuthController,
-  RestaurantController
+  RestaurantController,
+  ImageController
 } from '../controllers';
 import {
   MealService,
@@ -36,6 +37,8 @@ const orderController = new OrderController(
 );
 const authController = new AuthController();
 
+const imageController = new ImageController();
+
 const router = Router();
 
 router.use(mealController.path, mealController.setRoutes());
@@ -43,6 +46,7 @@ router.use(userController.path, userController.setRoutes());
 router.use(restaurantController.path, restaurantController.setRoutes());
 router.use(orderController.path, orderController.setRoutes());
 router.use(authController.path, authController.setRoutes());
+router.use(imageController.path, imageController.setRoutes());
 
 export const defaultHandler = (req: Request, res: Response) => {
   res.sendStatus(404);
