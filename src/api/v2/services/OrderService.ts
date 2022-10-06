@@ -92,7 +92,7 @@ export default class OrderService {
       const order = await this._repo.create({
         address: data.address,
         postalCode: data.postalCode,
-        userId: data.userId,
+        user: data.user,
         meals: data.meals
       } as IOrder);
       return [order, undefined];

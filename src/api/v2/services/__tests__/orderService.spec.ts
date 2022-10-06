@@ -6,7 +6,7 @@ import { OrderRepository } from '../../repositories';
 import Server from '../../../../Server';
 import Database from '../../../../config/Database';
 import { DATABASE_URL } from '../../../../config/constants';
-import { Order, User, Meal } from '../../models';
+import { Order, User, Meal, Restaurant } from '../../models';
 import { IOrder } from '../../interfaces/models';
 
 const db = new Database(DATABASE_URL, {
@@ -22,12 +22,24 @@ const fakeId = '123456789123123456789123';
 const realId = new Types.ObjectId();
 const realUserId = new Types.ObjectId();
 const realMealId = new Types.ObjectId();
+const restaurantId = new Types.ObjectId();
+
 const testOrder = {
   _id: realId,
   address: 'Rudolfstr. 7b',
   postalCode: 6067,
-  userId: realUserId,
-  meals: [realMealId]
+  user: {
+    ref: 'User',
+    id: realUserId,
+    href: `/users/${realUserId}`
+  },
+  meals: [
+    {
+      ref: 'Meal',
+      id: realMealId,
+      href: `/meals/${realMealId}`
+    }
+  ]
 };
 
 beforeAll(async () => {
@@ -38,6 +50,14 @@ beforeAll(async () => {
   ]);
   server.loadControllers();
   app = server.app;
+
+  await Restaurant.create({
+    _id: restaurantId,
+    name: 'somee restaurant',
+    rating: 7,
+    address: 'some street',
+    postalCode: 6060
+  });
 
   await User.create({
     _id: realUserId,
@@ -56,11 +76,14 @@ beforeAll(async () => {
     _id: realMealId,
     name: 'pizza',
     price: 8,
-    isVegetarian: false,
-    isVegan: false,
     rating: 4,
     calories: 400,
-    description: 'tasty pizza'
+    description: 'tasty pizza',
+    restaurant: {
+      ref: 'Restaurant',
+      id: restaurantId,
+      href: `/restaurants/${restaurantId}`
+    }
   });
 });
 
@@ -110,8 +133,18 @@ describe('create order', () => {
     const [order] = await ordersrv.create({
       postalCode: 6060,
       address: 'In der Schranne 10',
-      userId: realUserId,
-      meals: [realMealId]
+      user: {
+        ref: 'User',
+        id: realUserId,
+        href: `/users/${realUserId}`
+      },
+      meals: [
+        {
+          ref: 'Meal',
+          id: realMealId,
+          href: `/meals/${realMealId}`
+        }
+      ]
     } as unknown as IOrder);
     expect(order).toBeTruthy();
     expect(order?.address).toBe('In der Schranne 10');
@@ -158,7 +191,7 @@ describe('delete orders', () => {
   it('should delete and return user if id is valid', async () => {
     const [order] = await ordersrv.delete(`${realId}`);
     expect(order).toBeTruthy();
-    expect(order?.userId).toEqual(testOrder.userId);
+    expect(order?.user).toEqual(testOrder.user);
   });
 
   it('should return 404 error if invalid id', async () => {

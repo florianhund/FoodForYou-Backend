@@ -4,7 +4,7 @@ import { ConnectOptions, Types } from 'mongoose';
 import Server from '../../../../Server';
 import Database from '../../../../config/Database';
 import { DATABASE_URL } from '../../../../config/constants';
-import { Meal } from '../../models';
+import { Meal, Restaurant } from '../../models';
 import SuperTest from '../../../../../__tests__/utils/SuperTest';
 
 const db = new Database(DATABASE_URL, {
@@ -14,6 +14,7 @@ const superTest = new SuperTest('/api/v2/meals');
 
 const fakeId = '123456789123456789123456';
 const realId = new Types.ObjectId();
+const restaurantId = new Types.ObjectId();
 
 const meal = {
   _id: realId,
@@ -21,11 +22,24 @@ const meal = {
   price: 8,
   rating: 3,
   calories: 600,
-  description: 'tasty pizza'
+  description: 'tasty pizza',
+  restaurant: {
+    ref: 'Restaurant',
+    id: restaurantId,
+    href: `/restaurants/${restaurantId}`
+  }
 };
 
-beforeAll(() => {
+beforeAll(async () => {
   db.init();
+
+  await Restaurant.create({
+    _id: restaurantId,
+    name: 'somee restaurant',
+    rating: 7,
+    address: 'some street',
+    postalCode: 6060
+  });
 });
 
 afterAll(() => {
@@ -95,7 +109,12 @@ describe('POST /meals', () => {
       name: 'pizza',
       price: 8,
       rating: 3,
-      calories: 600
+      calories: 600,
+      restaurant: {
+        ref: 'Restaurant',
+        id: restaurantId,
+        href: `/restaurants/${restaurantId}`
+      }
     };
 
     const response = await superTest.post('', data);

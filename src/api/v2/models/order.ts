@@ -35,8 +35,8 @@ const order = new Schema<IOrder>({
 // });
 
 order.pre('validate', async function (next) {
-  this.totalPrice = await this.meals.reduce(async (total, id) => {
-    const meal: IMeal | null = await Meal.findById(id);
+  this.totalPrice = await this.meals.reduce(async (total, link) => {
+    const meal: IMeal | null = await Meal.findById(link.id);
     if (!meal) throw new Error();
     return (await total) + meal.price;
   }, Promise.resolve(0));

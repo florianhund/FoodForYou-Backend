@@ -20,13 +20,20 @@ const mealsrv = new MealService(new MealRepository());
 
 const fakeId = '123456789123123456789123';
 const realId = new Types.ObjectId();
+const restaurantId = new Types.ObjectId();
+
 const testMeal = {
   _id: realId,
   name: 'pizza',
   price: 8,
   rating: 3,
   calories: 600,
-  description: 'tasty pizza'
+  description: 'tasty pizza',
+  restaurant: {
+    ref: 'Restaurant',
+    id: restaurantId,
+    href: `/restaurants/${restaurantId}`
+  }
 };
 
 beforeAll(() => {
@@ -92,8 +99,13 @@ describe('create meal', () => {
       name: 'spaghetti',
       price: 9,
       rating: 3,
-      calories: 600
-    } as IMeal);
+      calories: 600,
+      restaurant: {
+        ref: 'Restaurant',
+        id: restaurantId,
+        href: `/restaurants/${restaurantId}`
+      }
+    } as unknown as IMeal);
     expect(meal).toBeTruthy();
     expect(meal?.price).toBe(9);
   });
@@ -104,8 +116,13 @@ describe('create meal', () => {
       price: 8,
       rating: 3,
       calories: 600,
-      tags: ['Vegetarian']
-    } as IMeal);
+      tags: ['Vegetarian'],
+      restaurant: {
+        ref: 'Restaurant',
+        id: restaurantId,
+        href: `/restaurants/${restaurantId}`
+      }
+    } as unknown as IMeal);
 
     expect(meal).toBeTruthy();
     expect(meal?.isVegetarian).toBeTruthy();
