@@ -1,6 +1,7 @@
 import { Schema, model, Types } from 'mongoose';
-import { Meal } from '.';
 
+import { Meal } from '.';
+import { Link } from '../interfaces';
 import { IMeal, IOrder } from '../interfaces/models';
 
 const order = new Schema<IOrder>({
@@ -45,15 +46,15 @@ order.pre('validate', async function (next) {
 
 order.pre('findOneAndUpdate', async function (next) {
   const update = this.getUpdate() as any;
-  const meals: string[] | undefined = update?.meals;
+  const meals: Link[] | undefined = update?.meals;
   const isDelivered: boolean | undefined = update?.isDelivered;
 
   if (isDelivered) update.status = 'delivered';
 
   if (!meals || meals.length === 0) return next();
 
-  update.totalPrice = await meals.reduce(async (total, id) => {
-    const meal: IMeal | null = await Meal.findById(id);
+  update.totalPrice = await meals.reduce(async (total, link) => {
+    const meal: IMeal | null = await Meal.findById(link.id);
     if (!meal) throw new Error();
     return (await total) + meal.price;
   }, Promise.resolve(0));

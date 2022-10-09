@@ -1,4 +1,5 @@
 import { Schema, model, Types } from 'mongoose';
+import { Meal } from '.';
 
 import { IMeal } from '../interfaces/models';
 import { Allergenics, MealTag } from '../interfaces/types';

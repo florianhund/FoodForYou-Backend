@@ -97,13 +97,13 @@ const createSchema: Schema = {
     isInt: true,
     errorMessage: 'postalCode cannot be empty and has to be a number'
   },
-  userId: {
+  'user.id': {
     notEmpty: true,
     isLength: {
       options: { min: 24, max: 24 },
       errorMessage: 'Id must be 24 characters long'
     },
-    errorMessage: 'userId cannot be empty',
+    errorMessage: 'user id cannot be empty',
     custom: {
       options: async value => {
         const user: IUser | null = await User.findById(value);
@@ -112,12 +112,20 @@ const createSchema: Schema = {
       }
     }
   },
+  'user.ref': {
+    notEmpty: true,
+    errorMessage: 'User ref cannot be empty'
+  },
+  'user.href': {
+    notEmpty: true,
+    errorMessage: 'User href cannot be empty'
+  },
   meals: {
     notEmpty: true,
     isArray: true,
     errorMessage: 'Meals cannot be empty'
   },
-  'meals.*': {
+  'meals.*.id': {
     notEmpty: true,
     isLength: {
       options: { min: 24, max: 24 },
@@ -142,7 +150,7 @@ const updateSchema: Schema = {
     isInt: true,
     errorMessage: 'postalCode cannot be empty and has to be a number'
   },
-  userId: {
+  'user.id': {
     optional: {
       options: { checkFalsy: true }
     },
@@ -150,7 +158,7 @@ const updateSchema: Schema = {
       options: { min: 24, max: 24 },
       errorMessage: 'Id must be 24 characters long'
     },
-    errorMessage: 'userId cannot be empty',
+    errorMessage: 'user id cannot be empty',
     custom: {
       options: async value => {
         const user: IUser | null = await User.findById(value);
@@ -166,7 +174,7 @@ const updateSchema: Schema = {
     isArray: true,
     errorMessage: 'Meals has to be array'
   },
-  'meals.*': {
+  'meals.*.id': {
     notEmpty: true,
     isLength: {
       options: { min: 24, max: 24 },

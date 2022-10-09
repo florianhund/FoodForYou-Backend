@@ -59,8 +59,12 @@ const createSchema: Schema = {
     errorMessage: 'Calories cannot be empty',
     toInt: true
   },
-  restaurant: {
+  'restaurant.id': {
     notEmpty: true,
+    isLength: {
+      options: { min: 24, max: 24 },
+      errorMessage: 'Id must be 24 characters long'
+    },
     custom: {
       options: async value => {
         const restaurant: IRestaurant | null = await Restaurant.findById(value);
@@ -68,7 +72,15 @@ const createSchema: Schema = {
         return true;
       }
     },
-    errorMessage: 'Restaurant cannot be empty'
+    errorMessage: 'Restaurant id cannot be empty'
+  },
+  'restaurant.ref': {
+    notEmpty: true,
+    errorMessage: 'Restaurant ref cannot be empty'
+  },
+  'restaurant.href': {
+    notEmpty: true,
+    errorMessage: 'Restaurant href cannot be empty'
   },
   description: {
     optional: {
@@ -170,9 +182,13 @@ const updateSchema: Schema = {
     errorMessage: 'Calories cannot be empty',
     toInt: true
   },
-  restaurant: {
+  'restaurant.id': {
     optional: {
       options: { checkFalsy: true }
+    },
+    isLength: {
+      options: { min: 24, max: 24 },
+      errorMessage: 'Id must be 24 characters long'
     },
     custom: {
       options: async value => {
