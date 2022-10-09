@@ -113,8 +113,8 @@ const createSchema: Schema = {
     }
   },
   'user.ref': {
-    notEmpty: true,
-    errorMessage: 'User ref cannot be empty'
+    isEmpty: true,
+    errorMessage: 'User ref must be empty'
   },
   'user.href': {
     notEmpty: true,
@@ -139,6 +139,10 @@ const createSchema: Schema = {
         return true;
       }
     }
+  },
+  'meals.*.ref': {
+    isEmpty: true,
+    errorMessage: 'Meal ref must be empty'
   }
 };
 
@@ -188,6 +192,10 @@ const updateSchema: Schema = {
         return true;
       }
     }
+  },
+  'meals.*.ref': {
+    isEmpty: true,
+    errorMessage: 'Meal ref must be empty'
   },
   orderTime: {
     isEmpty: true,

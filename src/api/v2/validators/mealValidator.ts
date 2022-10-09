@@ -75,8 +75,8 @@ const createSchema: Schema = {
     errorMessage: 'Restaurant id cannot be empty'
   },
   'restaurant.ref': {
-    notEmpty: true,
-    errorMessage: 'Restaurant ref cannot be empty'
+    isEmpty: true,
+    errorMessage: 'Restaurant ref must be empty'
   },
   'restaurant.href': {
     notEmpty: true,
@@ -197,6 +197,10 @@ const updateSchema: Schema = {
         return true;
       }
     }
+  },
+  'restaurant.ref': {
+    isEmpty: true,
+    errorMessage: 'restaurant ref has to be empty'
   },
   description: {
     optional: {

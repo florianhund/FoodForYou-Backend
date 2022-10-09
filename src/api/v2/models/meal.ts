@@ -16,8 +16,7 @@ const meal = new Schema<IMeal>({
   rating: { type: Number, required: true },
   calories: { type: Number, required: true },
   restaurant: {
-    ref: { type: String, required: true },
-    href: { type: String, required: true },
+    ref: { type: String, default: 'Restaurant' },
     id: { type: Types.ObjectId, ref: 'Restaurant', required: true }
   },
   allergenics: [

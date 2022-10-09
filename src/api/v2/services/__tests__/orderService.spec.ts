@@ -29,13 +29,11 @@ const testOrder = {
   address: 'Rudolfstr. 7b',
   postalCode: 6067,
   user: {
-    ref: 'User',
     id: realUserId,
     href: `/users/${realUserId}`
   },
   meals: [
     {
-      ref: 'Meal',
       id: realMealId,
       href: `/meals/${realMealId}`
     }
@@ -80,7 +78,6 @@ beforeAll(async () => {
     calories: 400,
     description: 'tasty pizza',
     restaurant: {
-      ref: 'Restaurant',
       id: restaurantId,
       href: `/restaurants/${restaurantId}`
     }
@@ -134,13 +131,11 @@ describe('create order', () => {
       postalCode: 6060,
       address: 'In der Schranne 10',
       user: {
-        ref: 'User',
         id: realUserId,
         href: `/users/${realUserId}`
       },
       meals: [
         {
-          ref: 'Meal',
           id: realMealId,
           href: `/meals/${realMealId}`
         }
@@ -191,7 +186,8 @@ describe('delete orders', () => {
   it('should delete and return user if id is valid', async () => {
     const [order] = await ordersrv.delete(`${realId}`);
     expect(order).toBeTruthy();
-    expect(order?.user).toEqual(testOrder.user);
+    expect(order?.user.id).toEqual(testOrder.user.id);
+    expect(order?.user.href).toEqual(testOrder.user.href);
   });
 
   it('should return 404 error if invalid id', async () => {

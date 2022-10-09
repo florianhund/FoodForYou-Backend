@@ -21,13 +21,11 @@ const order = {
   address: 'Rudolfstr. 7b',
   postalCode: 6067,
   user: {
-    ref: 'User',
     id: realUserId,
     href: `/users/${realUserId}`
   },
   meals: [
     {
-      ref: 'Meal',
       id: realMealId,
       href: `/meals/${realMealId}`
     }
@@ -66,7 +64,6 @@ beforeAll(async () => {
     calories: 400,
     description: 'tasty pizza',
     restaurant: {
-      ref: 'Restaurant',
       id: restaurantId,
       href: `/restaurants/${restaurantId}`
     }
@@ -133,13 +130,11 @@ describe('POST /orders', () => {
       address: 'Rudolfstr. 7b',
       postalCode: 6067,
       user: {
-        ref: 'User',
         id: realUserId,
         href: `/users/${realUserId}`
       },
       meals: [
         {
-          ref: 'Meal',
           id: realMealId,
           href: `/meals/${realMealId}`
         }

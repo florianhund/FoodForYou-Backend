@@ -15,13 +15,13 @@ const order = new Schema<IOrder>({
   postalCode: { type: Number, required: true },
   totalPrice: { type: Number, required: true },
   user: {
-    ref: { type: String, required: true },
+    ref: { type: String, default: 'User' },
     href: { type: String, required: true },
     id: { type: Types.ObjectId, ref: 'User', required: true }
   },
   meals: [
     {
-      ref: { type: String, required: true },
+      ref: { type: String, default: 'Meal' },
       href: { type: String, required: true },
       id: { type: Types.ObjectId, ref: 'Meal', required: true }
     }
