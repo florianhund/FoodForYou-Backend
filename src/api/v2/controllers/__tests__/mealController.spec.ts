@@ -24,8 +24,7 @@ const meal = {
   calories: 600,
   description: 'tasty pizza',
   restaurant: {
-    id: restaurantId,
-    href: `/restaurants/${restaurantId}`
+    id: restaurantId
   }
 };
 
@@ -110,8 +109,7 @@ describe('POST /meals', () => {
       rating: 3,
       calories: 600,
       restaurant: {
-        id: restaurantId,
-        href: `/restaurants/${restaurantId}`
+        id: restaurantId
       }
     };
 

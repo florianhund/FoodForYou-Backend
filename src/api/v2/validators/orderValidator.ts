@@ -117,8 +117,8 @@ const createSchema: Schema = {
     errorMessage: 'User ref must be empty'
   },
   'user.href': {
-    notEmpty: true,
-    errorMessage: 'User href cannot be empty'
+    isEmpty: true,
+    errorMessage: 'User href must be empty'
   },
   meals: {
     notEmpty: true,
@@ -170,6 +170,10 @@ const updateSchema: Schema = {
         return true;
       }
     }
+  },
+  'user.href': {
+    isEmpty: true,
+    errorMessage: 'User href must be empty'
   },
   meals: {
     optional: {

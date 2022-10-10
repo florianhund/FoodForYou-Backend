@@ -17,7 +17,8 @@ const meal = new Schema<IMeal>({
   calories: { type: Number, required: true },
   restaurant: {
     ref: { type: String, default: 'Restaurant' },
-    id: { type: Types.ObjectId, ref: 'Restaurant', required: true }
+    id: { type: Types.ObjectId, ref: 'Restaurant', required: true },
+    href: String
   },
   allergenics: [
     {
@@ -36,6 +37,7 @@ const meal = new Schema<IMeal>({
 meal.pre('save', function (next) {
   this.isVegetarian = !!this.tags?.includes(MealTag.VEGETARIAN);
   this.isVegan = !!this.tags?.includes(MealTag.VEGAN);
+  this.restaurant.href = `/restaurants/${this.restaurant.id}`;
   next();
 });
 
@@ -52,6 +54,10 @@ meal.pre('findOneAndUpdate', function (next) {
 
   update.isVegetarian = !!update.tags.includes('Vegetarian');
   update.isVegan = !!update.tags.includes('Vegan');
+
+  if (update.restaurant?.id) {
+    update.restaurant.href = `/restaurants/${update.restaurant.id}`;
+  }
 
   next();
 });

@@ -30,8 +30,7 @@ const testMeal = {
   calories: 600,
   description: 'tasty pizza',
   restaurant: {
-    id: restaurantId,
-    href: `/restaurants/${restaurantId}`
+    id: restaurantId
   }
 };
 
@@ -100,8 +99,7 @@ describe('create meal', () => {
       rating: 3,
       calories: 600,
       restaurant: {
-        id: restaurantId,
-        href: `/restaurants/${restaurantId}`
+        id: restaurantId
       }
     } as unknown as IMeal);
     expect(meal).toBeTruthy();
@@ -116,8 +114,7 @@ describe('create meal', () => {
       calories: 600,
       tags: ['Vegetarian'],
       restaurant: {
-        id: restaurantId,
-        href: `/restaurants/${restaurantId}`
+        id: restaurantId
       }
     } as unknown as IMeal);
 

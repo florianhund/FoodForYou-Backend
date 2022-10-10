@@ -16,14 +16,14 @@ const order = new Schema<IOrder>({
   totalPrice: { type: Number, required: true },
   user: {
     ref: { type: String, default: 'User' },
-    href: { type: String, required: true },
-    id: { type: Types.ObjectId, ref: 'User', required: true }
+    id: { type: Types.ObjectId, ref: 'User', required: true },
+    href: String
   },
   meals: [
     {
       ref: { type: String, default: 'Meal' },
-      href: { type: String, required: true },
-      id: { type: Types.ObjectId, ref: 'Meal', required: true }
+      id: { type: Types.ObjectId, ref: 'Meal', required: true },
+      href: String
     }
   ]
 });
@@ -34,6 +34,15 @@ const order = new Schema<IOrder>({
 //   if (this.get('isDelivered')) this.set({ status: 'delivered' });
 //   next();
 // });
+
+order.pre('save', function (next) {
+  this.user.href = `/users/${this.user.id}`;
+  this.meals = this.meals.map(meal => {
+    const { id, ref } = meal;
+    return { id, ref, href: `/meals/${meal.id}` };
+  });
+  next();
+});
 
 order.pre('validate', async function (next) {
   this.totalPrice = await this.meals.reduce(async (total, link) => {
@@ -58,6 +67,17 @@ order.pre('findOneAndUpdate', async function (next) {
     if (!meal) throw new Error();
     return (await total) + meal.price;
   }, Promise.resolve(0));
+
+  if (update.user?.id) {
+    update.user.href = `/users/${update.user.id}`;
+  }
+
+  if (update.meals?.length > 0) {
+    update.meals = update.meals.map((meal: any) => {
+      const { id, ref } = meal;
+      return { id, ref, href: `/meals/${meal.id}` };
+    });
+  }
 
   next();
 });

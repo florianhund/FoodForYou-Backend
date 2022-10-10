@@ -79,8 +79,8 @@ const createSchema: Schema = {
     errorMessage: 'Restaurant ref must be empty'
   },
   'restaurant.href': {
-    notEmpty: true,
-    errorMessage: 'Restaurant href cannot be empty'
+    isEmpty: true,
+    errorMessage: 'Restaurant href must be empty'
   },
   description: {
     optional: {
@@ -201,6 +201,10 @@ const updateSchema: Schema = {
   'restaurant.ref': {
     isEmpty: true,
     errorMessage: 'restaurant ref has to be empty'
+  },
+  'restaurant.href': {
+    isEmpty: true,
+    errorMessage: 'Restaurant href must be empty'
   },
   description: {
     optional: {

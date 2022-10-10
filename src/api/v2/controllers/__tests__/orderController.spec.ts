@@ -21,13 +21,11 @@ const order = {
   address: 'Rudolfstr. 7b',
   postalCode: 6067,
   user: {
-    id: realUserId,
-    href: `/users/${realUserId}`
+    id: realUserId
   },
   meals: [
     {
-      id: realMealId,
-      href: `/meals/${realMealId}`
+      id: realMealId
     }
   ]
 };
@@ -64,8 +62,7 @@ beforeAll(async () => {
     calories: 400,
     description: 'tasty pizza',
     restaurant: {
-      id: restaurantId,
-      href: `/restaurants/${restaurantId}`
+      id: restaurantId
     }
   });
 });
@@ -130,13 +127,11 @@ describe('POST /orders', () => {
       address: 'Rudolfstr. 7b',
       postalCode: 6067,
       user: {
-        id: realUserId,
-        href: `/users/${realUserId}`
+        id: realUserId
       },
       meals: [
         {
-          id: realMealId,
-          href: `/meals/${realMealId}`
+          id: realMealId
         }
       ]
     };
