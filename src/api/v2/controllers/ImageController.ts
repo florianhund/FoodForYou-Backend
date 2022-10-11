@@ -5,6 +5,7 @@ import { IRoute } from '../interfaces';
 import { httpMethods } from '../interfaces/types';
 import HttpController from './base/HttpController';
 import { uploadImage } from '../middlewares';
+import HttpError from '../utils/HttpError';
 
 export default class ImageController extends HttpController {
   path = '/images';
@@ -28,6 +29,11 @@ export default class ImageController extends HttpController {
     }
   ];
 
+  constructor() {
+    super();
+    super.bindHandlers(this);
+  }
+
   private async getImages(req: Request, res: Response) {
     const result = await cloudinary.api.resources();
     const data = {
@@ -37,14 +43,15 @@ export default class ImageController extends HttpController {
         url: resource.secure_url
       }))
     };
-    res.send(data);
+
+    super.sendSuccess(res, data);
   }
 
+  // TODO: check req.file in validator
   private async uploadImage(req: Request, res: Response) {
     if (!req.file?.path) return res.send('error');
     let result;
     try {
-      // result = await cloudinary.uploader.upload(req.file?.path);
       result = await upload(req.file.path, 'unused');
     } catch (error) {
       return super.sendError(res);
@@ -55,7 +62,15 @@ export default class ImageController extends HttpController {
 
   private async getImageDetails(req: Request, res: Response) {
     const { id } = req.params;
-    const result = await cloudinary.api.resource(id);
-    res.send(result);
+    let result;
+    try {
+      result = await cloudinary.api.resource(id);
+    } catch (err) {
+      return super.sendError(
+        res,
+        new HttpError('Not found', 404, 'INVALID ID')
+      );
+    }
+    super.sendSuccess(res, result);
   }
 }
