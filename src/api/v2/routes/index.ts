@@ -12,7 +12,8 @@ import {
   MealService,
   UserService,
   OrderService,
-  RestaurantService
+  RestaurantService,
+  ImageService
 } from '../services';
 import {
   MealRepository,
@@ -20,6 +21,7 @@ import {
   RestaurantRepository,
   UserRepository
 } from '../repositories';
+import cloudinary from '../../../config/cloudinary';
 
 const mealController = new MealController(
   new MealService(new MealRepository())
@@ -37,7 +39,7 @@ const orderController = new OrderController(
 );
 const authController = new AuthController();
 
-const imageController = new ImageController();
+const imageController = new ImageController(new ImageService(cloudinary));
 
 const router = Router();
 

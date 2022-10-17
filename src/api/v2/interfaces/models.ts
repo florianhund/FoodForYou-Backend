@@ -13,6 +13,7 @@ export interface IMeal extends Document {
   description?: string;
   allergenics?: Allergenics[];
   tags?: MealTag[];
+  images: { mediaId: string; href: string }[];
 }
 
 // add phone number

@@ -1,8 +1,10 @@
 import { Schema } from 'express-validator';
+import cloudinary from '../../../config/cloudinary';
 import { IRestaurant } from '../interfaces/models';
 
 import { Allergenics, MealTag } from '../interfaces/types';
 import { Restaurant } from '../models';
+import { ImageService } from '../services';
 
 const idSchema: Schema = {
   id: {
@@ -81,6 +83,27 @@ const createSchema: Schema = {
   'restaurant.href': {
     isEmpty: true,
     errorMessage: 'Restaurant href must be empty'
+  },
+  'image.id': {
+    notEmpty: true,
+    isLength: {
+      options: { min: 24, max: 24 },
+      errorMessage: 'Id must be 24 characters long'
+    },
+    custom: {
+      options: async value => {
+        if (typeof value === 'string' || value instanceof String)
+          throw new Error('Image id has to be string');
+        const imageService = new ImageService(cloudinary);
+        const image = imageService.getImageDetails(value);
+        if (!image) throw new Error('No image with specified id.');
+        return true;
+      }
+    }
+  },
+  'image.href': {
+    isEmpty: true,
+    errorMessage: 'image href must be empty'
   },
   description: {
     optional: {
@@ -205,6 +228,29 @@ const updateSchema: Schema = {
   'restaurant.href': {
     isEmpty: true,
     errorMessage: 'Restaurant href must be empty'
+  },
+  'image.id': {
+    optional: {
+      options: { checkFalsy: true }
+    },
+    isLength: {
+      options: { min: 24, max: 24 },
+      errorMessage: 'Id must be 24 characters long'
+    },
+    custom: {
+      options: async value => {
+        if (typeof value === 'string' || value instanceof String)
+          throw new Error('Image id has to be string');
+        const imageService = new ImageService(cloudinary);
+        const image = imageService.getImageDetails(value);
+        if (!image) throw new Error('No image with specified id.');
+        return true;
+      }
+    }
+  },
+  'image.href': {
+    isEmpty: true,
+    errorMessage: 'image href must be empty'
   },
   description: {
     optional: {

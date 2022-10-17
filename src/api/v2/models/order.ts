@@ -41,6 +41,7 @@ order.pre('save', function (next) {
     const { id, ref } = meal;
     return { id, ref, href: `/meals/${meal.id}` };
   });
+
   next();
 });
 
@@ -50,6 +51,7 @@ order.pre('validate', async function (next) {
     if (!meal) throw new Error();
     return (await total) + meal.price;
   }, Promise.resolve(0));
+
   next();
 });
 
@@ -57,16 +59,6 @@ order.pre('findOneAndUpdate', async function (next) {
   const update = this.getUpdate() as any;
   const meals: Link[] | undefined = update?.meals;
   const isDelivered: boolean | undefined = update?.isDelivered;
-
-  if (isDelivered) update.status = 'delivered';
-
-  if (!meals || meals.length === 0) return next();
-
-  update.totalPrice = await meals.reduce(async (total, link) => {
-    const meal: IMeal | null = await Meal.findById(link.id);
-    if (!meal) throw new Error();
-    return (await total) + meal.price;
-  }, Promise.resolve(0));
 
   if (update.user?.id) {
     update.user.href = `/users/${update.user.id}`;
@@ -78,6 +70,16 @@ order.pre('findOneAndUpdate', async function (next) {
       return { id, ref, href: `/meals/${meal.id}` };
     });
   }
+
+  if (isDelivered) update.status = 'delivered';
+
+  if (!meals || meals.length === 0) return next();
+
+  update.totalPrice = await meals.reduce(async (total, link) => {
+    const meal: IMeal | null = await Meal.findById(link.id);
+    if (!meal) throw new Error();
+    return (await total) + meal.price;
+  }, Promise.resolve(0));
 
   next();
 });

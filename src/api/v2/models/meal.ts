@@ -1,5 +1,4 @@
 import { Schema, model, Types } from 'mongoose';
-import { Meal } from '.';
 
 import { IMeal } from '../interfaces/models';
 import { Allergenics, MealTag } from '../interfaces/types';
@@ -20,6 +19,12 @@ const meal = new Schema<IMeal>({
     id: { type: Types.ObjectId, ref: 'Restaurant', required: true },
     href: String
   },
+  images: [
+    {
+      mediaId: { type: String, default: 'prod/meals/defaults/default' },
+      href: String
+    }
+  ],
   allergenics: [
     {
       type: String,
@@ -37,12 +42,29 @@ const meal = new Schema<IMeal>({
 meal.pre('save', function (next) {
   this.isVegetarian = !!this.tags?.includes(MealTag.VEGETARIAN);
   this.isVegan = !!this.tags?.includes(MealTag.VEGAN);
+
   this.restaurant.href = `/restaurants/${this.restaurant.id}`;
+  this.images = this.images.map(({ mediaId }: { mediaId: string }) => ({
+    mediaId,
+    href: `/images/${mediaId}`
+  }));
+
   next();
 });
 
 meal.pre('findOneAndUpdate', function (next) {
   const update = this.getUpdate() as any;
+
+  if (update.restaurant?.id) {
+    update.restaurant.href = `/restaurants/${update.restaurant.id}`;
+  }
+
+  if (update.images?.length > 0) {
+    update.images = update.images.map(({ mediaId }: { mediaId: string }) => ({
+      mediaId,
+      href: `/images/${mediaId}`
+    }));
+  }
 
   if (!update?.tags) return next();
 
@@ -54,10 +76,6 @@ meal.pre('findOneAndUpdate', function (next) {
 
   update.isVegetarian = !!update.tags.includes('Vegetarian');
   update.isVegan = !!update.tags.includes('Vegan');
-
-  if (update.restaurant?.id) {
-    update.restaurant.href = `/restaurants/${update.restaurant.id}`;
-  }
 
   next();
 });
