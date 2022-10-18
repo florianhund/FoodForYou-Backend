@@ -55,11 +55,11 @@ meal.pre('save', function (next) {
 meal.pre('findOneAndUpdate', function (next) {
   const update = this.getUpdate() as any;
 
-  if (update.restaurant?.id) {
+  if (update?.restaurant?.id) {
     update.restaurant.href = `/restaurants/${update.restaurant.id}`;
   }
 
-  if (update.images?.length > 0) {
+  if (update?.images?.length > 0) {
     update.images = update.images.map(({ mediaId }: { mediaId: string }) => ({
       mediaId,
       href: `/images/${mediaId}`
@@ -68,7 +68,7 @@ meal.pre('findOneAndUpdate', function (next) {
 
   if (!update?.tags) return next();
 
-  if (update.tags.length === 0) {
+  if (update?.tags.length === 0) {
     update.isVegetarian = false;
     update.isVegan = false;
     return next();

@@ -60,20 +60,18 @@ order.pre('findOneAndUpdate', async function (next) {
   const meals: Link[] | undefined = update?.meals;
   const isDelivered: boolean | undefined = update?.isDelivered;
 
-  if (update.user?.id) {
+  if (update?.user?.id) {
     update.user.href = `/users/${update.user.id}`;
-  }
-
-  if (update.meals?.length > 0) {
-    update.meals = update.meals.map((meal: any) => {
-      const { id, ref } = meal;
-      return { id, ref, href: `/meals/${meal.id}` };
-    });
   }
 
   if (isDelivered) update.status = 'delivered';
 
   if (!meals || meals.length === 0) return next();
+
+  update.meals = update.meals.map((meal: any) => {
+    const { id, ref } = meal;
+    return { id, ref, href: `/meals/${meal.id}` };
+  });
 
   update.totalPrice = await meals.reduce(async (total, link) => {
     const meal: IMeal | null = await Meal.findById(link.id);

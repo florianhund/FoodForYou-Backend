@@ -84,11 +84,9 @@ const createSchema: Schema = {
     isEmpty: true,
     errorMessage: 'Restaurant href must be empty'
   },
-  'image.id': {
-    notEmpty: true,
-    isLength: {
-      options: { min: 24, max: 24 },
-      errorMessage: 'Id must be 24 characters long'
+  'images.*.id': {
+    optional: {
+      options: { checkFalsy: true }
     },
     custom: {
       options: async value => {
@@ -101,7 +99,7 @@ const createSchema: Schema = {
       }
     }
   },
-  'image.href': {
+  'images.*.href': {
     isEmpty: true,
     errorMessage: 'image href must be empty'
   },
@@ -229,13 +227,9 @@ const updateSchema: Schema = {
     isEmpty: true,
     errorMessage: 'Restaurant href must be empty'
   },
-  'image.id': {
+  'images.*.mediaId': {
     optional: {
       options: { checkFalsy: true }
-    },
-    isLength: {
-      options: { min: 24, max: 24 },
-      errorMessage: 'Id must be 24 characters long'
     },
     custom: {
       options: async value => {
@@ -248,7 +242,7 @@ const updateSchema: Schema = {
       }
     }
   },
-  'image.href': {
+  'images.*.href': {
     isEmpty: true,
     errorMessage: 'image href must be empty'
   },
