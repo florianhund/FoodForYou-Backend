@@ -65,10 +65,27 @@ export default class ImageService {
     // });
   }
 
-  public changeFoder(publicId: string, folderName: string) {
-    return this._instance.uploader.rename(
-      publicId,
-      `${folderName}/${publicId.slice(publicId.lastIndexOf('/') + 1)}`
-    );
+  public async changeFolder(
+    publicId: string,
+    folderName: string
+  ): PromiseHandler<string> {
+    try {
+      const { public_id: newId } = await this._instance.uploader.rename(
+        publicId,
+        `${folderName}/${publicId.slice(publicId.lastIndexOf('/') + 1)}`
+      );
+      if (!newId)
+        return [
+          null,
+          new HttpError(
+            'No image with specified id was found.',
+            404,
+            'INVALID_ID'
+          )
+        ];
+      return [newId, undefined];
+    } catch (err) {
+      return [null, new HttpError()];
+    }
   }
 }

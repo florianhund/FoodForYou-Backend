@@ -1,7 +1,11 @@
 import { Schema, model, Types } from 'mongoose';
+import cloudinary from '../../../config/cloudinary';
 
 import { IMeal } from '../interfaces/models';
 import { Allergenics, MealTag } from '../interfaces/types';
+import { ImageService } from '../services';
+
+const imageSrv = new ImageService(cloudinary);
 
 const meal = new Schema<IMeal>({
   name: { type: String, required: true },
@@ -39,31 +43,37 @@ const meal = new Schema<IMeal>({
   ]
 });
 
-meal.pre('save', function (next) {
+meal.pre('save', async function (next) {
   this.isVegetarian = !!this.tags?.includes(MealTag.VEGETARIAN);
   this.isVegan = !!this.tags?.includes(MealTag.VEGAN);
 
   this.restaurant.href = `/restaurants/${this.restaurant.id}`;
-  this.images = this.images.map(({ mediaId }: { mediaId: string }) => ({
-    mediaId,
-    href: `/images/${mediaId}`
-  }));
+  this.images = await Promise.all(
+    this.images.map(async ({ mediaId }: { mediaId: string }) => {
+      const [id] = await imageSrv.changeFolder(mediaId, 'dev/meals');
+      if (!id) throw new Error();
+      return { mediaId: id, href: `/images/${id}` };
+    })
+  );
 
   next();
 });
 
-meal.pre('findOneAndUpdate', function (next) {
+meal.pre('findOneAndUpdate', async function (next) {
   const update = this.getUpdate() as any;
 
   if (update?.restaurant?.id) {
     update.restaurant.href = `/restaurants/${update.restaurant.id}`;
   }
 
-  if (update?.images?.length > 0) {
-    update.images = update.images.map(({ mediaId }: { mediaId: string }) => ({
-      mediaId,
-      href: `/images/${mediaId}`
-    }));
+  if (update?.images && update?.images?.length > 0) {
+    update.images = await Promise.all(
+      update.images.map(async ({ mediaId }: { mediaId: string }) => {
+        const [id] = await imageSrv.changeFolder(mediaId, 'dev/meals');
+        if (!id) throw new Error();
+        return { mediaId: id, href: `/images/${id}` };
+      })
+    );
   }
 
   if (!update?.tags) return next();

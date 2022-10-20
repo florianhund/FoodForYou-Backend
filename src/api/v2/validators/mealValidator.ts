@@ -84,7 +84,7 @@ const createSchema: Schema = {
     isEmpty: true,
     errorMessage: 'Restaurant href must be empty'
   },
-  'images.*.id': {
+  'images.*.mediaId': {
     optional: {
       options: { checkFalsy: true }
     },
