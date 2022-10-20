@@ -7,6 +7,7 @@ import orders from './endpoints/orders';
 import users from './endpoints/users';
 import meals from './endpoints/meals';
 import restaurants from './endpoints/restaurants';
+import images from './endpoints/images';
 
 export default {
   ...basicInfo,
@@ -27,6 +28,8 @@ export default {
     '/auth/login': auth.login,
     '/auth/logout': auth.logout,
     '/orders': orders.base,
-    '/orders/:id': orders.id
+    '/orders/{id}': orders.id,
+    '/images': images.base,
+    '/images/{id}': images.id
   }
 };

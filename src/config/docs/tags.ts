@@ -14,6 +14,9 @@ export default {
     },
     {
       name: 'Auth Endpoints'
+    },
+    {
+      name: 'Image Endpoints'
     }
   ]
 };
