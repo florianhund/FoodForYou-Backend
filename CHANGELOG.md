@@ -2,6 +2,16 @@
 
 All notable changes to this project are documented in this file following the [Keep a CHANGELOG](https://keepachangelog.com/en/1.0.0/) conventions.
 
+## [2.0.0-alpha.3] - 2022-10-23
+
+### Added
+
+- Added image functionality. User can now upload images and append them to meals
+
+### Changed
+
+- Changed links to other documents in models
+
 ## [2.0.0-alpha.2] - 2022-09-26
 
 ### Added
