@@ -3,7 +3,7 @@ import cloudinary from '../../../config/cloudinary';
 
 import { IMeal } from '../interfaces/models';
 import { Allergenics, MealTag } from '../interfaces/types';
-import { ImageService } from '../services';
+import ImageService from '../services/ImageService';
 
 const imageSrv = new ImageService(cloudinary);
 

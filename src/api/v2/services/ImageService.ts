@@ -19,14 +19,9 @@ export default class ImageService {
   public async getImageDetails(id: string): PromiseHandler<any> {
     try {
       const resource = await this._instance.api.resource(id);
-      if (!resource)
-        return [
-          null,
-          new HttpError('No image with that id.', 404, 'INVALID_ID')
-        ];
       return [resource, undefined];
     } catch (err) {
-      return [null, new HttpError()];
+      return [null, new HttpError('No image with that id.', 404, 'INVALID_ID')];
     }
   }
 
