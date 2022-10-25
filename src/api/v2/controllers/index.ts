@@ -1,13 +1,15 @@
-import MealControllerModule from './MealController';
-import UserControllerModule from './UserController';
-import RestaurantControllerModule from './RestaurantController';
-import OrderControllerModule from './OrderController';
-import AuthControllerModule from './AuthController';
-import ImageControllerModule from './ImageController';
+import MealController from './MealController';
+import UserController from './UserController';
+import RestaurantController from './RestaurantController';
+import OrderController from './OrderController';
+import AuthController from './AuthController';
+import ImageController from './ImageController';
 
-export const MealController = MealControllerModule;
-export const UserController = UserControllerModule;
-export const RestaurantController = RestaurantControllerModule;
-export const OrderController = OrderControllerModule;
-export const AuthController = AuthControllerModule;
-export const ImageController = ImageControllerModule;
+export {
+  MealController,
+  UserController,
+  RestaurantController,
+  OrderController,
+  AuthController,
+  ImageController
+};

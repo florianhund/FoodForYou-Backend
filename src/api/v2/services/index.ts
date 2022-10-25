@@ -1,11 +1,13 @@
-import MealServiceModule from './MealService';
-import UserServiceModule from './UserService';
-import RestaurantServiceModule from './RestaurantService';
-import OrderServiceModule from './OrderService';
-import ImageServiceModule from './ImageService';
+import MealService from './MealService';
+import UserService from './UserService';
+import RestaurantService from './RestaurantService';
+import OrderService from './OrderService';
+import ImageService from './ImageService';
 
-export const MealService = MealServiceModule;
-export const UserService = UserServiceModule;
-export const RestaurantService = RestaurantServiceModule;
-export const OrderService = OrderServiceModule;
-export const ImageService = ImageServiceModule;
+export {
+  MealService,
+  UserService,
+  RestaurantService,
+  OrderService,
+  ImageService
+};

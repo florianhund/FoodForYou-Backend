@@ -1,7 +1,5 @@
-import validations from './validator';
-import * as user from './user';
-import multer from './multer';
+import validate from './validator';
+import * as checkUser from './user';
+import uploadImage from './multer';
 
-export const validate = validations;
-export const checkUser = user;
-export const uploadImage = multer;
+export { validate, checkUser, uploadImage };

@@ -1,9 +1,6 @@
-import MealModel from './meal';
-import UserModel from './user';
-import RestaurantModel from './restaurant';
-import OrderModel from './order';
+import Meal from './meal';
+import User from './user';
+import Restaurant from './restaurant';
+import Order from './order';
 
-export const Meal = MealModel;
-export const User = UserModel;
-export const Restaurant = RestaurantModel;
-export const Order = OrderModel;
+export { Meal, User, Restaurant, Order };

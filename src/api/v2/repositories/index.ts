@@ -1,9 +1,11 @@
-import MealRepositoryModule from './MealRepository';
-import UserRepositoryModule from './UserRepository';
-import RestaurantRepositoryModule from './RestaurantRepository';
-import OrderRepositoryModule from './OrderRepository';
+import MealRepository from './MealRepository';
+import UserRepository from './UserRepository';
+import RestaurantRepository from './RestaurantRepository';
+import OrderRepository from './OrderRepository';
 
-export const MealRepository = MealRepositoryModule;
-export const UserRepository = UserRepositoryModule;
-export const RestaurantRepository = RestaurantRepositoryModule;
-export const OrderRepository = OrderRepositoryModule;
+export {
+  MealRepository,
+  UserRepository,
+  RestaurantRepository,
+  OrderRepository
+};
