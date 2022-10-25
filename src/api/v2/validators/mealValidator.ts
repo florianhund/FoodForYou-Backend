@@ -1,5 +1,6 @@
 import { Schema } from 'express-validator';
-import cloudinary from '../../../config/cloudinary';
+
+import { cloudinary } from '../lib';
 import { IRestaurant } from '../interfaces/models';
 
 import { Allergenics, MealTag } from '../interfaces/types';

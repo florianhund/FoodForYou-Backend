@@ -4,7 +4,7 @@ import {
   CLOUDINARY_NAME,
   CLOUDINARY_KEY,
   CLOUDINARY_SECRET
-} from './constants';
+} from '../../../config/constants';
 
 cloudinary.config({
   cloud_name: CLOUDINARY_NAME,

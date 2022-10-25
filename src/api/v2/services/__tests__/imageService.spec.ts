@@ -1,5 +1,5 @@
 import { ImageService } from '..';
-import cloudinary from '../../../../config/cloudinary';
+import { cloudinary } from '../../lib';
 
 const imageSrv = new ImageService(cloudinary);
 

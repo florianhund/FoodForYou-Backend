@@ -1,6 +1,6 @@
 import { UploadApiResponse } from 'cloudinary';
 
-import cloudinary from '../../../config/cloudinary';
+import { cloudinary } from '../lib';
 import { PromiseHandler } from '../interfaces/types';
 import { HttpError } from '../utils';
 

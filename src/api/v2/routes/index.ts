@@ -21,7 +21,7 @@ import {
   RestaurantRepository,
   UserRepository
 } from '../repositories';
-import cloudinary from '../../../config/cloudinary';
+import { cloudinary } from '../lib';
 
 const mealController = new MealController(
   new MealService(new MealRepository())

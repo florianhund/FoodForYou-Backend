@@ -4,13 +4,13 @@ import { Strategy as FacebookStrategy } from 'passport-facebook';
 import { Strategy as LocalStrategy } from 'passport-local';
 import bcrypt from 'bcrypt';
 
-import { User } from '../api/v2/models';
+import { User } from '../models';
 import {
   FACEBOOK_CLIENT_ID,
   FACEBOOK_CLIENT_SECRET,
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET
-} from './constants';
+} from '../../../config/constants';
 
 // ! error: device id and device name are required
 const initialize = (passport: PassportStatic) => {

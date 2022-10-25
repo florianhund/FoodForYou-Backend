@@ -1,5 +1,5 @@
 import { Schema, model, Types } from 'mongoose';
-import cloudinary from '../../../config/cloudinary';
+import { cloudinary } from '../lib';
 
 import { IMeal } from '../interfaces/models';
 import { Allergenics, MealTag } from '../interfaces/types';
