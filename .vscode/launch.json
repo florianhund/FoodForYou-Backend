@@ -8,9 +8,7 @@
       "type": "node",
       "request": "launch",
       "name": "Debug Program",
-      "skipFiles": [
-        "<node_internals>/**"
-      ],
+      "skipFiles": ["<node_internals>/**"],
       "program": "${workspaceFolder}\\src\\index.ts",
       "sourceMaps": true
     }

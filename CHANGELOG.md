@@ -71,7 +71,7 @@ All notable changes to this project are documented in this file following the [K
 ### Changed
 
 - Changed fail responses
-- Implemented DIJ 
+- Implemented DIJ
 
 ### Security
 
