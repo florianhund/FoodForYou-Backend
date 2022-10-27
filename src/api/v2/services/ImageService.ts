@@ -12,7 +12,14 @@ export default class ImageService {
       const resources = await this._instance.api.resources();
       return [resources, undefined];
     } catch (err) {
-      return [null, new HttpError()];
+      return [
+        null,
+        new HttpError(
+          'Oops, something went wrong!',
+          500,
+          'INTERNAL_SERVER_ERROR'
+        )
+      ];
     }
   }
 
@@ -36,7 +43,14 @@ export default class ImageService {
       });
       return [resource, undefined];
     } catch (err) {
-      return [null, new HttpError()];
+      return [
+        null,
+        new HttpError(
+          'Oops, something went wrong!',
+          500,
+          'INTERNAL_SERVER_ERROR'
+        )
+      ];
     }
     // return new Promise(resolve => {
     //   this._instance.uploader.upload(
@@ -80,7 +94,14 @@ export default class ImageService {
         ];
       return [newId, undefined];
     } catch (err) {
-      return [null, new HttpError()];
+      return [
+        null,
+        new HttpError(
+          'Oops, something went wrong!',
+          500,
+          'INTERNAL_SERVER_ERROR'
+        )
+      ];
     }
   }
 }

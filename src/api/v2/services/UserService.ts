@@ -16,7 +16,14 @@ export default class UserService {
 
       return [users, undefined];
     } catch (err) {
-      return [null, new HttpError()];
+      return [
+        null,
+        new HttpError(
+          'Oops, something went wrong!',
+          500,
+          'INTERNAL_SERVER_ERROR'
+        )
+      ];
     }
   }
 
@@ -35,7 +42,14 @@ export default class UserService {
         ];
       return [user, undefined];
     } catch (err) {
-      return [null, new HttpError()];
+      return [
+        null,
+        new HttpError(
+          'Oops, something went wrong!',
+          500,
+          'INTERNAL_SERVER_ERROR'
+        )
+      ];
     }
   }
 
@@ -56,7 +70,14 @@ export default class UserService {
         ];
       return [user, undefined];
     } catch (err) {
-      return [null, new HttpError()];
+      return [
+        null,
+        new HttpError(
+          'Oops, something went wrong!',
+          500,
+          'INTERNAL_SERVER_ERROR'
+        )
+      ];
     }
   }
 
@@ -79,7 +100,14 @@ export default class UserService {
       const newUser = await user.save();
       return [newUser, undefined];
     } catch (err) {
-      return [null, new HttpError()];
+      return [
+        null,
+        new HttpError(
+          'Oops, something went wrong!',
+          500,
+          'INTERNAL_SERVER_ERROR'
+        )
+      ];
     }
   }
 
@@ -101,7 +129,14 @@ export default class UserService {
         ];
       return [user, undefined];
     } catch (err) {
-      return [null, new HttpError()];
+      return [
+        null,
+        new HttpError(
+          'Oops, something went wrong!',
+          500,
+          'INTERNAL_SERVER_ERROR'
+        )
+      ];
     }
   }
 
@@ -120,7 +155,14 @@ export default class UserService {
         ];
       return [user, undefined];
     } catch (err) {
-      return [null, new HttpError()];
+      return [
+        null,
+        new HttpError(
+          'Oops, something went wrong!',
+          500,
+          'INTERNAL_SERVER_ERROR'
+        )
+      ];
     }
   }
 }

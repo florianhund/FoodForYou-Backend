@@ -17,7 +17,14 @@ export default class OrderService {
       const orders = await this._repo.findAll(sort || '', fields?.split(','));
       return [orders, undefined];
     } catch (err) {
-      return [null, new HttpError()];
+      return [
+        null,
+        new HttpError(
+          'Oops, something went wrong!',
+          500,
+          'INTERNAL_SERVER_ERROR'
+        )
+      ];
     }
   }
 
@@ -36,7 +43,14 @@ export default class OrderService {
         ];
       return [order, undefined];
     } catch (err) {
-      return [null, new HttpError()];
+      return [
+        null,
+        new HttpError(
+          'Oops, something went wrong!',
+          500,
+          'INTERNAL_SERVER_ERROR'
+        )
+      ];
     }
   }
 
@@ -83,7 +97,14 @@ export default class OrderService {
       );
       return [orders, undefined];
     } catch (err) {
-      return [null, new HttpError()];
+      return [
+        null,
+        new HttpError(
+          'Oops, something went wrong!',
+          500,
+          'INTERNAL_SERVER_ERROR'
+        )
+      ];
     }
   }
 
@@ -97,7 +118,14 @@ export default class OrderService {
       } as IOrder);
       return [order, undefined];
     } catch (err) {
-      return [null, new HttpError()];
+      return [
+        null,
+        new HttpError(
+          'Oops, something went wrong!',
+          500,
+          'INTERNAL_SERVER_ERROR'
+        )
+      ];
     }
   }
 
@@ -119,7 +147,14 @@ export default class OrderService {
         ];
       return [order, undefined];
     } catch (err) {
-      return [null, new HttpError()];
+      return [
+        null,
+        new HttpError(
+          'Oops, something went wrong!',
+          500,
+          'INTERNAL_SERVER_ERROR'
+        )
+      ];
     }
   }
 
@@ -138,7 +173,14 @@ export default class OrderService {
         ];
       return [order, undefined];
     } catch (err) {
-      return [null, new HttpError()];
+      return [
+        null,
+        new HttpError(
+          'Oops, something went wrong!',
+          500,
+          'INTERNAL_SERVER_ERROR'
+        )
+      ];
     }
   }
 }

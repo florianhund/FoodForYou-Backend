@@ -20,7 +20,14 @@ export default class RestaurantService {
       );
       return [restaurants, undefined];
     } catch (err) {
-      return [null, new HttpError()];
+      return [
+        null,
+        new HttpError(
+          'Oops, something went wrong!',
+          500,
+          'INTERNAL_SERVER_ERROR'
+        )
+      ];
     }
   }
 
@@ -45,7 +52,14 @@ export default class RestaurantService {
         ];
       return [restaurant, undefined];
     } catch (err) {
-      return [null, new HttpError()];
+      return [
+        null,
+        new HttpError(
+          'Oops, something went wrong!',
+          500,
+          'INTERNAL_SERVER_ERROR'
+        )
+      ];
     }
   }
 
@@ -72,7 +86,14 @@ export default class RestaurantService {
       );
       return [restaurants, undefined];
     } catch (err) {
-      return [null, new HttpError()];
+      return [
+        null,
+        new HttpError(
+          'Oops, something went wrong!',
+          500,
+          'INTERNAL_SERVER_ERROR'
+        )
+      ];
     }
   }
 
@@ -81,7 +102,14 @@ export default class RestaurantService {
       const restaurant = await this._repo.create(data);
       return [restaurant, undefined];
     } catch (err) {
-      return [null, new HttpError()];
+      return [
+        null,
+        new HttpError(
+          'Oops, something went wrong!',
+          500,
+          'INTERNAL_SERVER_ERROR'
+        )
+      ];
     }
   }
 
@@ -103,7 +131,14 @@ export default class RestaurantService {
         ];
       return [restaurant, undefined];
     } catch (err) {
-      return [null, new HttpError()];
+      return [
+        null,
+        new HttpError(
+          'Oops, something went wrong!',
+          500,
+          'INTERNAL_SERVER_ERROR'
+        )
+      ];
     }
   }
 
@@ -122,7 +157,14 @@ export default class RestaurantService {
         ];
       return [restaurant, undefined];
     } catch (err) {
-      return [null, new HttpError()];
+      return [
+        null,
+        new HttpError(
+          'Oops, something went wrong!',
+          500,
+          'INTERNAL_SERVER_ERROR'
+        )
+      ];
     }
   }
 }

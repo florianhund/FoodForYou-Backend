@@ -33,11 +33,17 @@ export default abstract class HttpController {
 
   protected sendError(
     res: Response,
-    err: HttpError = new HttpError()
+    err: HttpError = new HttpError(
+      'Oops, something went wrong!',
+      500,
+      'INTERNAL_SERVER_ERROR'
+    )
   ): Response {
-    return res
-      .status(err.code)
-      .json({ message: err.message, code: err.code, status: err.status });
+    return res.status(err.statusCode).json({
+      message: err.message,
+      code: err.statusCode,
+      status: err.statusMessage
+    });
   }
 
   protected bindHandlers(context: HttpController) {
