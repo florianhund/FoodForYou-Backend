@@ -23,6 +23,6 @@ describe('get images by id', () => {
     const [image, error] = await imageSrv.getImageDetails('somefakeid');
 
     expect(image).toBeFalsy();
-    expect(error?.code).toBe(404);
+    expect(error?.statusCode).toBe(404);
   });
 });

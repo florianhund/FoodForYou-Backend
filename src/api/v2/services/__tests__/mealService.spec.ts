@@ -79,7 +79,7 @@ describe('get meal by id', () => {
     const [meals, error] = await mealsrv.getById(fakeId);
     expect(meals).toBeFalsy();
     expect(error).toBeTruthy();
-    expect(error?.code).toBe(404);
+    expect(error?.statusCode).toBe(404);
   });
 
   it('should return data if id is valid', async () => {
@@ -136,7 +136,7 @@ describe('update meal', () => {
     const [meal, error] = await mealsrv.update(fakeId, {});
     expect(meal).toBeFalsy();
     expect(error).toBeTruthy();
-    expect(error?.code).toBe(404);
+    expect(error?.statusCode).toBe(404);
   });
 
   it('should set isVegetarian true if vegetarian tag', async () => {
@@ -160,6 +160,6 @@ describe('delete meals', () => {
     const [meal, error] = await mealsrv.delete(fakeId);
     expect(meal).toBeFalsy();
     expect(error).toBeTruthy();
-    expect(error?.code).toBe(404);
+    expect(error?.statusCode).toBe(404);
   });
 });

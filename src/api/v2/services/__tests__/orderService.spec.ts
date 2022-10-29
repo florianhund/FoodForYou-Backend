@@ -112,7 +112,7 @@ describe('get order by id', () => {
     const [order, error] = await ordersrv.getById(fakeId);
     expect(order).toBeFalsy();
     expect(error).toBeTruthy();
-    expect(error?.code).toBe(404);
+    expect(error?.statusCode).toBe(404);
   });
 
   it('should return data if id is valid', async () => {
@@ -155,7 +155,7 @@ describe('update order', () => {
     const [order, error] = await ordersrv.update(fakeId, {});
     expect(order).toBeFalsy();
     expect(error).toBeTruthy();
-    expect(error?.code).toBe(404);
+    expect(error?.statusCode).toBe(404);
   });
 
   it('should update price when adding meals', async () => {
@@ -188,6 +188,6 @@ describe('delete orders', () => {
     const [orderedMeals, error] = await ordersrv.delete(fakeId);
     expect(orderedMeals).toBeFalsy();
     expect(error).toBeTruthy();
-    expect(error?.code).toBe(404);
+    expect(error?.statusCode).toBe(404);
   });
 });

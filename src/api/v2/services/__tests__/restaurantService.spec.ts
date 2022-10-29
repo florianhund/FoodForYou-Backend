@@ -72,7 +72,7 @@ describe('get restaurant by id', () => {
     const [restaurants, error] = await restaurantsrv.getById(fakeId);
     expect(restaurants).toBeFalsy();
     expect(error).toBeTruthy();
-    expect(error?.code).toBe(404);
+    expect(error?.statusCode).toBe(404);
   });
 
   it('should return data if id is valid', async () => {
@@ -110,7 +110,7 @@ describe('update restaurant', () => {
     const [restaurant, error] = await restaurantsrv.update(fakeId, {});
     expect(restaurant).toBeFalsy();
     expect(error).toBeTruthy();
-    expect(error?.code).toBe(404);
+    expect(error?.statusCode).toBe(404);
   });
 });
 
@@ -125,6 +125,6 @@ describe('delete restaurants', () => {
     const [restaurant, error] = await restaurantsrv.delete(fakeId);
     expect(restaurant).toBeFalsy();
     expect(error).toBeTruthy();
-    expect(error?.code).toBe(404);
+    expect(error?.statusCode).toBe(404);
   });
 });

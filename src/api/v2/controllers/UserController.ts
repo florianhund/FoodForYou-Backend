@@ -145,7 +145,10 @@ export default class UserController extends HttpController {
     if (!user) return super.sendError(res, error);
 
     if (+otp! !== user.otp)
-      return super.sendError(res, new HttpError('wrong code', 401));
+      return super.sendError(
+        res,
+        new HttpError('wrong code', 401, 'UNAUTHENTIICATED')
+      );
     await this._usersrv.update(id, { isVerified: true, otp: null });
     return super.sendSuccess(res, {}, 204);
   }

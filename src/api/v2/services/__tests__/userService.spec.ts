@@ -80,7 +80,7 @@ describe('get user by id', () => {
     const [users, error] = await usersrv.getById(fakeId);
     expect(users).toBeFalsy();
     expect(error).toBeTruthy();
-    expect(error?.code).toBe(404);
+    expect(error?.statusCode).toBe(404);
   });
 
   it('should return data if id is valid', async () => {
@@ -120,7 +120,7 @@ describe('update user', () => {
     const [user, error] = await usersrv.update(fakeId, {});
     expect(user).toBeFalsy();
     expect(error).toBeTruthy();
-    expect(error?.code).toBe(404);
+    expect(error?.statusCode).toBe(404);
   });
 });
 
@@ -135,6 +135,6 @@ describe('delete users', () => {
     const [user, error] = await usersrv.delete(fakeId);
     expect(user).toBeFalsy();
     expect(error).toBeTruthy();
-    expect(error?.code).toBe(404);
+    expect(error?.statusCode).toBe(404);
   });
 });
