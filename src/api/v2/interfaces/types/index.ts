@@ -13,6 +13,14 @@ export enum httpMethods {
   CONNECT = 'connect'
 }
 
+export interface IHttpError extends Error {
+  message: string;
+  statusCode: number;
+  statusMessage: string;
+  isOperational: boolean;
+  stack?: string;
+}
+
 export enum Allergenics {
   A,
   B,
