@@ -4,17 +4,15 @@
   "description": "Food Delivery API",
   "main": "./src/index.ts",
   "scripts": {
+    "prepare": "husky install",
     "start": "ts-node --files ./src/index.ts",
     "dev": "nodemon ./src/index.ts",
     "test": "jest --runInBand",
     "build": "tsc -p .",
     "prettier:format": "prettier --config .prettierrc . --write",
-    "lint": "eslint . --ext .ts"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run prettier:format && npm run lint && npm run build"
-    }
+    "lint": "eslint . --ext .ts",
+    "pre-commit": "npm run lint && npm run build",
+    "pre-push": "npm run prettier:format"
   },
   "nodemonConfig": {
     "watch": [
