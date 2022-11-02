@@ -1,9 +1,9 @@
 import { ConnectOptions, Types } from 'mongoose';
 
-import Database from '../../../../config/Database';
-import { DATABASE_URL } from '../../../../config/constants';
-import { User } from '../../models';
-import SuperTest from '../../../../../__tests__/utils/SuperTest';
+import Database from '../../src/config/Database';
+import { DATABASE_URL } from '../../src/config/constants';
+import { User } from '../../src/api/v2/models';
+import SuperTest from '../utils/SuperTest';
 
 const db = new Database(DATABASE_URL, {
   useNewUrlParser: true

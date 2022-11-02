@@ -1,4 +1,4 @@
-import SuperTest from '../../../../../__tests__/utils/SuperTest';
+import SuperTest from '../utils/SuperTest';
 
 const superTest = new SuperTest('/api/v2/images');
 

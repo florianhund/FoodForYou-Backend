@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction, Router } from 'express';
-import { IRoute } from '../../interfaces';
+
+import { IRoute, IHttpError } from '../../interfaces';
 import HttpError from '../../utils/HttpError';
 
 export default abstract class HttpController {
@@ -33,7 +34,7 @@ export default abstract class HttpController {
 
   protected sendError(
     res: Response,
-    err: HttpError = new HttpError(
+    err: IHttpError = new HttpError(
       'Oops, something went wrong!',
       500,
       'INTERNAL_SERVER_ERROR'

@@ -1,33 +1,29 @@
 import { ConnectOptions, Types } from 'mongoose';
 
-import Database from '../../../../config/Database';
-import { DATABASE_URL } from '../../../../config/constants';
-import { Order, User, Meal, Restaurant } from '../../models';
-import SuperTest from '../../../../../__tests__/utils/SuperTest';
+import Database from '../../src/config/Database';
+import { DATABASE_URL } from '../../src/config/constants';
+import { Meal, Restaurant } from '../../src/api/v2/models';
+import SuperTest from '../utils/SuperTest';
 
 const db = new Database(DATABASE_URL, {
   useNewUrlParser: true
 } as ConnectOptions);
-const superTest = new SuperTest('/api/v2/orders');
+const superTest = new SuperTest('/api/v2/meals');
 
 const fakeId = '123456789123456789123456';
 const realId = new Types.ObjectId();
-const realUserId = new Types.ObjectId();
-const realMealId = new Types.ObjectId();
 const restaurantId = new Types.ObjectId();
 
-const order = {
+const meal = {
   _id: realId,
-  address: 'Rudolfstr. 7b',
-  postalCode: 6067,
-  user: {
-    id: realUserId
-  },
-  meals: [
-    {
-      id: realMealId
-    }
-  ]
+  name: 'pizza',
+  price: 8,
+  rating: 3,
+  calories: 600,
+  description: 'tasty pizza',
+  restaurant: {
+    id: restaurantId
+  }
 };
 
 beforeAll(async () => {
@@ -40,31 +36,6 @@ beforeAll(async () => {
     address: 'some street',
     postalCode: 6060
   });
-
-  await User.create({
-    _id: realUserId,
-    firstName: 'Florian',
-    lastName: 'Hundegger',
-    email: 'flo.hundegger@gmail.com',
-    password: 'SevretPassword_2',
-    provider: 'email',
-    providerId: realId,
-    otp: 7632,
-    isVerified: false,
-    isAdmin: false
-  });
-
-  await Meal.create({
-    _id: realMealId,
-    name: 'pizza',
-    price: 8,
-    rating: 4,
-    calories: 400,
-    description: 'tasty pizza',
-    restaurant: {
-      id: restaurantId
-    }
-  });
 });
 
 afterAll(() => {
@@ -72,14 +43,14 @@ afterAll(() => {
 });
 
 beforeEach(async () => {
-  await new Order(order).save();
+  await new Meal(meal).save();
 });
 
 afterEach(async () => {
-  await Order.deleteMany({});
+  await Meal.deleteMany({});
 });
 
-describe('GET /orders', () => {
+describe('GET /meals', () => {
   it('should return 200 & array if query object is empty', async () => {
     const response = await superTest.get('');
 
@@ -88,16 +59,23 @@ describe('GET /orders', () => {
     expect(Array.isArray(response.body.data)).toBeTruthy();
   });
 
-  it('should return 200 & arr if query is not empty', async () => {
-    const response = await superTest.get('?min_price=12');
+  it('should return 200 & array if query object is not empty', async () => {
+    const response = await superTest.get('?name=pizza');
 
     expect(response.statusCode).toBe(200);
     expect(response.headers['content-type']).toMatch(/application\/json/g);
-    expect(response.body.data).toBeTruthy();
+    expect(Array.isArray(response.body.data)).toBeTruthy();
+  });
+
+  it('should return 400 if query[without_allergenics] is no allergenic', async () => {
+    const response = await superTest.get('?without_allergenics=Z');
+
+    expect(response.statusCode).toBe(400);
+    expect(response.headers['content-type']).toMatch(/application\/json/g);
   });
 });
 
-describe('GET /orders/:id', () => {
+describe('GET /meals/:id', () => {
   it('should return 200 & object if valid id', async () => {
     const response = await superTest.get(`/${realId}`);
 
@@ -121,32 +99,27 @@ describe('GET /orders/:id', () => {
   });
 });
 
-describe('POST /orders', () => {
+describe('POST /meals', () => {
   it('should create post & return 201', async () => {
     const data = {
-      address: 'Rudolfstr. 7b',
-      postalCode: 6067,
-      user: {
-        id: realUserId
-      },
-      meals: [
-        {
-          id: realMealId
-        }
-      ]
+      name: 'pizza',
+      price: 8,
+      rating: 3,
+      calories: 600,
+      restaurant: {
+        id: restaurantId
+      }
     };
 
     const response = await superTest.post('', data);
+
     expect(response.statusCode).toBe(201);
     expect(response.headers.location).toBeTruthy();
   });
 
-  it('should return 400 if meals is []', async () => {
+  it('should return 400 with invalid input', async () => {
     const data = {
-      address: 'Rudolfstr. 7b',
-      postalCode: 6067,
-      userId: realUserId,
-      meals: []
+      name: 'pizza'
     };
 
     const response = await superTest.post('', data);
@@ -155,22 +128,13 @@ describe('POST /orders', () => {
     expect(response.headers['content-type']).toMatch(/application\/json/g);
   });
 
-  it('should return 400 if user is null', async () => {
+  it('should retun 400 if wrong tag', async () => {
     const data = {
-      address: 'Rudolfstr. 7b',
-      postalCode: 6067,
-      meals: []
-    };
-
-    const response = await superTest.post('', data);
-
-    expect(response.statusCode).toBe(400);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
-  });
-
-  it('should return 400 with other invalid input', async () => {
-    const data = {
-      postalCode: 'some string'
+      name: 'pizza',
+      price: 8,
+      rating: 3,
+      calories: 600,
+      tags: ['something']
     };
 
     const response = await superTest.post('', data);
@@ -180,10 +144,11 @@ describe('POST /orders', () => {
   });
 });
 
-describe('PATCH /orders/:id', () => {
+describe('PATCH /meals/:id', () => {
   it('should return 204 and update data with valid id', async () => {
     const data = {
-      postalCode: 6060
+      price: 6,
+      tags: ['Burger']
     };
     const response = await superTest.patch(`/${realId}`, data);
 
@@ -201,7 +166,8 @@ describe('PATCH /orders/:id', () => {
 
   it('should return 404 if invalid id', async () => {
     const data = {
-      postalCode: 6060
+      name: 'lasagne',
+      price: 2
     };
     const response = await superTest.patch(`/${fakeId}`, data);
 
@@ -211,7 +177,8 @@ describe('PATCH /orders/:id', () => {
 
   it('should return 400 if wrong input data', async () => {
     const data = {
-      address: 2342
+      name: 'burger',
+      price: 1000
     };
 
     const response = await superTest.patch('/123', data);
@@ -219,9 +186,20 @@ describe('PATCH /orders/:id', () => {
     expect(response.statusCode).toBe(400);
     expect(response.headers['content-type']).toMatch(/application\/json/g);
   });
+
+  it('should retun 400 if wrong tag', async () => {
+    const data = {
+      tags: ['something']
+    };
+
+    const response = await superTest.patch(`/${realId}`, data);
+
+    expect(response.statusCode).toBe(400);
+    expect(response.headers['content-type']).toMatch(/application\/json/g);
+  });
 });
 
-describe('DELETE /orders/:id', () => {
+describe('DELETE /meals/:id', () => {
   it('should return 204 if valid id', async () => {
     const response = await superTest.delete(`/${realId}`);
 

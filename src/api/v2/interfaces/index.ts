@@ -38,6 +38,14 @@ export interface Link {
   id: ObjectId;
 }
 
+export interface IHttpError extends Error {
+  message: string;
+  statusCode: number;
+  statusMessage: string;
+  isOperational: boolean;
+  stack?: string;
+}
+
 export interface MealQuery {
   name?: string;
   min_price?: number;
