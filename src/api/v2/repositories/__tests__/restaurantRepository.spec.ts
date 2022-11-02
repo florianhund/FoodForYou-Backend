@@ -40,9 +40,9 @@ describe('RestaurantRepo', () => {
         }
       ];
 
-      Restaurant.find = jest.fn().mockImplementationOnce(() => ({
-        sort: jest.fn().mockImplementationOnce(() => ({
-          select: jest.fn().mockResolvedValueOnce(mockResponse)
+      Restaurant.find = jest.fn().mockImplementation(() => ({
+        sort: jest.fn().mockImplementation(() => ({
+          select: jest.fn().mockResolvedValue(mockResponse)
         }))
       }));
 
@@ -67,9 +67,9 @@ describe('RestaurantRepo', () => {
         }
       ];
 
-      Restaurant.find = jest.fn().mockImplementationOnce(() => ({
-        sort: jest.fn().mockImplementationOnce(() => ({
-          select: jest.fn().mockResolvedValueOnce(mockResponse)
+      Restaurant.find = jest.fn().mockImplementation(() => ({
+        sort: jest.fn().mockImplementation(() => ({
+          select: jest.fn().mockResolvedValue(mockResponse)
         }))
       }));
 
@@ -93,13 +93,28 @@ describe('RestaurantRepo', () => {
         __v: 0
       };
 
-      Restaurant.findById = jest.fn().mockImplementationOnce(() => ({
-        select: jest.fn().mockResolvedValueOnce(mockResponse)
+      Restaurant.findById = jest.fn().mockImplementation(() => ({
+        select: jest.fn().mockResolvedValue(mockResponse)
       }));
 
       const result = await restaurantRepo.findById(restaurantId);
 
       expect(result).toEqual(mockResponse);
+      expect(Restaurant.findById).toHaveBeenCalledTimes(1);
+      expect(Restaurant.findById).toHaveBeenCalledWith(restaurantId);
+    });
+
+    it('should return null', async () => {
+      const restaurantId = new Types.ObjectId('123456789123456789123456');
+      const mockResponse = null;
+
+      Restaurant.findById = jest.fn().mockImplementation(() => ({
+        select: jest.fn().mockResolvedValue(mockResponse)
+      }));
+
+      const result = await restaurantRepo.findById(restaurantId);
+
+      expect(result).toBeNull();
       expect(Restaurant.findById).toHaveBeenCalledTimes(1);
       expect(Restaurant.findById).toHaveBeenCalledWith(restaurantId);
     });
@@ -119,7 +134,7 @@ describe('RestaurantRepo', () => {
         __v: 0
       };
 
-      Restaurant.create = jest.fn().mockResolvedValueOnce(mockResponse);
+      Restaurant.create = jest.fn().mockResolvedValue(mockResponse);
 
       const result = await restaurantRepo.create(restaurantData);
 
@@ -145,7 +160,7 @@ describe('RestaurantRepo', () => {
         __v: 0
       };
 
-      Restaurant.findByIdAndUpdate = jest.fn().mockImplementationOnce(() => {
+      Restaurant.findByIdAndUpdate = jest.fn().mockImplementation(() => {
         mockResponse.name = updateQuery.name;
         return mockResponse;
       });
@@ -153,6 +168,26 @@ describe('RestaurantRepo', () => {
       const result = await restaurantRepo.update(restaurantId, updateQuery);
 
       expect(result).toEqual(mockResponse);
+      expect(Restaurant.findByIdAndUpdate).toHaveBeenCalledTimes(1);
+      expect(Restaurant.findByIdAndUpdate).toHaveBeenCalledWith(
+        restaurantId,
+        updateQuery,
+        { new: true }
+      );
+    });
+
+    it('should return null', async () => {
+      const restaurantId = new Types.ObjectId('123456789123456789123456');
+      const updateQuery = {
+        name: 'la taverna'
+      };
+      const mockResponse = null;
+
+      Restaurant.findByIdAndUpdate = jest.fn().mockResolvedValue(mockResponse);
+
+      const result = await restaurantRepo.update(restaurantId, updateQuery);
+
+      expect(result).toBeNull();
       expect(Restaurant.findByIdAndUpdate).toHaveBeenCalledTimes(1);
       expect(Restaurant.findByIdAndUpdate).toHaveBeenCalledWith(
         restaurantId,
@@ -174,15 +209,26 @@ describe('RestaurantRepo', () => {
         __v: 0
       };
 
-      Restaurant.findByIdAndRemove = jest
-        .fn()
-        .mockResolvedValueOnce(mockResponse);
+      Restaurant.findByIdAndRemove = jest.fn().mockResolvedValue(mockResponse);
 
       const result = await restaurantRepo.delete(restaurantId);
 
       expect(result).toEqual(mockResponse);
       expect(Restaurant.findByIdAndRemove).toHaveBeenCalledTimes(1);
       expect(Restaurant.findByIdAndRemove).toBeCalledWith(restaurantId);
+    });
+
+    it('should return null', async () => {
+      const restaurantId = new Types.ObjectId('123456789123456789123456');
+      const mockResponse = null;
+
+      Restaurant.findByIdAndRemove = jest.fn().mockResolvedValue(mockResponse);
+
+      const result = await restaurantRepo.delete(restaurantId);
+
+      expect(result).toBeNull();
+      expect(Restaurant.findByIdAndRemove).toHaveBeenCalledTimes(1);
+      expect(Restaurant.findByIdAndRemove).toHaveBeenCalledWith(restaurantId);
     });
   });
 });
