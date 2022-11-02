@@ -11,8 +11,8 @@
     "build": "tsc -p .",
     "prettier:format": "prettier --config .prettierrc . --write",
     "lint": "eslint . --ext .ts",
-    "pre-commit": "npm run lint && npm run build",
-    "pre-push": "npm run prettier:format"
+    "pre-commit": "npm run lint && npm run prettier:format",
+    "pre-push": "npm run build"
   },
   "nodemonConfig": {
     "watch": [
