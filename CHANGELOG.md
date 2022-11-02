@@ -2,6 +2,21 @@
 
 All notable changes to this project are documented in this file following the [Keep a CHANGELOG](https://keepachangelog.com/en/1.0.0/) conventions.
 
+## [2.0.0-alpha.4] - 2022-11-02
+
+### Added
+
+- Added husky
+- Added HttpError interface
+
+### Changed
+
+- Moved 3rd party related files into src/api/v2/lib folder
+
+### Fixed
+
+- Fixed serialization error when logging in
+
 ## [2.0.0-alpha.3] - 2022-10-23
 
 ### Added
