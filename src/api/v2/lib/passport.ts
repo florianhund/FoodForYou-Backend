@@ -103,7 +103,7 @@ const initialize = (passport: PassportStatic) => {
   );
 
   passport.serializeUser((user, done) => {
-    done(null, user.providerId);
+    done(null, user._id);
   });
 
   passport.deserializeUser(async (id, done) => {
