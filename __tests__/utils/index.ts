@@ -12,6 +12,9 @@ export const getMockedRequest = (
     params,
     body,
     query,
+    file: {
+      path: 'somebuffer'
+    },
     isAuthenticated: jest.fn()
   } as unknown as Request);
 
