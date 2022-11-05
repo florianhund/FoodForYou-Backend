@@ -36,15 +36,8 @@ export default class ImageController extends HttpController {
 
   private async getImages(req: Request, res: Response) {
     const [result, err] = await this._imageSrv.getAllImages();
-    const data = {
-      ...result,
-      resources: result.resources.map((resource: any) => ({
-        publicId: resource.public_id,
-        url: resource.secure_url
-      }))
-    };
     if (!result) return super.sendError(res, err);
-    super.sendSuccess(res, data);
+    super.sendSuccess(res, result);
   }
 
   // TODO: check req.file (req.body.img) in validator

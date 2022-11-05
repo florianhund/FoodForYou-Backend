@@ -9,8 +9,15 @@ export default class ImageService {
 
   public async getAllImages(): PromiseHandler<any> {
     try {
-      const resources = await this._instance.api.resources();
-      return [resources, undefined];
+      const data = await this._instance.api.resources();
+      const result = {
+        ...data,
+        resources: data.resources.map((resource: any) => ({
+          publicId: resource.public_id,
+          url: resource.secure_url
+        }))
+      };
+      return [result, undefined];
     } catch (err) {
       return [
         null,
