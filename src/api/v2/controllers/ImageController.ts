@@ -3,7 +3,6 @@ import { Request, Response } from 'express';
 import { IRoute } from '../interfaces';
 import { httpMethods } from '../interfaces/types';
 import HttpController from './base/HttpController';
-import HttpError from '../utils/HttpError';
 import ImageService from '../services/ImageService';
 import { uploadImage } from '../middlewares';
 
@@ -43,10 +42,7 @@ export default class ImageController extends HttpController {
   // TODO: check req.file (req.body.img) in validator
   private async uploadImage(req: Request, res: Response) {
     if (!req.file?.path) return res.send('error');
-    const [result, err] = await this._imageSrv.upload(
-      req.file.path,
-      'dev/meals'
-    );
+    const [result, err] = await this._imageSrv.upload(req.file.path, 'unused');
     if (!result) return super.sendError(res, err);
     res.setHeader('Location', `images/${result?.public_id}`);
     super.sendSuccess(res, {}, 201);
