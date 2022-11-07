@@ -385,4 +385,8 @@ describe('UserController', () => {
       expect(mRes.json).toHaveBeenCalledTimes(1);
     });
   });
+
+  describe('UserController.sendVerification', () => {});
+
+  describe('UserController.verifyUser', () => {});
 });
