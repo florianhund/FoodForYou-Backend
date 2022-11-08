@@ -3,4 +3,5 @@ dist
 .env
 requests.http
 .idea
-coverage
+coverage/*
+!coverage/lcov.info
