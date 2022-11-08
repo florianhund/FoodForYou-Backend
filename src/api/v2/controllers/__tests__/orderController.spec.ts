@@ -1,244 +1,484 @@
-import { ConnectOptions, Types } from 'mongoose';
+import { Types } from 'mongoose';
 
-import Database from '../../../../config/Database';
-import { DATABASE_URL } from '../../../../config/constants';
-import { Order, User, Meal, Restaurant } from '../../models';
-import SuperTest from '../../../../../__tests__/utils/SuperTest';
+import { OrderRepository } from '../../repositories';
+import { OrderService } from '../../services';
+import OrderController from '../OrderController';
+import { HttpError } from '../../utils';
+import {
+  getMockedRequest,
+  getMockedResponse
+} from '../../../../../__tests__/utils';
+import { IOrder } from '../../interfaces/models';
+import { IHttpError } from '../../interfaces';
 
-const db = new Database(DATABASE_URL, {
-  useNewUrlParser: true
-} as ConnectOptions);
-const superTest = new SuperTest('/api/v2/orders');
+const orderService = new OrderService(new OrderRepository());
+const orderController = new OrderController(orderService);
 
-const fakeId = '123456789123456789123456';
-const realId = new Types.ObjectId();
-const realUserId = new Types.ObjectId();
-const realMealId = new Types.ObjectId();
-const restaurantId = new Types.ObjectId();
+jest.mock('../../services');
+const mockedOrderService = jest.mocked(orderService, true);
 
-const order = {
-  _id: realId,
-  address: 'Rudolfstr. 7b',
-  postalCode: 6067,
-  user: {
-    id: realUserId
-  },
-  meals: [
-    {
-      id: realMealId
-    }
-  ]
-};
-
-beforeAll(async () => {
-  db.init();
-
-  await Restaurant.create({
-    _id: restaurantId,
-    name: 'somee restaurant',
-    rating: 7,
-    address: 'some street',
-    postalCode: 6060
+describe('OrderController', () => {
+  beforeEach(() => {
+    jest.resetAllMocks();
   });
 
-  await User.create({
-    _id: realUserId,
-    firstName: 'Florian',
-    lastName: 'Hundegger',
-    email: 'flo.hundegger@gmail.com',
-    password: 'SevretPassword_2',
-    provider: 'email',
-    providerId: realId,
-    otp: 7632,
-    isVerified: false,
-    isAdmin: false
-  });
-
-  await Meal.create({
-    _id: realMealId,
-    name: 'pizza',
-    price: 8,
-    rating: 4,
-    calories: 400,
-    description: 'tasty pizza',
-    restaurant: {
-      id: restaurantId
-    }
-  });
-});
-
-afterAll(() => {
-  Database.closeAllConnections();
-});
-
-beforeEach(async () => {
-  await new Order(order).save();
-});
-
-afterEach(async () => {
-  await Order.deleteMany({});
-});
-
-describe('GET /orders', () => {
-  it('should return 200 & array if query object is empty', async () => {
-    const response = await superTest.get('');
-
-    expect(response.statusCode).toBe(200);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
-    expect(Array.isArray(response.body.data)).toBeTruthy();
-  });
-
-  it('should return 200 & arr if query is not empty', async () => {
-    const response = await superTest.get('?min_price=12');
-
-    expect(response.statusCode).toBe(200);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
-    expect(response.body.data).toBeTruthy();
-  });
-});
-
-describe('GET /orders/:id', () => {
-  it('should return 200 & object if valid id', async () => {
-    const response = await superTest.get(`/${realId}`);
-
-    expect(response.statusCode).toBe(200);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
-    expect(response.body.data._id).toBe(realId.toString());
-  });
-
-  it('should return 404 if id is invalid', async () => {
-    const response = await superTest.get(`/${fakeId}`);
-
-    expect(response.statusCode).toBe(404);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
-  });
-
-  it('should return 400 if id is not 24 chars long', async () => {
-    const response = await superTest.get('/123');
-
-    expect(response.statusCode).toBe(400);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
-  });
-});
-
-describe('POST /orders', () => {
-  it('should create post & return 201', async () => {
-    const data = {
-      address: 'Rudolfstr. 7b',
-      postalCode: 6067,
-      user: {
-        id: realUserId
-      },
-      meals: [
+  describe('OrderController.__getOrders', () => {
+    it('should send 200 response with empty query', async () => {
+      const mockOrders = [
         {
-          id: realMealId
+          _id: new Types.ObjectId(),
+          address: 'Rudolfstr. 7b',
+          postalCode: 6067,
+          user: {
+            id: new Types.ObjectId()
+          },
+          meals: [
+            {
+              id: new Types.ObjectId()
+            }
+          ]
+        },
+        {
+          _id: new Types.ObjectId(),
+          address: 'Rudolfstr. 7b',
+          postalCode: 6067,
+          user: {
+            id: new Types.ObjectId()
+          },
+          meals: [
+            {
+              id: new Types.ObjectId()
+            }
+          ]
+        },
+        {
+          _id: new Types.ObjectId(),
+          address: 'Rudolfstr. 7b',
+          postalCode: 6067,
+          user: {
+            id: new Types.ObjectId()
+          },
+          meals: [
+            {
+              id: new Types.ObjectId()
+            }
+          ]
         }
-      ]
-    };
+      ] as unknown as IOrder[];
+      const mockResponse: [IOrder[], undefined] = [mockOrders, undefined];
 
-    const response = await superTest.post('', data);
-    expect(response.statusCode).toBe(201);
-    expect(response.headers.location).toBeTruthy();
+      const mReq = getMockedRequest();
+      const mRes = getMockedResponse();
+      // orderService.getById = jest.fn().mockResolvedValue(mockResponse);
+      mockedOrderService.getAll.mockResolvedValue(mockResponse);
+
+      await orderController.routes[0].handler(mReq, mRes);
+
+      expect(mRes.status).toHaveBeenCalledWith(200);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({ data: mockOrders });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
+
+    it('should send 200 response with query', async () => {
+      const mockOrders = [
+        {
+          _id: new Types.ObjectId(),
+          address: 'Rudolfstr. 7b',
+          postalCode: 6067,
+          user: {
+            id: new Types.ObjectId()
+          },
+          meals: [
+            {
+              id: new Types.ObjectId()
+            }
+          ]
+        },
+        {
+          _id: new Types.ObjectId(),
+          address: 'Rudolfstr. 7b',
+          postalCode: 6067,
+          user: {
+            id: new Types.ObjectId()
+          },
+          meals: [
+            {
+              id: new Types.ObjectId()
+            }
+          ]
+        },
+        {
+          _id: new Types.ObjectId(),
+          address: 'Rudolfstr. 7b',
+          postalCode: 6067,
+          user: {
+            id: new Types.ObjectId()
+          },
+          meals: [
+            {
+              id: new Types.ObjectId()
+            }
+          ]
+        }
+      ] as unknown as IOrder[];
+      const mockResponse: [IOrder[], undefined] = [mockOrders, undefined];
+
+      const mReq = getMockedRequest(
+        {},
+        {},
+        { min_price: 10, sort_by: '-address' }
+      );
+      const mRes = getMockedResponse();
+      // orderService.getById = jest.fn().mockResolvedValue(mockResponse);
+      mockedOrderService.get.mockResolvedValue(mockResponse);
+
+      await orderController.routes[0].handler(mReq, mRes);
+
+      expect(mRes.status).toHaveBeenCalledWith(200);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({ data: mockOrders });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
+
+    it('should return 500 error with empty query', async () => {
+      const mockError = new HttpError(
+        'Order was not found.',
+        500,
+        'INTERNAL_SERVER_ERROR'
+      );
+      const mockResponse: [null, IHttpError] = [null, mockError];
+
+      const mReq = getMockedRequest();
+      const mRes = getMockedResponse();
+      mockedOrderService.getAll.mockResolvedValue(mockResponse);
+
+      await orderController.routes[0].handler(mReq, mRes);
+
+      expect(mRes.status).toHaveBeenCalledWith(500);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({
+        message: mockError.message,
+        code: mockError.statusCode,
+        status: mockError.statusMessage
+      });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
+
+    it('should return 500 error', async () => {
+      const mockError = new HttpError(
+        'Order was not found.',
+        500,
+        'INTERNAL_SERVER_ERROR'
+      );
+      const mockResponse: [null, IHttpError] = [null, mockError];
+
+      const mReq = getMockedRequest({}, {}, { min_price: 7 });
+      const mRes = getMockedResponse();
+      mockedOrderService.get.mockResolvedValue(mockResponse);
+
+      await orderController.routes[0].handler(mReq, mRes);
+
+      expect(mRes.status).toHaveBeenCalledWith(500);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({
+        message: mockError.message,
+        code: mockError.statusCode,
+        status: mockError.statusMessage
+      });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
   });
 
-  it('should return 400 if meals is []', async () => {
-    const data = {
-      address: 'Rudolfstr. 7b',
-      postalCode: 6067,
-      userId: realUserId,
-      meals: []
-    };
+  describe('OrderController.__getOrderById', () => {
+    it('should send 200 response', async () => {
+      const orderId = new Types.ObjectId();
+      const mockOrder = {
+        _id: new Types.ObjectId(),
+        address: 'Rudolfstr. 7b',
+        postalCode: 6067,
+        user: {
+          id: new Types.ObjectId()
+        },
+        meals: [
+          {
+            id: new Types.ObjectId()
+          }
+        ]
+      } as unknown as IOrder;
+      const mockResponse: [IOrder, undefined] = [mockOrder, undefined];
 
-    const response = await superTest.post('', data);
+      const mReq = getMockedRequest({ id: orderId.toString() });
+      const mRes = getMockedResponse();
+      // orderService.getById = jest.fn().mockResolvedValue(mockResponse);
+      mockedOrderService.getById.mockResolvedValue(mockResponse);
 
-    expect(response.statusCode).toBe(400);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
+      await orderController.routes[2].handler(mReq, mRes);
+
+      expect(mRes.status).toHaveBeenCalledWith(200);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({ data: mockOrder });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
+
+    it('should return 500 error', async () => {
+      const mockError = new HttpError(
+        'Order was not found.',
+        500,
+        'INTERNAL_SERVER_ERROR'
+      );
+      const mockResponse: [null, IHttpError] = [null, mockError];
+
+      const mReq = getMockedRequest();
+      const mRes = getMockedResponse();
+      mockedOrderService.getById.mockResolvedValue(mockResponse);
+
+      await orderController.routes[2].handler(mReq, mRes);
+
+      expect(mRes.status).toHaveBeenCalledWith(500);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({
+        message: mockError.message,
+        code: mockError.statusCode,
+        status: mockError.statusMessage
+      });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
   });
 
-  it('should return 400 if user is null', async () => {
-    const data = {
-      address: 'Rudolfstr. 7b',
-      postalCode: 6067,
-      meals: []
-    };
+  describe('OrderController.__createOrder', () => {
+    it('should send 201 response', async () => {
+      const order = {
+        _id: new Types.ObjectId(),
+        address: 'Rudolfstr. 7b',
+        postalCode: 6067,
+        user: {
+          id: new Types.ObjectId()
+        },
+        meals: [
+          {
+            id: new Types.ObjectId()
+          }
+        ]
+      } as unknown as IOrder;
+      const mockResponse: [IOrder, undefined] = [order, undefined];
 
-    const response = await superTest.post('', data);
+      const mReq = getMockedRequest({}, { ...order });
+      const mRes = getMockedResponse();
+      mockedOrderService.create.mockResolvedValue(mockResponse);
 
-    expect(response.statusCode).toBe(400);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
+      await orderController.routes[1].handler(mReq, mRes);
+
+      expect(mRes.sendStatus).toHaveBeenCalledWith(201);
+      expect(mRes.sendStatus).toHaveBeenCalledTimes(1);
+    });
+
+    it('should send 500 error', async () => {
+      const order = {
+        _id: new Types.ObjectId(),
+        address: 'Rudolfstr. 7b',
+        postalCode: 6067,
+        user: {
+          id: new Types.ObjectId()
+        },
+        meals: [
+          {
+            id: new Types.ObjectId()
+          }
+        ]
+      } as unknown as IOrder;
+      const mockError = new HttpError(
+        'Order was not found.',
+        500,
+        'INTERNAL_SERVER_ERROR'
+      );
+      const mockResponse: [null, IHttpError] = [null, mockError];
+
+      const mReq = getMockedRequest({}, { ...order });
+      const mRes = getMockedResponse();
+      // orderService.delete = jest.fn().mockResolvedValue(mockResponse);
+      mockedOrderService.create.mockResolvedValue(mockResponse);
+
+      await orderController.routes[1].handler(mReq, mRes);
+
+      expect(mRes.status).toHaveBeenCalledWith(500);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({
+        message: mockError.message,
+        code: mockError.statusCode,
+        status: mockError.statusMessage
+      });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
   });
 
-  it('should return 400 with other invalid input', async () => {
-    const data = {
-      postalCode: 'some string'
-    };
+  describe('OrderController.__updateOrder', () => {
+    it('should send 204 response', async () => {
+      const orderId = new Types.ObjectId();
+      const updateQuery = { address: 'London Avenue 8' };
+      const mockOrder = {
+        _id: new Types.ObjectId(),
+        address: 'Rudolfstr. 7b',
+        postalCode: 6067,
+        user: {
+          id: new Types.ObjectId()
+        },
+        meals: [
+          {
+            id: new Types.ObjectId()
+          }
+        ]
+      } as unknown as IOrder;
+      const mockResponse: [IOrder, undefined] = [mockOrder, undefined];
 
-    const response = await superTest.post('', data);
+      const mReq = getMockedRequest(
+        { id: orderId.toString() },
+        { updateQuery }
+      );
+      const mRes = getMockedResponse();
+      mockedOrderService.update.mockImplementation(() => {
+        mockOrder.address = updateQuery.address;
+        return Promise.resolve(mockResponse);
+      });
 
-    expect(response.statusCode).toBe(400);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
+      await orderController.routes[3].handler(mReq, mRes);
+
+      expect(mRes.sendStatus).toHaveBeenCalledWith(204);
+      expect(mRes.sendStatus).toHaveBeenCalledTimes(1);
+    });
+
+    it('should send 404 error', async () => {
+      const orderId = new Types.ObjectId('123456789123456789123456');
+      const mockError = new HttpError(
+        'No order with specified id was found.',
+        404,
+        'NOT_FOUND'
+      );
+      const mockResponse: [null, IHttpError] = [null, mockError];
+
+      const mReq = getMockedRequest({ id: orderId });
+      const mRes = getMockedResponse();
+      // orderService.delete = jest.fn().mockResolvedValue(mockResponse);
+      mockedOrderService.update.mockResolvedValue(mockResponse);
+
+      await orderController.routes[3].handler(mReq, mRes);
+
+      expect(mRes.status).toHaveBeenCalledWith(404);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({
+        message: mockError.message,
+        code: mockError.statusCode,
+        status: mockError.statusMessage
+      });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
+
+    it('should return 500', async () => {
+      const orderId = new Types.ObjectId();
+      const mockError = new HttpError(
+        'Order was not found.',
+        500,
+        'INTERNAL_SERVER_ERROR'
+      );
+      const mockResponse: [null, IHttpError] = [null, mockError];
+
+      const mReq = getMockedRequest({ id: orderId });
+      const mRes = getMockedResponse();
+      // orderService.delete = jest.fn().mockResolvedValue(mockResponse);
+      mockedOrderService.update.mockResolvedValue(mockResponse);
+
+      await orderController.routes[3].handler(mReq, mRes);
+
+      expect(mRes.status).toHaveBeenCalledWith(500);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({
+        message: mockError.message,
+        code: mockError.statusCode,
+        status: mockError.statusMessage
+      });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
   });
-});
 
-describe('PATCH /orders/:id', () => {
-  it('should return 204 and update data with valid id', async () => {
-    const data = {
-      postalCode: 6060
-    };
-    const response = await superTest.patch(`/${realId}`, data);
+  describe('OrderController.__deleteOrder', () => {
+    it('should return 204', async () => {
+      const orderId = new Types.ObjectId();
+      const mockOrder = {
+        _id: new Types.ObjectId(),
+        address: 'Rudolfstr. 7b',
+        postalCode: 6067,
+        user: {
+          id: new Types.ObjectId()
+        },
+        meals: [
+          {
+            id: new Types.ObjectId()
+          }
+        ]
+      } as unknown as IOrder;
+      const mockResponse: [IOrder, undefined] = [mockOrder, undefined];
 
-    expect(response.statusCode).toBe(204);
-  });
+      const mReq = getMockedRequest({ id: orderId });
+      const mRes = getMockedResponse();
+      // orderService.delete = jest.fn().mockResolvedValue(mockResponse);
+      mockedOrderService.delete.mockResolvedValue(mockResponse);
 
-  it('should return 204 if additional data', async () => {
-    const data = {
-      test: 'burger'
-    };
-    const response = await superTest.patch(`/${realId}`, data);
+      await orderController.routes[4].handler(mReq, mRes);
 
-    expect(response.statusCode).toBe(204);
-  });
+      expect(mRes.sendStatus).toHaveBeenCalledWith(204);
+      expect(mRes.sendStatus).toHaveBeenCalledTimes(1);
+    });
 
-  it('should return 404 if invalid id', async () => {
-    const data = {
-      postalCode: 6060
-    };
-    const response = await superTest.patch(`/${fakeId}`, data);
+    it('should return 404', async () => {
+      const orderId = new Types.ObjectId('123456789123456789123456');
+      const mockError = new HttpError(
+        'No order with specified id was found.',
+        404,
+        'NOT_FOUND'
+      );
+      const mockResponse: [null, IHttpError] = [null, mockError];
 
-    expect(response.statusCode).toBe(404);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
-  });
+      const mReq = getMockedRequest({ id: orderId });
+      const mRes = getMockedResponse();
+      // orderService.delete = jest.fn().mockResolvedValue(mockResponse);
+      mockedOrderService.delete.mockResolvedValue(mockResponse);
 
-  it('should return 400 if wrong input data', async () => {
-    const data = {
-      address: 2342
-    };
+      await orderController.routes[4].handler(mReq, mRes);
 
-    const response = await superTest.patch('/123', data);
+      expect(mRes.status).toHaveBeenCalledWith(404);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({
+        message: mockError.message,
+        code: mockError.statusCode,
+        status: mockError.statusMessage
+      });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
 
-    expect(response.statusCode).toBe(400);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
-  });
-});
+    it('should return 500', async () => {
+      const orderId = new Types.ObjectId();
+      const mockError = new HttpError(
+        'Order was not found.',
+        500,
+        'INTERNAL_SERVER_ERROR'
+      );
+      const mockResponse: [null, IHttpError] = [null, mockError];
 
-describe('DELETE /orders/:id', () => {
-  it('should return 204 if valid id', async () => {
-    const response = await superTest.delete(`/${realId}`);
+      const mReq = getMockedRequest({ id: orderId });
+      const mRes = getMockedResponse();
+      // restaurantService.delete = jest.fn().mockResolvedValue(mockResponse);
+      mockedOrderService.delete.mockResolvedValue(mockResponse);
 
-    expect(response.statusCode).toBe(204);
-  });
+      await orderController.routes[4].handler(mReq, mRes);
 
-  it('should return 404 if invalid id', async () => {
-    const response = await superTest.delete(`/${fakeId}`);
-
-    expect(response.statusCode).toBe(404);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
-  });
-
-  it('should return 400 if id is not 24 chars', async () => {
-    const response = await superTest.delete('/123');
-
-    expect(response.statusCode).toBe(400);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
+      expect(mRes.status).toHaveBeenCalledWith(500);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({
+        message: mockError.message,
+        code: mockError.statusCode,
+        status: mockError.statusMessage
+      });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
   });
 });

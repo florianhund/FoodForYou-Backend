@@ -1,224 +1,460 @@
-import express, { Application } from 'express';
-import { ConnectOptions, Types } from 'mongoose';
+import { Types } from 'mongoose';
 
-import Server from '../../../../Server';
-import Database from '../../../../config/Database';
-import { DATABASE_URL } from '../../../../config/constants';
-import { Meal, Restaurant } from '../../models';
-import SuperTest from '../../../../../__tests__/utils/SuperTest';
+import { MealRepository } from '../../repositories';
+import { MealService } from '../../services';
+import MealController from '../MealController';
+import { HttpError } from '../../utils';
+import {
+  getMockedRequest,
+  getMockedResponse
+} from '../../../../../__tests__/utils';
+import { IMeal } from '../../interfaces/models';
+import { IHttpError } from '../../interfaces';
 
-const db = new Database(DATABASE_URL, {
-  useNewUrlParser: true
-} as ConnectOptions);
-const superTest = new SuperTest('/api/v2/meals');
+const mealService = new MealService(new MealRepository());
+const mealController = new MealController(mealService);
 
-const fakeId = '123456789123456789123456';
-const realId = new Types.ObjectId();
-const restaurantId = new Types.ObjectId();
+jest.mock('../../services');
+const mockedMealService = jest.mocked(mealService, true);
 
-const meal = {
-  _id: realId,
-  name: 'pizza',
-  price: 8,
-  rating: 3,
-  calories: 600,
-  description: 'tasty pizza',
-  restaurant: {
-    id: restaurantId
-  }
-};
-
-beforeAll(async () => {
-  db.init();
-
-  await Restaurant.create({
-    _id: restaurantId,
-    name: 'somee restaurant',
-    rating: 7,
-    address: 'some street',
-    postalCode: 6060
-  });
-});
-
-afterAll(() => {
-  Database.closeAllConnections();
-});
-
-beforeEach(async () => {
-  await new Meal(meal).save();
-});
-
-afterEach(async () => {
-  await Meal.deleteMany({});
-});
-
-describe('GET /meals', () => {
-  it('should return 200 & array if query object is empty', async () => {
-    const response = await superTest.get('');
-
-    expect(response.statusCode).toBe(200);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
-    expect(Array.isArray(response.body.data)).toBeTruthy();
+describe('MealController', () => {
+  beforeEach(() => {
+    jest.resetAllMocks();
   });
 
-  it('should return 200 & array if query object is not empty', async () => {
-    const response = await superTest.get('?name=pizza');
+  describe('MealController.__getMeals', () => {
+    it('should send 200 response with empty query', async () => {
+      const mockMeals = [
+        {
+          _id: new Types.ObjectId(),
+          name: 'pizza',
+          price: 8,
+          rating: 3,
+          calories: 600,
+          description: 'tasty pizza',
+          restaurant: {
+            id: new Types.ObjectId()
+          }
+        },
+        {
+          _id: new Types.ObjectId(),
+          name: 'pizza',
+          price: 8,
+          rating: 3,
+          calories: 600,
+          description: 'tasty pizza',
+          restaurant: {
+            id: new Types.ObjectId()
+          }
+        },
+        {
+          _id: new Types.ObjectId(),
+          name: 'pizza',
+          price: 8,
+          rating: 3,
+          calories: 600,
+          description: 'tasty pizza',
+          restaurant: {
+            id: new Types.ObjectId()
+          }
+        }
+      ] as unknown as IMeal[];
+      const mockResponse: [IMeal[], undefined] = [mockMeals, undefined];
 
-    expect(response.statusCode).toBe(200);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
-    expect(Array.isArray(response.body.data)).toBeTruthy();
+      const mReq = getMockedRequest();
+      const mRes = getMockedResponse();
+      // mealService.getById = jest.fn().mockResolvedValue(mockResponse);
+      mockedMealService.getAll.mockResolvedValue(mockResponse);
+
+      await mealController.routes[0].handler(mReq, mRes);
+
+      expect(mRes.status).toHaveBeenCalledWith(200);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({ data: mockMeals });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
+
+    it('should send 200 response with query', async () => {
+      const mockMeals = [
+        {
+          _id: new Types.ObjectId(),
+          name: 'pizza',
+          price: 8,
+          rating: 3,
+          calories: 600,
+          description: 'tasty pizza',
+          restaurant: {
+            id: new Types.ObjectId()
+          }
+        },
+        {
+          _id: new Types.ObjectId(),
+          name: 'pizza',
+          price: 8,
+          rating: 3,
+          calories: 600,
+          description: 'tasty pizza',
+          restaurant: {
+            id: new Types.ObjectId()
+          }
+        },
+        {
+          _id: new Types.ObjectId(),
+          name: 'pizza',
+          price: 8,
+          rating: 3,
+          calories: 600,
+          description: 'tasty pizza',
+          restaurant: {
+            id: new Types.ObjectId()
+          }
+        }
+      ] as unknown as IMeal[];
+      const mockResponse: [IMeal[], undefined] = [mockMeals, undefined];
+
+      const mReq = getMockedRequest(
+        {},
+        {},
+        { min_rating: 7, sort_by: '-name' }
+      );
+      const mRes = getMockedResponse();
+      // mealService.getById = jest.fn().mockResolvedValue(mockResponse);
+      mockedMealService.get.mockResolvedValue(mockResponse);
+
+      await mealController.routes[0].handler(mReq, mRes);
+
+      expect(mRes.status).toHaveBeenCalledWith(200);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({ data: mockMeals });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
+
+    it('should return 500 error with empty query', async () => {
+      const mockError = new HttpError(
+        'Meal was not found.',
+        500,
+        'INTERNAL_SERVER_ERROR'
+      );
+      const mockResponse: [null, IHttpError] = [null, mockError];
+
+      const mReq = getMockedRequest();
+      const mRes = getMockedResponse();
+      mockedMealService.getAll.mockResolvedValue(mockResponse);
+
+      await mealController.routes[0].handler(mReq, mRes);
+
+      expect(mRes.status).toHaveBeenCalledWith(500);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({
+        message: mockError.message,
+        code: mockError.statusCode,
+        status: mockError.statusMessage
+      });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
+
+    it('should return 500 error', async () => {
+      const mockError = new HttpError(
+        'Meal was not found.',
+        500,
+        'INTERNAL_SERVER_ERROR'
+      );
+      const mockResponse: [null, IHttpError] = [null, mockError];
+
+      const mReq = getMockedRequest({}, {}, { min_rating: 7 });
+      const mRes = getMockedResponse();
+      mockedMealService.get.mockResolvedValue(mockResponse);
+
+      await mealController.routes[0].handler(mReq, mRes);
+
+      expect(mRes.status).toHaveBeenCalledWith(500);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({
+        message: mockError.message,
+        code: mockError.statusCode,
+        status: mockError.statusMessage
+      });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
   });
 
-  it('should return 400 if query[without_allergenics] is no allergenic', async () => {
-    const response = await superTest.get('?without_allergenics=Z');
+  describe('MealController.__getMealById', () => {
+    it('should send 200 response', async () => {
+      const mealId = new Types.ObjectId();
+      const mockMeal = {
+        _id: new Types.ObjectId(),
+        name: 'pizza',
+        price: 8,
+        rating: 3,
+        calories: 600,
+        description: 'tasty pizza',
+        restaurant: {
+          id: new Types.ObjectId()
+        }
+      } as unknown as IMeal;
+      const mockResponse: [IMeal, undefined] = [mockMeal, undefined];
 
-    expect(response.statusCode).toBe(400);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
-  });
-});
+      const mReq = getMockedRequest({ id: mealId.toString() });
+      const mRes = getMockedResponse();
+      // mealService.getById = jest.fn().mockResolvedValue(mockResponse);
+      mockedMealService.getById.mockResolvedValue(mockResponse);
 
-describe('GET /meals/:id', () => {
-  it('should return 200 & object if valid id', async () => {
-    const response = await superTest.get(`/${realId}`);
+      await mealController.routes[2].handler(mReq, mRes);
 
-    expect(response.statusCode).toBe(200);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
-    expect(response.body.data._id).toBe(realId.toString());
-  });
+      expect(mRes.status).toHaveBeenCalledWith(200);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({ data: mockMeal });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
 
-  it('should return 404 if id is invalid', async () => {
-    const response = await superTest.get(`/${fakeId}`);
+    it('should return 500 error', async () => {
+      const mockError = new HttpError(
+        'Meal was not found.',
+        500,
+        'INTERNAL_SERVER_ERROR'
+      );
+      const mockResponse: [null, IHttpError] = [null, mockError];
 
-    expect(response.statusCode).toBe(404);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
-  });
+      const mReq = getMockedRequest();
+      const mRes = getMockedResponse();
+      mockedMealService.getById.mockResolvedValue(mockResponse);
 
-  it('should return 400 if id is not 24 chars long', async () => {
-    const response = await superTest.get('/123');
+      await mealController.routes[2].handler(mReq, mRes);
 
-    expect(response.statusCode).toBe(400);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
-  });
-});
-
-describe('POST /meals', () => {
-  it('should create post & return 201', async () => {
-    const data = {
-      name: 'pizza',
-      price: 8,
-      rating: 3,
-      calories: 600,
-      restaurant: {
-        id: restaurantId
-      }
-    };
-
-    const response = await superTest.post('', data);
-
-    expect(response.statusCode).toBe(201);
-    expect(response.headers.location).toBeTruthy();
-  });
-
-  it('should return 400 with invalid input', async () => {
-    const data = {
-      name: 'pizza'
-    };
-
-    const response = await superTest.post('', data);
-
-    expect(response.statusCode).toBe(400);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
+      expect(mRes.status).toHaveBeenCalledWith(500);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({
+        message: mockError.message,
+        code: mockError.statusCode,
+        status: mockError.statusMessage
+      });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
   });
 
-  it('should retun 400 if wrong tag', async () => {
-    const data = {
-      name: 'pizza',
-      price: 8,
-      rating: 3,
-      calories: 600,
-      tags: ['something']
-    };
+  describe('MealController.__createMeal', () => {
+    it('should send 201 response', async () => {
+      const meal = {
+        _id: new Types.ObjectId(),
+        name: 'pizza',
+        price: 8,
+        rating: 3,
+        calories: 600,
+        description: 'tasty pizza',
+        restaurant: {
+          id: new Types.ObjectId()
+        }
+      } as unknown as IMeal;
+      const mockResponse: [IMeal, undefined] = [meal, undefined];
 
-    const response = await superTest.post('', data);
+      const mReq = getMockedRequest({}, { ...meal });
+      const mRes = getMockedResponse();
+      mockedMealService.create.mockResolvedValue(mockResponse);
 
-    expect(response.statusCode).toBe(400);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
-  });
-});
+      await mealController.routes[1].handler(mReq, mRes);
 
-describe('PATCH /meals/:id', () => {
-  it('should return 204 and update data with valid id', async () => {
-    const data = {
-      price: 6,
-      tags: ['Burger']
-    };
-    const response = await superTest.patch(`/${realId}`, data);
+      expect(mRes.sendStatus).toHaveBeenCalledWith(201);
+      expect(mRes.sendStatus).toHaveBeenCalledTimes(1);
+    });
 
-    expect(response.statusCode).toBe(204);
-  });
+    it('should send 500 error', async () => {
+      const meal = {
+        _id: new Types.ObjectId(),
+        name: 'pizza',
+        price: 8,
+        rating: 3,
+        calories: 600,
+        description: 'tasty pizza',
+        restaurant: {
+          id: new Types.ObjectId()
+        }
+      } as unknown as IMeal;
+      const mockError = new HttpError(
+        'Meal was not found.',
+        500,
+        'INTERNAL_SERVER_ERROR'
+      );
+      const mockResponse: [null, IHttpError] = [null, mockError];
 
-  it('should return 204 if additional data', async () => {
-    const data = {
-      test: 'burger'
-    };
-    const response = await superTest.patch(`/${realId}`, data);
+      const mReq = getMockedRequest({}, { ...meal });
+      const mRes = getMockedResponse();
+      // mealService.delete = jest.fn().mockResolvedValue(mockResponse);
+      mockedMealService.create.mockResolvedValue(mockResponse);
 
-    expect(response.statusCode).toBe(204);
-  });
+      await mealController.routes[1].handler(mReq, mRes);
 
-  it('should return 404 if invalid id', async () => {
-    const data = {
-      name: 'lasagne',
-      price: 2
-    };
-    const response = await superTest.patch(`/${fakeId}`, data);
-
-    expect(response.statusCode).toBe(404);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
-  });
-
-  it('should return 400 if wrong input data', async () => {
-    const data = {
-      name: 'burger',
-      price: 1000
-    };
-
-    const response = await superTest.patch('/123', data);
-
-    expect(response.statusCode).toBe(400);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
-  });
-
-  it('should retun 400 if wrong tag', async () => {
-    const data = {
-      tags: ['something']
-    };
-
-    const response = await superTest.patch(`/${realId}`, data);
-
-    expect(response.statusCode).toBe(400);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
-  });
-});
-
-describe('DELETE /meals/:id', () => {
-  it('should return 204 if valid id', async () => {
-    const response = await superTest.delete(`/${realId}`);
-
-    expect(response.statusCode).toBe(204);
+      expect(mRes.status).toHaveBeenCalledWith(500);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({
+        message: mockError.message,
+        code: mockError.statusCode,
+        status: mockError.statusMessage
+      });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
   });
 
-  it('should return 404 if invalid id', async () => {
-    const response = await superTest.delete(`/${fakeId}`);
+  describe('MealController.__updateMeal', () => {
+    it('should send 204 response', async () => {
+      const mealId = new Types.ObjectId();
+      const updateQuery = { rating: 8 };
+      const mockMeal = {
+        _id: new Types.ObjectId(),
+        name: 'pizza',
+        price: 8,
+        rating: 3,
+        calories: 600,
+        description: 'tasty pizza',
+        restaurant: {
+          id: new Types.ObjectId()
+        },
+        __v: 0
+      } as unknown as IMeal;
+      const mockResponse: [IMeal, undefined] = [mockMeal, undefined];
 
-    expect(response.statusCode).toBe(404);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
+      const mReq = getMockedRequest({ id: mealId.toString() }, { updateQuery });
+      const mRes = getMockedResponse();
+      mockedMealService.update.mockImplementation(() => {
+        mockMeal.rating = updateQuery.rating;
+        return Promise.resolve(mockResponse);
+      });
+
+      await mealController.routes[3].handler(mReq, mRes);
+
+      expect(mRes.sendStatus).toHaveBeenCalledWith(204);
+      expect(mRes.sendStatus).toHaveBeenCalledTimes(1);
+    });
+
+    it('should send 404 error', async () => {
+      const mealId = new Types.ObjectId('123456789123456789123456');
+      const mockError = new HttpError(
+        'No meal with specified id was found.',
+        404,
+        'NOT_FOUND'
+      );
+      const mockResponse: [null, IHttpError] = [null, mockError];
+
+      const mReq = getMockedRequest({ id: mealId });
+      const mRes = getMockedResponse();
+      // mealService.delete = jest.fn().mockResolvedValue(mockResponse);
+      mockedMealService.update.mockResolvedValue(mockResponse);
+
+      await mealController.routes[3].handler(mReq, mRes);
+
+      expect(mRes.status).toHaveBeenCalledWith(404);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({
+        message: mockError.message,
+        code: mockError.statusCode,
+        status: mockError.statusMessage
+      });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
+
+    it('should return 500', async () => {
+      const mealId = new Types.ObjectId();
+      const mockError = new HttpError(
+        'Meal was not found.',
+        500,
+        'INTERNAL_SERVER_ERROR'
+      );
+      const mockResponse: [null, IHttpError] = [null, mockError];
+
+      const mReq = getMockedRequest({ id: mealId });
+      const mRes = getMockedResponse();
+      // mealService.delete = jest.fn().mockResolvedValue(mockResponse);
+      mockedMealService.update.mockResolvedValue(mockResponse);
+
+      await mealController.routes[3].handler(mReq, mRes);
+
+      expect(mRes.status).toHaveBeenCalledWith(500);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({
+        message: mockError.message,
+        code: mockError.statusCode,
+        status: mockError.statusMessage
+      });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
   });
 
-  it('should return 400 if id is not 24 chars', async () => {
-    const response = await superTest.delete('/123');
+  describe('MealController.__deleteMeal', () => {
+    it('should return 204', async () => {
+      const mealId = new Types.ObjectId();
+      const mockMeal = {
+        _id: new Types.ObjectId(),
+        name: 'pizza',
+        price: 8,
+        rating: 3,
+        calories: 600,
+        description: 'tasty pizza',
+        restaurant: {
+          id: new Types.ObjectId()
+        }
+      } as unknown as IMeal;
+      const mockResponse: [IMeal, undefined] = [mockMeal, undefined];
 
-    expect(response.statusCode).toBe(400);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
+      const mReq = getMockedRequest({ id: mealId });
+      const mRes = getMockedResponse();
+      // mealService.delete = jest.fn().mockResolvedValue(mockResponse);
+      mockedMealService.delete.mockResolvedValue(mockResponse);
+
+      await mealController.routes[4].handler(mReq, mRes);
+
+      expect(mRes.sendStatus).toHaveBeenCalledWith(204);
+      expect(mRes.sendStatus).toHaveBeenCalledTimes(1);
+    });
+
+    it('should return 404', async () => {
+      const mealId = new Types.ObjectId('123456789123456789123456');
+      const mockError = new HttpError(
+        'No meal with specified id was found.',
+        404,
+        'NOT_FOUND'
+      );
+      const mockResponse: [null, IHttpError] = [null, mockError];
+
+      const mReq = getMockedRequest({ id: mealId });
+      const mRes = getMockedResponse();
+      // mealService.delete = jest.fn().mockResolvedValue(mockResponse);
+      mockedMealService.delete.mockResolvedValue(mockResponse);
+
+      await mealController.routes[4].handler(mReq, mRes);
+
+      expect(mRes.status).toHaveBeenCalledWith(404);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({
+        message: mockError.message,
+        code: mockError.statusCode,
+        status: mockError.statusMessage
+      });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
+
+    it('should return 500', async () => {
+      const mealId = new Types.ObjectId();
+      const mockError = new HttpError(
+        'Meal was not found.',
+        500,
+        'INTERNAL_SERVER_ERROR'
+      );
+      const mockResponse: [null, IHttpError] = [null, mockError];
+
+      const mReq = getMockedRequest({ id: mealId });
+      const mRes = getMockedResponse();
+      // restaurantService.delete = jest.fn().mockResolvedValue(mockResponse);
+      mockedMealService.delete.mockResolvedValue(mockResponse);
+
+      await mealController.routes[4].handler(mReq, mRes);
+
+      expect(mRes.status).toHaveBeenCalledWith(500);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({
+        message: mockError.message,
+        code: mockError.statusCode,
+        status: mockError.statusMessage
+      });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
   });
 });

@@ -1,4 +1,6 @@
-export default class HttpError extends Error {
+import { IHttpError } from '../interfaces';
+
+export default class HttpError extends Error implements IHttpError {
   private _stack: string | undefined;
 
   constructor(

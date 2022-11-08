@@ -20,7 +20,7 @@ describe('hasAllNullishValues', () => {
   });
 });
 
-describe('hasNullisValues', () => {
+describe('hasNullishValues', () => {
   it('shold return true if one property is null or undefined or emtpy string', () => {
     expect(hasNullishValues({ test: '', name: 'something' })).toBe(true);
   });

@@ -1,208 +1,495 @@
-import { ConnectOptions, Types } from 'mongoose';
+import { Types } from 'mongoose';
 
-import Database from '../../../../config/Database';
-import { DATABASE_URL } from '../../../../config/constants';
-import { User } from '../../models';
-import SuperTest from '../../../../../__tests__/utils/SuperTest';
+import { UserRepository } from '../../repositories';
+import { UserService } from '../../services';
+import UserController from '../UserController';
+import { HttpError } from '../../utils';
+import {
+  getMockedRequest,
+  getMockedResponse
+} from '../../../../../__tests__/utils';
+import { IUser } from '../../interfaces/models';
+import { IHttpError } from '../../interfaces';
 
-const db = new Database(DATABASE_URL, {
-  useNewUrlParser: true
-} as ConnectOptions);
-const superTest = new SuperTest('/api/v2/users');
+const userService = new UserService(new UserRepository());
+const userController = new UserController(userService);
 
-const fakeId = '123456789123456789123456';
-const realId = new Types.ObjectId();
-const realOtp = 4591;
-const user = {
-  _id: realId,
-  firstName: 'Florian',
-  lastName: 'Hundegger',
-  email: 'flo.hundegger@gmail.com',
-  password: 'SevretPassword_2',
-  provider: 'email',
-  providerId: realId,
-  otp: realOtp,
-  isVerified: false,
-  isAdmin: false
-};
+jest.mock('../../services');
+const mockedUserService = jest.mocked(userService, true);
 
-beforeAll(() => {
-  db.init();
-});
-
-afterAll(() => {
-  Database.closeAllConnections();
-});
-
-beforeEach(async () => {
-  await new User(user).save();
-});
-
-afterEach(async () => {
-  await User.deleteMany({});
-});
-
-describe('GET /users', () => {
-  it('should return 200 & array if query object is empty', async () => {
-    const response = await superTest.get('');
-
-    expect(response.statusCode).toBe(200);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
-    expect(Array.isArray(response.body.data)).toBeTruthy();
+describe('UserController', () => {
+  beforeEach(() => {
+    jest.resetAllMocks();
   });
 
-  it('should return 200 if email query is real & return single document', async () => {
-    const response = await superTest.get('?email=flo.hundegger@gmail.com');
+  describe('UserController.__getUsers', () => {
+    it('should send 200 response with empty query', async () => {
+      const mockUsers = [
+        {
+          _id: new Types.ObjectId(),
+          firstName: 'Florian',
+          lastName: 'Hundegger',
+          email: 'flo.hundegger@gmail.com',
+          password: 'SevretPassword_2',
+          provider: 'email',
+          providerId: new Types.ObjectId(),
+          otp: 6247,
+          isVerified: false,
+          isAdmin: false
+        },
+        {
+          _id: new Types.ObjectId(),
+          firstName: 'Florian',
+          lastName: 'Hundegger',
+          email: 'flo.hundegger@gmail.com',
+          password: 'SevretPassword_2',
+          provider: 'email',
+          providerId: new Types.ObjectId(),
+          otp: 6247,
+          isVerified: false,
+          isAdmin: false
+        },
+        {
+          _id: new Types.ObjectId(),
+          firstName: 'Florian',
+          lastName: 'Hundegger',
+          email: 'flo.hundegger@gmail.com',
+          password: 'SevretPassword_2',
+          provider: 'email',
+          providerId: new Types.ObjectId(),
+          otp: 6247,
+          isVerified: false,
+          isAdmin: false
+        }
+      ] as unknown as IUser[];
+      const mockResponse: [IUser[], undefined] = [mockUsers, undefined];
 
-    expect(response.statusCode).toBe(200);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
-    expect(response.body.data).toBeTruthy();
+      const mReq = getMockedRequest();
+      const mRes = getMockedResponse();
+      // userService.getById = jest.fn().mockResolvedValue(mockResponse);
+      mockedUserService.getAll.mockResolvedValue(mockResponse);
+
+      await userController.routes[0].handler(mReq, mRes);
+
+      expect(mRes.status).toHaveBeenCalledWith(200);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({ data: mockUsers });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
+
+    it('should return 500 error with empty query', async () => {
+      const mockError = new HttpError(
+        'User was not found.',
+        500,
+        'INTERNAL_SERVER_ERROR'
+      );
+      const mockResponse: [null, IHttpError] = [null, mockError];
+
+      const mReq = getMockedRequest();
+      const mRes = getMockedResponse();
+      mockedUserService.getAll.mockResolvedValue(mockResponse);
+
+      await userController.routes[0].handler(mReq, mRes);
+
+      expect(mRes.status).toHaveBeenCalledWith(500);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({
+        message: mockError.message,
+        code: mockError.statusCode,
+        status: mockError.statusMessage
+      });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
   });
 
-  it('should return 404 if email query is wrong', async () => {
-    const response = await superTest.get('?email=something');
+  describe('UserController.__getUserById', () => {
+    it('should send 200 response', async () => {
+      const userId = new Types.ObjectId();
+      const mockUser = {
+        _id: new Types.ObjectId(),
+        firstName: 'Florian',
+        lastName: 'Hundegger',
+        email: 'flo.hundegger@gmail.com',
+        password: 'SevretPassword_2',
+        provider: 'email',
+        providerId: new Types.ObjectId(),
+        otp: 6247,
+        isVerified: false,
+        isAdmin: false
+      } as unknown as IUser;
+      const mockResponse: [IUser, undefined] = [mockUser, undefined];
 
-    expect(response.statusCode).toBe(404);
-  });
-});
+      const mReq = getMockedRequest({ id: userId.toString() });
+      const mRes = getMockedResponse();
+      // userService.getById = jest.fn().mockResolvedValue(mockResponse);
+      mockedUserService.getById.mockResolvedValue(mockResponse);
 
-describe('GET /users/:id', () => {
-  it('should return 200 & object if valid id', async () => {
-    const response = await superTest.get(`/${realId}`);
+      await userController.routes[2].handler(mReq, mRes);
 
-    expect(response.statusCode).toBe(200);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
-    expect(response.body.data._id).toBe(realId.toString());
-  });
+      expect(mRes.status).toHaveBeenCalledWith(200);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({ data: mockUser });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
 
-  it('should return 404 if id is invalid', async () => {
-    const response = await superTest.get(`/${fakeId}`);
+    it('should return 500 error', async () => {
+      const mockError = new HttpError(
+        'User was not found.',
+        500,
+        'INTERNAL_SERVER_ERROR'
+      );
+      const mockResponse: [null, IHttpError] = [null, mockError];
 
-    expect(response.statusCode).toBe(404);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
-  });
+      const mReq = getMockedRequest();
+      const mRes = getMockedResponse();
+      mockedUserService.getById.mockResolvedValue(mockResponse);
 
-  it('should return 400 if id is not 24 chars long', async () => {
-    const response = await superTest.get('/123');
+      await userController.routes[2].handler(mReq, mRes);
 
-    expect(response.statusCode).toBe(400);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
-  });
-});
-
-describe('POST /users', () => {
-  it('should create post & return 201', async () => {
-    const data = {
-      firstName: 'Florian',
-      lastName: 'Hundegger',
-      email: 'f.hundegger@gmail.com',
-      password: 'SevretPassword_2',
-      otp: 1234
-    };
-
-    const response = await superTest.post('', data);
-
-    expect(response.statusCode).toBe(201);
-    expect(response.headers.location).toBeTruthy();
-  });
-
-  it('should return 400 with invalid input', async () => {
-    const data = {
-      firstName: 'pizza'
-    };
-
-    const response = await superTest.post('', data);
-
-    expect(response.statusCode).toBe(400);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
-  });
-});
-
-describe('PATCH /users/:id', () => {
-  it('should return 204 and update data with valid id', async () => {
-    const data = {
-      firstName: 'Stefan'
-    };
-    const response = await superTest.patch(`/${realId}`, data);
-
-    expect(response.statusCode).toBe(204);
+      expect(mRes.status).toHaveBeenCalledWith(500);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({
+        message: mockError.message,
+        code: mockError.statusCode,
+        status: mockError.statusMessage
+      });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
   });
 
-  it('should return 204 if additional data', async () => {
-    const data = {
-      test: 'burger'
-    };
-    const response = await superTest.patch(`/${realId}`, data);
+  describe('UserController.__createUser', () => {
+    it('should send 201 response', async () => {
+      const user = {
+        _id: new Types.ObjectId(),
+        firstName: 'Florian',
+        lastName: 'Hundegger',
+        email: 'flo.hundegger@gmail.com',
+        password: 'SevretPassword_2',
+        provider: 'email',
+        providerId: new Types.ObjectId(),
+        otp: 6247,
+        isVerified: false,
+        isAdmin: false
+      } as unknown as IUser;
+      const mockResponse: [IUser, undefined] = [user, undefined];
 
-    expect(response.statusCode).toBe(204);
+      const mReq = getMockedRequest({}, { ...user });
+      const mRes = getMockedResponse();
+      mockedUserService.create.mockResolvedValue(mockResponse);
+
+      await userController.routes[1].handler(mReq, mRes);
+
+      expect(mRes.sendStatus).toHaveBeenCalledWith(201);
+      expect(mRes.sendStatus).toHaveBeenCalledTimes(1);
+    });
+
+    it('should send 500 error', async () => {
+      const user = {
+        _id: new Types.ObjectId(),
+        firstName: 'Florian',
+        lastName: 'Hundegger',
+        email: 'flo.hundegger@gmail.com',
+        password: 'SevretPassword_2',
+        provider: 'email',
+        providerId: new Types.ObjectId(),
+        otp: 6247,
+        isVerified: false,
+        isAdmin: false
+      } as unknown as IUser;
+      const mockError = new HttpError(
+        'User was not found.',
+        500,
+        'INTERNAL_SERVER_ERROR'
+      );
+      const mockResponse: [null, IHttpError] = [null, mockError];
+
+      const mReq = getMockedRequest({}, { ...user });
+      const mRes = getMockedResponse();
+      // userService.delete = jest.fn().mockResolvedValue(mockResponse);
+      mockedUserService.create.mockResolvedValue(mockResponse);
+
+      await userController.routes[1].handler(mReq, mRes);
+
+      expect(mRes.status).toHaveBeenCalledWith(500);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({
+        message: mockError.message,
+        code: mockError.statusCode,
+        status: mockError.statusMessage
+      });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
   });
 
-  it('should return 404 if invalid id', async () => {
-    const data = {
-      firstName: 'Stefan'
-    };
-    const response = await superTest.patch(`/${fakeId}`, data);
+  describe('UserController.__updateUser', () => {
+    it('should send 204 response', async () => {
+      const userId = new Types.ObjectId();
+      const updateQuery = { firstName: 'John' };
+      const mockUser = {
+        _id: new Types.ObjectId(),
+        firstName: 'Florian',
+        lastName: 'Hundegger',
+        email: 'flo.hundegger@gmail.com',
+        password: 'SevretPassword_2',
+        provider: 'email',
+        providerId: new Types.ObjectId(),
+        otp: 6247,
+        isVerified: false,
+        isAdmin: false
+      } as unknown as IUser;
+      const mockResponse: [IUser, undefined] = [mockUser, undefined];
 
-    expect(response.statusCode).toBe(404);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
+      const mReq = getMockedRequest({ id: userId.toString() }, { updateQuery });
+      const mRes = getMockedResponse();
+      mockedUserService.update.mockImplementation(() => {
+        mockUser.firstName = updateQuery.firstName;
+        return Promise.resolve(mockResponse);
+      });
+
+      await userController.routes[3].handler(mReq, mRes);
+
+      expect(mRes.sendStatus).toHaveBeenCalledWith(204);
+      expect(mRes.sendStatus).toHaveBeenCalledTimes(1);
+    });
+
+    it('should send 404 error', async () => {
+      const userId = new Types.ObjectId('123456789123456789123456');
+      const mockError = new HttpError(
+        'No user with specified id was found.',
+        404,
+        'NOT_FOUND'
+      );
+      const mockResponse: [null, IHttpError] = [null, mockError];
+
+      const mReq = getMockedRequest({ id: userId });
+      const mRes = getMockedResponse();
+      // userService.delete = jest.fn().mockResolvedValue(mockResponse);
+      mockedUserService.update.mockResolvedValue(mockResponse);
+
+      await userController.routes[3].handler(mReq, mRes);
+
+      expect(mRes.status).toHaveBeenCalledWith(404);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({
+        message: mockError.message,
+        code: mockError.statusCode,
+        status: mockError.statusMessage
+      });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
+
+    it('should return 500', async () => {
+      const userId = new Types.ObjectId();
+      const mockError = new HttpError(
+        'User was not found.',
+        500,
+        'INTERNAL_SERVER_ERROR'
+      );
+      const mockResponse: [null, IHttpError] = [null, mockError];
+
+      const mReq = getMockedRequest({ id: userId });
+      const mRes = getMockedResponse();
+      // userService.delete = jest.fn().mockResolvedValue(mockResponse);
+      mockedUserService.update.mockResolvedValue(mockResponse);
+
+      await userController.routes[3].handler(mReq, mRes);
+
+      expect(mRes.status).toHaveBeenCalledWith(500);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({
+        message: mockError.message,
+        code: mockError.statusCode,
+        status: mockError.statusMessage
+      });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
   });
 
-  it('should return 400 if wrong input data', async () => {
-    const data = {
-      firstName: 'Hello Im too longgggggggggggggggg'
-    };
+  describe('UserController.__deleteUser', () => {
+    it('should return 204', async () => {
+      const userId = new Types.ObjectId();
+      const mockUser = {
+        _id: new Types.ObjectId(),
+        firstName: 'Florian',
+        lastName: 'Hundegger',
+        email: 'flo.hundegger@gmail.com',
+        password: 'SevretPassword_2',
+        provider: 'email',
+        providerId: new Types.ObjectId(),
+        otp: 6247,
+        isVerified: false,
+        isAdmin: false
+      } as unknown as IUser;
+      const mockResponse: [IUser, undefined] = [mockUser, undefined];
 
-    const response = await superTest.patch('/123', data);
+      const mReq = getMockedRequest({ id: userId });
+      const mRes = getMockedResponse();
+      // userService.delete = jest.fn().mockResolvedValue(mockResponse);
+      mockedUserService.delete.mockResolvedValue(mockResponse);
 
-    expect(response.statusCode).toBe(400);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
+      await userController.routes[4].handler(mReq, mRes);
+
+      expect(mRes.sendStatus).toHaveBeenCalledWith(204);
+      expect(mRes.sendStatus).toHaveBeenCalledTimes(1);
+    });
+
+    it('should return 404', async () => {
+      const userId = new Types.ObjectId('123456789123456789123456');
+      const mockError = new HttpError(
+        'No user with specified id was found.',
+        404,
+        'NOT_FOUND'
+      );
+      const mockResponse: [null, IHttpError] = [null, mockError];
+
+      const mReq = getMockedRequest({ id: userId });
+      const mRes = getMockedResponse();
+      // userService.delete = jest.fn().mockResolvedValue(mockResponse);
+      mockedUserService.delete.mockResolvedValue(mockResponse);
+
+      await userController.routes[4].handler(mReq, mRes);
+
+      expect(mRes.status).toHaveBeenCalledWith(404);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({
+        message: mockError.message,
+        code: mockError.statusCode,
+        status: mockError.statusMessage
+      });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
+
+    it('should return 500', async () => {
+      const userId = new Types.ObjectId();
+      const mockError = new HttpError(
+        'User was not found.',
+        500,
+        'INTERNAL_SERVER_ERROR'
+      );
+      const mockResponse: [null, IHttpError] = [null, mockError];
+
+      const mReq = getMockedRequest({ id: userId });
+      const mRes = getMockedResponse();
+      // restaurantService.delete = jest.fn().mockResolvedValue(mockResponse);
+      mockedUserService.delete.mockResolvedValue(mockResponse);
+
+      await userController.routes[4].handler(mReq, mRes);
+
+      expect(mRes.status).toHaveBeenCalledWith(500);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({
+        message: mockError.message,
+        code: mockError.statusCode,
+        status: mockError.statusMessage
+      });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
   });
-});
 
-describe('DELETE /users/:id', () => {
-  it('should return 204 if valid id', async () => {
-    const response = await superTest.delete(`/${realId}`);
+  describe('UserController.sendVerification', () => {
+    it('should return 204', async () => {
+      const userId = new Types.ObjectId();
+      const mockResponse: [boolean, undefined] = [true, undefined];
 
-    expect(response.statusCode).toBe(204);
+      const mReq = getMockedRequest({ id: userId.toString() });
+      const mRes = getMockedResponse();
+      mockedUserService.sendVerificationMail.mockResolvedValue(mockResponse);
+
+      await userController.routes[5].handler(mReq, mRes);
+
+      expect(mRes.sendStatus).toHaveBeenCalledWith(204);
+      expect(mRes.sendStatus).toHaveBeenCalledTimes(1);
+    });
   });
 
-  it('should return 404 if invalid id', async () => {
-    const response = await superTest.delete(`/${fakeId}`);
+  describe('UserController.verifyUser', () => {
+    it('should return 204', async () => {
+      const userId = new Types.ObjectId();
+      const mockResponse: [boolean, undefined] = [true, undefined];
 
-    expect(response.statusCode).toBe(404);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
-  });
+      const mReq = getMockedRequest(
+        { id: userId.toString() },
+        {},
+        { otp: 3636 }
+      );
+      const mRes = getMockedResponse();
+      mockedUserService.verifiyUser.mockResolvedValue(mockResponse);
 
-  it('should return 400 if id is not 24 chars', async () => {
-    const response = await superTest.delete('/123');
+      await userController.routes[6].handler(mReq, mRes);
 
-    expect(response.statusCode).toBe(400);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
-  });
-});
+      expect(mRes.sendStatus).toHaveBeenCalledWith(204);
+      expect(mRes.sendStatus).toHaveBeenCalledTimes(1);
+    });
 
-describe('GET /users/:id/verify', () => {
-  it('should return 204 & verify user if otp is right', async () => {
-    const response = await superTest.get(`/${realId}/verify?otp=${realOtp}`);
+    it('should return 404 error', async () => {
+      const userId = new Types.ObjectId();
+      const mockError = new HttpError('User not found.', 404, 'NOT_FOUND');
+      const mockResponse: [boolean, IHttpError] = [false, mockError];
 
-    expect(response.statusCode).toBe(204);
-  });
+      const mReq = getMockedRequest({ id: userId.toString() }, {});
+      const mRes = getMockedResponse();
+      mockedUserService.verifiyUser.mockResolvedValue(mockResponse);
 
-  it('should return 401 if otp is not right', async () => {
-    const response = await superTest.get(`/${realId}/verify?otp=1000`);
+      await userController.routes[6].handler(mReq, mRes);
 
-    expect(response.statusCode).toBe(401);
-  });
+      expect(mRes.status).toHaveBeenCalledWith(404);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({
+        message: mockError.message,
+        code: mockError.statusCode,
+        status: mockError.statusMessage
+      });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
 
-  it('should return 404 if id is invalid', async () => {
-    const response = await superTest.get(`/${fakeId}/verify?otp=${realOtp}`);
+    it('should return 401 error', async () => {
+      const userId = new Types.ObjectId();
+      const mockError = new HttpError(
+        'Provided OTP iss wrong.',
+        401,
+        'UNAUTHROIZED'
+      );
+      const mockResponse: [boolean, IHttpError] = [false, mockError];
 
-    expect(response.statusCode).toBe(404);
-  });
+      const mReq = getMockedRequest({ id: userId.toString() }, {});
+      const mRes = getMockedResponse();
+      mockedUserService.verifiyUser.mockResolvedValue(mockResponse);
 
-  it('should return 400 if otp is undefined', async () => {
-    const response = await superTest.get(`/${realId}/verify`);
+      await userController.routes[6].handler(mReq, mRes);
 
-    expect(response.statusCode).toBe(400);
+      expect(mRes.status).toHaveBeenCalledWith(401);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({
+        message: mockError.message,
+        code: mockError.statusCode,
+        status: mockError.statusMessage
+      });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
+
+    it('should return 500 error', async () => {
+      const userId = new Types.ObjectId();
+      const mockError = new HttpError(
+        'Oops, something went wrong!',
+        500,
+        'INTERNAL_SERVER_ERROR'
+      );
+      const mockResponse: [boolean, IHttpError] = [false, mockError];
+
+      const mReq = getMockedRequest({ id: userId.toString() }, {});
+      const mRes = getMockedResponse();
+      mockedUserService.verifiyUser.mockResolvedValue(mockResponse);
+
+      await userController.routes[6].handler(mReq, mRes);
+
+      expect(mRes.status).toHaveBeenCalledWith(500);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({
+        message: mockError.message,
+        code: mockError.statusCode,
+        status: mockError.statusMessage
+      });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
   });
 });

@@ -1,171 +1,440 @@
-import { ConnectOptions, Types } from 'mongoose';
+import { Types } from 'mongoose';
 
-import Database from '../../../../config/Database';
-import { DATABASE_URL } from '../../../../config/constants';
-import { Restaurant } from '../../models';
-import SuperTest from '../../../../../__tests__/utils/SuperTest';
+import { RestaurantRepository } from '../../repositories';
+import { RestaurantService } from '../../services';
+import RestaurantController from '../RestaurantController';
+import { HttpError } from '../../utils';
+import {
+  getMockedRequest,
+  getMockedResponse
+} from '../../../../../__tests__/utils';
+import { IRestaurant } from '../../interfaces/models';
+import { IHttpError } from '../../interfaces';
 
-const db = new Database(DATABASE_URL, {
-  useNewUrlParser: true
-} as ConnectOptions);
-const superTest = new SuperTest('/api/v2/restaurants');
+const restaurantService = new RestaurantService(new RestaurantRepository());
+const restaurantController = new RestaurantController(restaurantService);
 
-const fakeId = '123456789123456789123456';
-const realId = new Types.ObjectId();
+jest.mock('../../services');
+const mockedRestaurantService = jest.mocked(restaurantService, true);
 
-const restaurant = {
-  _id: realId,
-  name: 'il mondo',
-  rating: 7,
-  postalCode: 6060,
-  address: 'hallstraße'
-};
-
-beforeAll(() => {
-  db.init();
-});
-
-afterAll(() => {
-  Database.closeAllConnections();
-});
-
-beforeEach(async () => {
-  await new Restaurant(restaurant).save();
-});
-
-afterEach(async () => {
-  await Restaurant.deleteMany({});
-});
-
-describe('GET /restaurants', () => {
-  it('should return 200 & array if query object is empty', async () => {
-    const response = await superTest.get('');
-
-    expect(response.statusCode).toBe(200);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
-    expect(Array.isArray(response.body.data)).toBeTruthy();
+describe('RestaurantController', () => {
+  beforeEach(() => {
+    jest.resetAllMocks();
   });
 
-  it('should return 200 & array if query object is not empty', async () => {
-    const response = await superTest.get('?postal_code=6034');
+  describe('RestaurantController.__getRestaurants', () => {
+    it('should send 200 response with empty query', async () => {
+      const mockRestaurants = [
+        {
+          _id: new Types.ObjectId(),
+          name: 'restaurant',
+          rating: 7,
+          postalCode: 6060,
+          address: 'hallstraße',
+          __v: 0
+        },
+        {
+          _id: new Types.ObjectId(),
+          name: 'some restaurant',
+          rating: 5,
+          postalCode: 6060,
+          address: 'hallstraße',
+          __v: 0
+        },
+        {
+          _id: new Types.ObjectId(),
+          name: 'some other restaurant',
+          rating: 8,
+          postalCode: 6060,
+          address: 'hallstraße',
+          __v: 0
+        }
+      ] as IRestaurant[];
+      const mockResponse: [IRestaurant[], undefined] = [
+        mockRestaurants,
+        undefined
+      ];
 
-    expect(response.statusCode).toBe(200);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
-    expect(Array.isArray(response.body.data)).toBeTruthy();
+      const mReq = getMockedRequest();
+      const mRes = getMockedResponse();
+      // restaurantService.getById = jest.fn().mockResolvedValue(mockResponse);
+      mockedRestaurantService.getAll.mockResolvedValue(mockResponse);
+
+      await restaurantController.routes[0].handler(mReq, mRes);
+
+      expect(mRes.status).toHaveBeenCalledWith(200);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({ data: mockRestaurants });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
+
+    it('should send 200 response with', async () => {
+      const mockRestaurants = [
+        {
+          _id: new Types.ObjectId(),
+          name: 'restaurant',
+          rating: 7,
+          postalCode: 6060,
+          address: 'hallstraße',
+          __v: 0
+        },
+        {
+          _id: new Types.ObjectId(),
+          name: 'some restaurant',
+          rating: 5,
+          postalCode: 6060,
+          address: 'hallstraße',
+          __v: 0
+        },
+        {
+          _id: new Types.ObjectId(),
+          name: 'some other restaurant',
+          rating: 8,
+          postalCode: 6060,
+          address: 'hallstraße',
+          __v: 0
+        }
+      ] as IRestaurant[];
+      const mockResponse: [IRestaurant[], undefined] = [
+        mockRestaurants,
+        undefined
+      ];
+
+      const mReq = getMockedRequest(
+        {},
+        {},
+        { min_rating: 7, sort_by: '-name' }
+      );
+      const mRes = getMockedResponse();
+      // restaurantService.getById = jest.fn().mockResolvedValue(mockResponse);
+      mockedRestaurantService.get.mockResolvedValue(mockResponse);
+
+      await restaurantController.routes[0].handler(mReq, mRes);
+
+      expect(mRes.status).toHaveBeenCalledWith(200);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({ data: mockRestaurants });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
+
+    it('should return 500 error with empty query', async () => {
+      const mockError = new HttpError(
+        'Restaurant was not found.',
+        500,
+        'INTERNAL_SERVER_ERROR'
+      );
+      const mockResponse: [null, IHttpError] = [null, mockError];
+
+      const mReq = getMockedRequest();
+      const mRes = getMockedResponse();
+      mockedRestaurantService.getAll.mockResolvedValue(mockResponse);
+
+      await restaurantController.routes[0].handler(mReq, mRes);
+
+      expect(mRes.status).toHaveBeenCalledWith(500);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({
+        message: mockError.message,
+        code: mockError.statusCode,
+        status: mockError.statusMessage
+      });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
+
+    it('should return 500 error', async () => {
+      const mockError = new HttpError(
+        'Restaurant was not found.',
+        500,
+        'INTERNAL_SERVER_ERROR'
+      );
+      const mockResponse: [null, IHttpError] = [null, mockError];
+
+      const mReq = getMockedRequest({}, {}, { min_rating: 7 });
+      const mRes = getMockedResponse();
+      mockedRestaurantService.get.mockResolvedValue(mockResponse);
+
+      await restaurantController.routes[0].handler(mReq, mRes);
+
+      expect(mRes.status).toHaveBeenCalledWith(500);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({
+        message: mockError.message,
+        code: mockError.statusCode,
+        status: mockError.statusMessage
+      });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
   });
-});
 
-describe('GET /restaurants/:id', () => {
-  it('should return 200 & object if valid id', async () => {
-    const response = await superTest.get(`/${realId}`);
+  describe('RestaurantController.__getRestaurantById', () => {
+    it('should send 200 response', async () => {
+      const restaurantId = new Types.ObjectId();
+      const mockRestaurant = {
+        _id: restaurantId,
+        name: 'il mondo',
+        rating: 7,
+        postalCode: 6060,
+        address: 'hallstraße',
+        __v: 0
+      } as IRestaurant;
+      const mockResponse: [IRestaurant, undefined] = [
+        mockRestaurant,
+        undefined
+      ];
 
-    expect(response.statusCode).toBe(200);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
-    expect(response.body.data._id).toBe(realId.toString());
+      const mReq = getMockedRequest({ id: restaurantId.toString() });
+      const mRes = getMockedResponse();
+      // restaurantService.getById = jest.fn().mockResolvedValue(mockResponse);
+      mockedRestaurantService.getById.mockResolvedValue(mockResponse);
+
+      await restaurantController.routes[2].handler(mReq, mRes);
+
+      expect(mRes.status).toHaveBeenCalledWith(200);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({ data: mockRestaurant });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
+
+    it('should return 500 error', async () => {
+      const mockError = new HttpError(
+        'Restaurant was not found.',
+        500,
+        'INTERNAL_SERVER_ERROR'
+      );
+      const mockResponse: [null, IHttpError] = [null, mockError];
+
+      const mReq = getMockedRequest();
+      const mRes = getMockedResponse();
+      mockedRestaurantService.getById.mockResolvedValue(mockResponse);
+
+      await restaurantController.routes[2].handler(mReq, mRes);
+
+      expect(mRes.status).toHaveBeenCalledWith(500);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({
+        message: mockError.message,
+        code: mockError.statusCode,
+        status: mockError.statusMessage
+      });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
   });
 
-  it('should return 404 if id is invalid', async () => {
-    const response = await superTest.get(`/${fakeId}`);
+  describe('RestaurantController.__createRestaurant', () => {
+    it('should send 201 response', async () => {
+      const restaurant = {
+        name: 'il mondo',
+        rating: 7,
+        postalCode: 6060,
+        address: 'hallstraße'
+      } as IRestaurant;
+      const mockResponse: [IRestaurant, undefined] = [restaurant, undefined];
 
-    expect(response.statusCode).toBe(404);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
+      const mReq = getMockedRequest({}, { ...restaurant });
+      const mRes = getMockedResponse();
+      mockedRestaurantService.create.mockResolvedValue(mockResponse);
+
+      await restaurantController.routes[1].handler(mReq, mRes);
+
+      expect(mRes.sendStatus).toHaveBeenCalledWith(201);
+      expect(mRes.sendStatus).toHaveBeenCalledTimes(1);
+    });
+
+    it('should send 500 error', async () => {
+      const restaurant = {
+        name: 'il mondo',
+        rating: 7,
+        postalCode: 6060,
+        address: 'hallstraße'
+      } as IRestaurant;
+      const mockError = new HttpError(
+        'Restaurant was not found.',
+        500,
+        'INTERNAL_SERVER_ERROR'
+      );
+      const mockResponse: [null, IHttpError] = [null, mockError];
+
+      const mReq = getMockedRequest({}, { ...restaurant });
+      const mRes = getMockedResponse();
+      // restaurantService.delete = jest.fn().mockResolvedValue(mockResponse);
+      mockedRestaurantService.create.mockResolvedValue(mockResponse);
+
+      await restaurantController.routes[1].handler(mReq, mRes);
+
+      expect(mRes.status).toHaveBeenCalledWith(500);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({
+        message: mockError.message,
+        code: mockError.statusCode,
+        status: mockError.statusMessage
+      });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
   });
 
-  it('should return 400 if id is not 24 chars long', async () => {
-    const response = await superTest.get('/123');
+  describe('RestaurantController.__updateRestaurant', () => {
+    it('should send 204 response', async () => {
+      const restaurantId = new Types.ObjectId();
+      const updateQuery = { rating: 8 };
+      const mockRestaurant = {
+        _id: restaurantId,
+        name: 'il mondo',
+        rating: 7,
+        postalCode: 6060,
+        address: 'hallstraße',
+        __v: 0
+      } as IRestaurant;
+      const mockResponse: [IRestaurant, undefined] = [
+        mockRestaurant,
+        undefined
+      ];
 
-    expect(response.statusCode).toBe(400);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
-  });
-});
+      const mReq = getMockedRequest(
+        { id: restaurantId.toString() },
+        { updateQuery }
+      );
+      const mRes = getMockedResponse();
+      mockedRestaurantService.update.mockImplementation(() => {
+        mockRestaurant.rating = updateQuery.rating;
+        return Promise.resolve(mockResponse);
+      });
 
-describe('POST /restaurants', () => {
-  it('should create post & return 201', async () => {
-    const data = {
-      name: 'il mondo',
-      rating: 7,
-      postalCode: 6060,
-      address: 'hallstraße'
-    };
+      await restaurantController.routes[3].handler(mReq, mRes);
 
-    const response = await superTest.post('', data);
+      expect(mRes.sendStatus).toHaveBeenCalledWith(204);
+      expect(mRes.sendStatus).toHaveBeenCalledTimes(1);
+    });
 
-    expect(response.statusCode).toBe(201);
-    expect(response.headers.location).toBeTruthy();
-  });
+    it('should send 404 error', async () => {
+      const restaurantId = new Types.ObjectId('123456789123456789123456');
+      const mockError = new HttpError(
+        'No restaurant with specified id was found.',
+        404,
+        'NOT_FOUND'
+      );
+      const mockResponse: [null, IHttpError] = [null, mockError];
 
-  it('should return 400 with invalid input', async () => {
-    const data = {
-      name: 'pizza restaurant'
-    };
+      const mReq = getMockedRequest({ id: restaurantId });
+      const mRes = getMockedResponse();
+      // restaurantService.delete = jest.fn().mockResolvedValue(mockResponse);
+      mockedRestaurantService.update.mockResolvedValue(mockResponse);
 
-    const response = await superTest.post('', data);
+      await restaurantController.routes[3].handler(mReq, mRes);
 
-    expect(response.statusCode).toBe(400);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
-  });
-});
+      expect(mRes.status).toHaveBeenCalledWith(404);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({
+        message: mockError.message,
+        code: mockError.statusCode,
+        status: mockError.statusMessage
+      });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
 
-describe('PATCH /restaurants/:id', () => {
-  it('should return 204 and update data with valid id', async () => {
-    const data = {
-      rating: 5
-    };
-    const response = await superTest.patch(`/${realId}`, data);
+    it('should return 500', async () => {
+      const restaurantId = new Types.ObjectId();
+      const mockError = new HttpError(
+        'Restaurant was not found.',
+        500,
+        'INTERNAL_SERVER_ERROR'
+      );
+      const mockResponse: [null, IHttpError] = [null, mockError];
 
-    expect(response.statusCode).toBe(204);
-  });
+      const mReq = getMockedRequest({ id: restaurantId });
+      const mRes = getMockedResponse();
+      // restaurantService.delete = jest.fn().mockResolvedValue(mockResponse);
+      mockedRestaurantService.update.mockResolvedValue(mockResponse);
 
-  it('should return 204 if additional data', async () => {
-    const data = {
-      test: 'burger'
-    };
-    const response = await superTest.patch(`/${realId}`, data);
+      await restaurantController.routes[3].handler(mReq, mRes);
 
-    expect(response.statusCode).toBe(204);
-  });
-
-  it('should return 404 if invalid id', async () => {
-    const data = {
-      name: 'lasagne',
-      price: 2
-    };
-    const response = await superTest.patch(`/${fakeId}`, data);
-
-    expect(response.statusCode).toBe(404);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
-  });
-
-  it('should return 400 if wrong input data', async () => {
-    const data = {
-      rating: 'sdome'
-    };
-
-    const response = await superTest.patch('/123', data);
-
-    expect(response.statusCode).toBe(400);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
-  });
-});
-
-describe('DELETE /restaurants/:id', () => {
-  it('should return 204 if valid id', async () => {
-    const response = await superTest.delete(`/${realId}`);
-
-    expect(response.statusCode).toBe(204);
-  });
-
-  it('should return 404 if invalid id', async () => {
-    const response = await superTest.delete(`/${fakeId}`);
-
-    expect(response.statusCode).toBe(404);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
+      expect(mRes.status).toHaveBeenCalledWith(500);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({
+        message: mockError.message,
+        code: mockError.statusCode,
+        status: mockError.statusMessage
+      });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
   });
 
-  it('should return 400 if id is not 24 chars', async () => {
-    const response = await superTest.delete('/123');
+  describe('RestaurantController.__deleteRestaurant', () => {
+    it('should return 204', async () => {
+      const restaurantId = new Types.ObjectId();
+      const mockRestaurant = {
+        _id: restaurantId,
+        name: 'il mondo',
+        rating: 7,
+        postalCode: 6060,
+        address: 'hallstraße',
+        __v: 0
+      } as IRestaurant;
+      const mockResponse: [IRestaurant, undefined] = [
+        mockRestaurant,
+        undefined
+      ];
 
-    expect(response.statusCode).toBe(400);
-    expect(response.headers['content-type']).toMatch(/application\/json/g);
+      const mReq = getMockedRequest({ id: restaurantId });
+      const mRes = getMockedResponse();
+      // restaurantService.delete = jest.fn().mockResolvedValue(mockResponse);
+      mockedRestaurantService.delete.mockResolvedValue(mockResponse);
+
+      await restaurantController.routes[4].handler(mReq, mRes);
+
+      expect(mRes.sendStatus).toHaveBeenCalledWith(204);
+      expect(mRes.sendStatus).toHaveBeenCalledTimes(1);
+    });
+
+    it('should return 404', async () => {
+      const restaurantId = new Types.ObjectId('123456789123456789123456');
+      const mockError = new HttpError(
+        'No restaurant with specified id was found.',
+        404,
+        'NOT_FOUND'
+      );
+      const mockResponse: [null, IHttpError] = [null, mockError];
+
+      const mReq = getMockedRequest({ id: restaurantId });
+      const mRes = getMockedResponse();
+      // restaurantService.delete = jest.fn().mockResolvedValue(mockResponse);
+      mockedRestaurantService.delete.mockResolvedValue(mockResponse);
+
+      await restaurantController.routes[4].handler(mReq, mRes);
+
+      expect(mRes.status).toHaveBeenCalledWith(404);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({
+        message: mockError.message,
+        code: mockError.statusCode,
+        status: mockError.statusMessage
+      });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
+
+    it('should return 500', async () => {
+      const restaurantId = new Types.ObjectId();
+      const mockError = new HttpError(
+        'Restaurant was not found.',
+        500,
+        'INTERNAL_SERVER_ERROR'
+      );
+      const mockResponse: [null, IHttpError] = [null, mockError];
+
+      const mReq = getMockedRequest({ id: restaurantId });
+      const mRes = getMockedResponse();
+      // restaurantService.delete = jest.fn().mockResolvedValue(mockResponse);
+      mockedRestaurantService.delete.mockResolvedValue(mockResponse);
+
+      await restaurantController.routes[4].handler(mReq, mRes);
+
+      expect(mRes.status).toHaveBeenCalledWith(500);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({
+        message: mockError.message,
+        code: mockError.statusCode,
+        status: mockError.statusMessage
+      });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
   });
 });

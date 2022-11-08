@@ -84,8 +84,9 @@ export default class AuthController extends HttpController {
   }
 
   private handleLogout(req: Request, res: Response) {
-    req.logOut();
-    res.sendStatus(204);
+    req.logout(_err => {
+      res.sendStatus(204);
+    });
   }
 
   private failureCallback(req: Request, res: Response) {

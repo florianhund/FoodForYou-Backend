@@ -1,5 +1,9 @@
 import express, { Application } from 'express';
+import session from 'express-session';
+import passport from 'passport';
 import request from 'supertest';
+import { initializePassport } from '../../src/api/v2/lib';
+import { COOKIE_KEY } from '../../src/config/constants';
 
 import Server from '../../src/Server';
 
@@ -13,11 +17,19 @@ export default class SuperTest {
   private _app!: Application;
 
   private _initializeServer() {
+    initializePassport(passport);
     this._server = Server.instantiate(3000);
     this._server
       .loadGlobalMiddleware([
+        session({
+          secret: COOKIE_KEY!,
+          resave: false,
+          saveUninitialized: false
+        }),
         express.urlencoded({ extended: false }),
-        express.json()
+        express.json(),
+        passport.initialize(),
+        passport.session()
       ])
       .loadControllers();
     this._app = this._server.app;

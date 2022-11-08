@@ -1,165 +1,368 @@
-import { ConnectOptions, Types } from 'mongoose';
-import express, { Application } from 'express';
+import { Types } from 'mongoose';
 
-import MealService from '../MealService';
-import Server from '../../../../Server';
-import Database from '../../../../config/Database';
-import { DATABASE_URL } from '../../../../config/constants';
-import { Meal } from '../../models';
-import { IMeal } from '../../interfaces/models';
 import { MealRepository } from '../../repositories';
+import { MealService } from '..';
+import { IMeal } from '../../interfaces/models';
 
-const db = new Database(DATABASE_URL, {
-  useNewUrlParser: true
-} as ConnectOptions);
+const mealRepo = new MealRepository();
+const mealService = new MealService(mealRepo);
 
-const server: Server = Server.instantiate(3000);
-let app: Application;
+jest.mock('../../repositories');
+const mockedMealRepo = jest.mocked(mealRepo, true);
 
-const mealsrv = new MealService(new MealRepository());
-
-const fakeId = '123456789123123456789123';
-const realId = new Types.ObjectId();
-const restaurantId = new Types.ObjectId();
-
-const testMeal = {
-  _id: realId,
-  name: 'pizza',
-  price: 8,
-  rating: 3,
-  calories: 600,
-  description: 'tasty pizza',
-  restaurant: {
-    id: restaurantId
-  }
-};
-
-beforeAll(() => {
-  db.init();
-  server.loadGlobalMiddleware([
-    express.urlencoded({ extended: false }),
-    express.json()
-  ]);
-  server.loadControllers();
-  app = server.app;
-});
-
-afterAll(() => {
-  Database.closeAllConnections();
-});
-
-beforeEach(async () => {
-  await new Meal(testMeal).save();
-});
-
-afterEach(async () => {
-  await Meal.deleteMany({});
-});
-
-describe('get meals', () => {
-  it('should return arr if query is {}', async () => {
-    const [meals] = await mealsrv.getAll();
-    expect(meals).toBeTruthy();
-    expect(Array.isArray(meals)).toBeTruthy();
+describe('MealService', () => {
+  beforeEach(() => {
+    jest.resetAllMocks();
   });
 
-  it('should return arr if query is no empty object', async () => {
-    const [meals] = await mealsrv.get({
-      name: 'pizza',
-      maxPrice: 5
+  describe('MealService.__getAll', () => {
+    it('should return meals', async () => {
+      const mockResponse = [
+        {
+          _id: new Types.ObjectId(),
+          name: 'pizza',
+          price: 8,
+          rating: 3,
+          calories: 600,
+          description: 'tasty pizza',
+          restaurant: {
+            id: new Types.ObjectId()
+          },
+          tags: ['pizza'],
+          images: [],
+          allergenics: ['A', 'E']
+        },
+        {
+          _id: new Types.ObjectId(),
+          name: 'pizza',
+          price: 8,
+          rating: 3,
+          calories: 600,
+          description: 'tasty pizza',
+          restaurant: {
+            id: new Types.ObjectId()
+          },
+          tags: ['pizza'],
+          images: [],
+          allergenics: ['A', 'E']
+        },
+        {
+          _id: new Types.ObjectId(),
+          name: 'pizza',
+          price: 8,
+          rating: 3,
+          calories: 600,
+          description: 'tasty pizza',
+          restaurant: {
+            id: new Types.ObjectId()
+          },
+          tags: ['pizza'],
+          images: [],
+          allergenics: ['A', 'E']
+        }
+      ] as unknown as IMeal[];
+
+      mockedMealRepo.findAll.mockResolvedValue(mockResponse);
+
+      const [meals, error] = await mealService.getAll();
+
+      expect(meals).toEqual(mockResponse);
+      expect(error).toBeUndefined();
+      expect(mockedMealRepo.findAll).toHaveBeenCalledTimes(1);
+      expect(mockedMealRepo.findAll).toHaveBeenCalledWith('', undefined);
     });
 
-    expect(meals).toBeTruthy();
-    expect(Array.isArray(meals)).toBeTruthy();
-  });
-});
+    it('should return 500', async () => {
+      const mockResponse = null;
 
-describe('get meal by id', () => {
-  it('should return null if id is empty & 404 error', async () => {
-    const [meals, error] = await mealsrv.getById(fakeId);
-    expect(meals).toBeFalsy();
-    expect(error).toBeTruthy();
-    expect(error?.statusCode).toBe(404);
-  });
+      mockedMealRepo.findAll.mockRejectedValue(mockResponse);
 
-  it('should return data if id is valid', async () => {
-    const [meal] = await mealsrv.getById(`${realId}`);
-    expect(meal).toBeTruthy();
-    expect(meal?.name).toBe(testMeal.name);
-  });
-});
+      const [meals, error] = await mealService.getAll();
 
-describe('create meal', () => {
-  it('should create meal', async () => {
-    const id = new Types.ObjectId();
-    const [meal] = await mealsrv.create({
-      _id: id,
-      name: 'spaghetti',
-      price: 9,
-      rating: 3,
-      calories: 600,
-      restaurant: {
-        id: restaurantId
-      }
-    } as unknown as IMeal);
-    expect(meal).toBeTruthy();
-    expect(meal?.price).toBe(9);
-  });
-
-  it('should set isVegetarian true if vegetarian tag', async () => {
-    const [meal] = await mealsrv.create({
-      name: 'pizza',
-      price: 8,
-      rating: 3,
-      calories: 600,
-      tags: ['Vegetarian'],
-      restaurant: {
-        id: restaurantId
-      }
-    } as unknown as IMeal);
-
-    expect(meal).toBeTruthy();
-    expect(meal?.isVegetarian).toBeTruthy();
-  });
-});
-
-describe('update meal', () => {
-  it('should update meal if id is valid', async () => {
-    const [meal] = await mealsrv.update(`${realId}`, {
-      price: 20
+      expect(meals).toBeNull();
+      expect(error?.statusCode).toBe(500);
+      expect(mockedMealRepo.findAll).toHaveBeenCalledTimes(1);
+      expect(mockedMealRepo.findAll).toHaveBeenCalledWith('', undefined);
     });
-    expect(meal).toBeTruthy();
-    expect(meal?.price).toBe(20);
   });
 
-  it('should return 404 error if id is invalid', async () => {
-    const [meal, error] = await mealsrv.update(fakeId, {});
-    expect(meal).toBeFalsy();
-    expect(error).toBeTruthy();
-    expect(error?.statusCode).toBe(404);
-  });
+  describe('MealService.__get', () => {
+    it('should return meals', async () => {
+      const query = { minRating: 7 };
+      const mockResponse = [
+        {
+          _id: new Types.ObjectId(),
+          name: 'pizza',
+          price: 8,
+          rating: 3,
+          calories: 600,
+          description: 'tasty pizza',
+          restaurant: {
+            id: new Types.ObjectId()
+          },
+          tags: ['pizza'],
+          images: [],
+          allergenics: ['A', 'E']
+        }
+      ] as unknown as IMeal[];
 
-  it('should set isVegetarian true if vegetarian tag', async () => {
-    const [meal] = await mealsrv.update(`${realId}`, {
-      tags: ['Vegetarian']
+      mockedMealRepo.find.mockResolvedValue(mockResponse);
+
+      const [meals, error] = await mealService.get(query);
+
+      expect(meals).toEqual(mockResponse);
+      expect(error).toBeUndefined();
+      expect(mockedMealRepo.find).toHaveBeenCalledTimes(1);
     });
 
-    expect(meal).toBeTruthy();
-    expect(meal?.isVegetarian).toBeTruthy();
-  });
-});
+    it('should return 500', async () => {
+      const query = { minRating: 7 };
+      const mockResponse = null;
 
-describe('delete meals', () => {
-  it('should delete and return meal if id is valid', async () => {
-    const [meal] = await mealsrv.delete(`${realId}`);
-    expect(meal).toBeTruthy();
-    expect(meal?.name).toBe(testMeal.name);
+      mockedMealRepo.find.mockRejectedValue(mockResponse);
+
+      const [meals, error] = await mealService.get(query);
+
+      expect(meals).toBeNull();
+      expect(error?.statusCode).toBe(500);
+      expect(mockedMealRepo.find).toHaveBeenCalledTimes(1);
+    });
   });
 
-  it('should return 404 error if invalid id', async () => {
-    const [meal, error] = await mealsrv.delete(fakeId);
-    expect(meal).toBeFalsy();
-    expect(error).toBeTruthy();
-    expect(error?.statusCode).toBe(404);
+  describe('MealService.__getById', () => {
+    it('should return meal', async () => {
+      const mealId = new Types.ObjectId();
+      const mockResponse = {
+        _id: new Types.ObjectId(),
+        name: 'pizza',
+        price: 8,
+        rating: 3,
+        calories: 600,
+        description: 'tasty pizza',
+        restaurant: {
+          id: new Types.ObjectId()
+        },
+        tags: ['pizza'],
+        images: [],
+        allergenics: ['A', 'E']
+      } as unknown as IMeal;
+
+      mockedMealRepo.findById.mockResolvedValue(mockResponse);
+
+      const [meals, error] = await mealService.getById(mealId.toString());
+
+      expect(meals).toEqual(mockResponse);
+      expect(error).toBeUndefined();
+      expect(mockedMealRepo.findById).toHaveBeenCalledTimes(1);
+      expect(mockedMealRepo.findById).toHaveBeenCalledWith(mealId, undefined);
+    });
+
+    it('should return 500 error', async () => {
+      const mealId = new Types.ObjectId();
+      const mockMeal = null;
+
+      mockedMealRepo.findById.mockRejectedValue(mockMeal);
+
+      const [meal, error] = await mealService.getById(mealId.toString());
+
+      expect(meal).toBeNull();
+      expect(error?.statusCode).toBe(500);
+      expect(mockedMealRepo.findById).toHaveBeenCalledTimes(1);
+      expect(mockedMealRepo.findById).toHaveBeenCalledWith(mealId, undefined);
+    });
+  });
+
+  describe('MealService.__create', () => {
+    it('should return created meal', async () => {
+      const mealData = {
+        _id: new Types.ObjectId(),
+        name: 'pizza',
+        price: 8,
+        rating: 3,
+        calories: 600,
+        description: 'tasty pizza',
+        restaurant: {
+          id: new Types.ObjectId()
+        },
+        tags: ['pizza'],
+        images: [],
+        allergenics: ['A', 'E']
+      } as unknown as IMeal;
+      const mockResponse = {
+        ...mealData,
+        _id: new Types.ObjectId(),
+        __v: 0
+      } as IMeal;
+
+      mockedMealRepo.create.mockResolvedValue(mockResponse);
+
+      const [meal, error] = await mealService.create(mealData);
+
+      expect(meal).toEqual(mockResponse);
+      expect(error).toBeUndefined();
+      expect(mockedMealRepo.create).toHaveBeenCalledTimes(1);
+      expect(mockedMealRepo.create).toHaveBeenCalledWith(mealData);
+    });
+
+    it('should return 500', async () => {
+      const mealData = {
+        _id: new Types.ObjectId(),
+        name: 'pizza',
+        price: 8,
+        rating: 3,
+        calories: 600,
+        description: 'tasty pizza',
+        restaurant: {
+          id: new Types.ObjectId()
+        },
+        tags: ['pizza'],
+        images: [],
+        allergenics: ['A', 'E']
+      } as unknown as IMeal;
+      const mockResponse = null;
+
+      mockedMealRepo.create.mockRejectedValue(mockResponse);
+
+      const [meal, error] = await mealService.create(mealData);
+
+      expect(meal).toBeNull();
+      expect(error?.statusCode).toBe(500);
+      expect(mockedMealRepo.create).toHaveBeenCalledTimes(1);
+      expect(mockedMealRepo.create).toHaveBeenCalledWith(mealData);
+    });
+  });
+
+  describe('MealService.__update', () => {
+    it('should return updated meal', async () => {
+      const mealId = new Types.ObjectId();
+      const updateQuery = {
+        rating: 8
+      };
+      const mockResponse = {
+        _id: new Types.ObjectId(),
+        name: 'pizza',
+        price: 8,
+        rating: 3,
+        calories: 600,
+        description: 'tasty pizza',
+        restaurant: {
+          id: new Types.ObjectId()
+        },
+        tags: ['pizza'],
+        images: [],
+        allergenics: ['A', 'E']
+      } as unknown as IMeal;
+
+      mockedMealRepo.update.mockImplementation(() => {
+        mockResponse.rating = updateQuery.rating;
+        return Promise.resolve(mockResponse);
+      });
+
+      const [meal, error] = await mealService.update(
+        mealId.toString(),
+        updateQuery
+      );
+
+      expect(meal).toEqual(mockResponse);
+      expect(error).toBeUndefined();
+      expect(mockedMealRepo.update).toHaveBeenCalledTimes(1);
+      expect(mockedMealRepo.update).toHaveBeenCalledWith(mealId, updateQuery);
+    });
+
+    it('should return 404 error', async () => {
+      const mealId = new Types.ObjectId('123456789123456789123456');
+      const updateQuery = {
+        rating: 8
+      };
+      const mockMeal = null;
+
+      mockedMealRepo.update.mockResolvedValue(mockMeal);
+
+      const [meal, error] = await mealService.update(
+        mealId.toString(),
+        updateQuery
+      );
+
+      expect(meal).toBeNull();
+      expect(error?.statusCode).toBe(404);
+      expect(mockedMealRepo.update).toHaveBeenCalledTimes(1);
+      expect(mockedMealRepo.update).toHaveBeenCalledWith(mealId, updateQuery);
+    });
+
+    it('should return 500 error', async () => {
+      const mealId = new Types.ObjectId('123456789123456789123456');
+      const updateQuery = {
+        rating: 8
+      };
+      const mockMeal = null;
+
+      mockedMealRepo.update.mockRejectedValue(mockMeal);
+
+      const [meal, error] = await mealService.update(
+        mealId.toString(),
+        updateQuery
+      );
+
+      expect(meal).toBeNull();
+      expect(error?.statusCode).toBe(500);
+      expect(mockedMealRepo.update).toHaveBeenCalledTimes(1);
+      expect(mockedMealRepo.update).toHaveBeenCalledWith(mealId, updateQuery);
+    });
+  });
+
+  describe('MealService.__delete', () => {
+    it('should return removed meal', async () => {
+      const mealId = new Types.ObjectId();
+      const mockResponse = {
+        _id: new Types.ObjectId(),
+        name: 'pizza',
+        price: 8,
+        rating: 3,
+        calories: 600,
+        description: 'tasty pizza',
+        restaurant: {
+          id: new Types.ObjectId()
+        },
+        tags: ['pizza'],
+        images: []
+      } as unknown as IMeal;
+
+      mockedMealRepo.delete.mockResolvedValue(mockResponse);
+
+      const [meal, error] = await mealService.delete(mealId.toString());
+
+      expect(meal).toEqual(mockResponse);
+      expect(error).toBeUndefined();
+      expect(mockedMealRepo.delete).toHaveBeenCalledTimes(1);
+      expect(mockedMealRepo.delete).toHaveBeenCalledWith(mealId);
+    });
+
+    it('should return 404 error', async () => {
+      const mealId = new Types.ObjectId('123456789123456789123456');
+      const mockMeal = null;
+
+      mockedMealRepo.delete.mockResolvedValue(mockMeal);
+
+      const [meal, error] = await mealService.delete(mealId.toString());
+
+      expect(meal).toBeNull();
+      expect(error?.statusCode).toBe(404);
+      expect(mockedMealRepo.delete).toHaveBeenCalledTimes(1);
+      expect(mockedMealRepo.delete).toHaveBeenCalledWith(mealId);
+    });
+
+    it('should return 500 error', async () => {
+      const mealId = new Types.ObjectId();
+      const mockMeal = null;
+
+      mockedMealRepo.delete.mockRejectedValue(mockMeal);
+
+      const [meal, error] = await mealService.delete(mealId.toString());
+
+      expect(meal).toBeNull();
+      expect(error?.statusCode).toBe(500);
+      expect(mockedMealRepo.delete).toHaveBeenCalledTimes(1);
+      expect(mockedMealRepo.delete).toHaveBeenCalledWith(mealId);
+    });
   });
 });

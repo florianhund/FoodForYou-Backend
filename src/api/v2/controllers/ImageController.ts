@@ -3,7 +3,6 @@ import { Request, Response } from 'express';
 import { IRoute } from '../interfaces';
 import { httpMethods } from '../interfaces/types';
 import HttpController from './base/HttpController';
-import HttpError from '../utils/HttpError';
 import ImageService from '../services/ImageService';
 import { uploadImage } from '../middlewares';
 
@@ -36,24 +35,14 @@ export default class ImageController extends HttpController {
 
   private async getImages(req: Request, res: Response) {
     const [result, err] = await this._imageSrv.getAllImages();
-    const data = {
-      ...result,
-      resources: result.resources.map((resource: any) => ({
-        publicId: resource.public_id,
-        url: resource.secure_url
-      }))
-    };
     if (!result) return super.sendError(res, err);
-    super.sendSuccess(res, data);
+    super.sendSuccess(res, result);
   }
 
   // TODO: check req.file (req.body.img) in validator
   private async uploadImage(req: Request, res: Response) {
     if (!req.file?.path) return res.send('error');
-    const [result, err] = await this._imageSrv.upload(
-      req.file.path,
-      'dev/meals'
-    );
+    const [result, err] = await this._imageSrv.upload(req.file.path, 'unused');
     if (!result) return super.sendError(res, err);
     res.setHeader('Location', `images/${result?.public_id}`);
     super.sendSuccess(res, {}, 201);

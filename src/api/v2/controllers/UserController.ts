@@ -6,12 +6,6 @@ import { httpMethods } from '../interfaces/types';
 import { UserQuery, IRoute } from '../interfaces';
 import { userSchema } from '../validators';
 import { checkUser, validate } from '../middlewares';
-import Mailer from '../../../config/Mailer';
-import {
-  GOOGLE_CLIENT_ID,
-  GOOGLE_CLIENT_SECRET,
-  GOOGLE_REFRESH_TOKEN
-} from '../../../config/constants';
 import HttpError from '../utils/HttpError';
 import UserService from '../services/UserService';
 
@@ -118,38 +112,17 @@ export default class UserController extends HttpController {
     req: Request,
     res: Response
   ): Promise<Response> {
-    if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET || !GOOGLE_REFRESH_TOKEN)
-      throw new Error(
-        'Either Client id, client secret or refresh token is null'
-      );
-    const mailer = new Mailer(
-      GOOGLE_CLIENT_ID,
-      GOOGLE_CLIENT_SECRET,
-      GOOGLE_REFRESH_TOKEN
-    );
-
-    const [user, error] = await this._usersrv.getById(req.params.id);
-    if (!user) return super.sendError(res, error);
-
-    // eslint-disable-next-line
-    mailer.sendVerification(user.email, user.otp!);
+    const { id } = req.params;
+    const [success, error] = await this._usersrv.sendVerificationMail(id);
+    if (!success) return super.sendError(res, error);
     return super.sendSuccess(res, {}, 204);
   }
 
-  // TODO: implement service method
   private async verifyUser(req: Request, res: Response): Promise<Response> {
     const { id } = req.params;
-    const { otp } = req.query;
-
-    const [user, error] = await this._usersrv.getById(id);
-    if (!user) return super.sendError(res, error);
-
-    if (+otp! !== user.otp)
-      return super.sendError(
-        res,
-        new HttpError('wrong code', 401, 'UNAUTHENTIICATED')
-      );
-    await this._usersrv.update(id, { isVerified: true, otp: null });
+    const { otp } = req.query as Record<string, string>;
+    const [success, error] = await this._usersrv.verifiyUser(id, otp);
+    if (!success) return super.sendError(res, error);
     return super.sendSuccess(res, {}, 204);
   }
 }

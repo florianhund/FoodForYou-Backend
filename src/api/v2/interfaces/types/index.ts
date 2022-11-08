@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import HttpError from '../../utils/HttpError';
+import { IHttpError } from '..';
 
 export enum httpMethods {
   GET = 'get',
@@ -30,7 +30,7 @@ export enum Allergenics {
   R
 }
 
-export type PromiseHandler<T> = Promise<[T | null, HttpError | undefined]>;
+export type PromiseHandler<T> = Promise<[T | null, IHttpError | undefined]>;
 
 // export type MealTag =
 //   | 'Fast Food'

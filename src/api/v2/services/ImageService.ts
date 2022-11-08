@@ -9,8 +9,15 @@ export default class ImageService {
 
   public async getAllImages(): PromiseHandler<any> {
     try {
-      const resources = await this._instance.api.resources();
-      return [resources, undefined];
+      const data = await this._instance.api.resources();
+      const result = {
+        ...data,
+        resources: data.resources.map((resource: any) => ({
+          publicId: resource.public_id,
+          url: resource.secure_url
+        }))
+      };
+      return [result, undefined];
     } catch (err) {
       return [
         null,
@@ -52,26 +59,6 @@ export default class ImageService {
         )
       ];
     }
-    // return new Promise(resolve => {
-    //   this._instance.uploader.upload(
-    //     file,
-    //     {
-    //       ressource_type: 'auto',
-    //       folder
-    //     },
-    //     (_err, result) => {
-    //       resolve({
-    //         result: {
-    //           public_id: result?.public_id,
-    //           format: result?.format,
-    //           created_at: result?.created_at,
-    //           bytes: result?.bytes,
-    //           url: result?.secure_url
-    //         }
-    //       });
-    //     }
-    //   );
-    // });
   }
 
   public async changeFolder(
@@ -83,25 +70,9 @@ export default class ImageService {
         publicId,
         `${folderName}/${publicId.slice(publicId.lastIndexOf('/') + 1)}`
       );
-      if (!newId)
-        return [
-          null,
-          new HttpError(
-            'No image with specified id was found.',
-            404,
-            'INVALID_ID'
-          )
-        ];
       return [newId, undefined];
     } catch (err) {
-      return [
-        null,
-        new HttpError(
-          'Oops, something went wrong!',
-          500,
-          'INTERNAL_SERVER_ERROR'
-        )
-      ];
+      return [null, new HttpError('No image with that id.', 404, 'INVALID_ID')];
     }
   }
 }

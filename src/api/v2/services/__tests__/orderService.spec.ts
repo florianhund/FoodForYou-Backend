@@ -1,193 +1,360 @@
-import { ConnectOptions, Types } from 'mongoose';
-import express, { Application } from 'express';
+import { Types } from 'mongoose';
 
-import { OrderService } from '..';
 import { OrderRepository } from '../../repositories';
-import Server from '../../../../Server';
-import Database from '../../../../config/Database';
-import { DATABASE_URL } from '../../../../config/constants';
-import { Order, User, Meal, Restaurant } from '../../models';
+import { OrderService } from '..';
 import { IOrder } from '../../interfaces/models';
 
-const db = new Database(DATABASE_URL, {
-  useNewUrlParser: true
-} as ConnectOptions);
+const orderRepo = new OrderRepository();
+const orderService = new OrderService(orderRepo);
 
-const server: Server = Server.instantiate(3000);
-let app: Application;
+jest.mock('../../repositories');
+const mockedOrderRepo = jest.mocked(orderRepo, true);
 
-const ordersrv = new OrderService(new OrderRepository());
-
-const fakeId = '123456789123123456789123';
-const realId = new Types.ObjectId();
-const realUserId = new Types.ObjectId();
-const realMealId = new Types.ObjectId();
-const restaurantId = new Types.ObjectId();
-
-const testOrder = {
-  _id: realId,
-  address: 'Rudolfstr. 7b',
-  postalCode: 6067,
-  user: {
-    id: realUserId
-  },
-  meals: [
-    {
-      id: realMealId
-    }
-  ]
-};
-
-beforeAll(async () => {
-  db.init();
-  server.loadGlobalMiddleware([
-    express.urlencoded({ extended: false }),
-    express.json()
-  ]);
-  server.loadControllers();
-  app = server.app;
-
-  await Restaurant.create({
-    _id: restaurantId,
-    name: 'somee restaurant',
-    rating: 7,
-    address: 'some street',
-    postalCode: 6060
+describe('OrderService', () => {
+  beforeEach(() => {
+    jest.resetAllMocks();
   });
 
-  await User.create({
-    _id: realUserId,
-    firstName: 'Florian',
-    lastName: 'Hundegger',
-    email: 'flo.hundegger@gmail.com',
-    password: 'SevretPassword_2',
-    provider: 'email',
-    providerId: realId,
-    otp: 7632,
-    isVerified: false,
-    isAdmin: false
-  });
-
-  await Meal.create({
-    _id: realMealId,
-    name: 'pizza',
-    price: 8,
-    rating: 4,
-    calories: 400,
-    description: 'tasty pizza',
-    restaurant: {
-      id: restaurantId
-    }
-  });
-});
-
-afterAll(() => {
-  Database.closeAllConnections();
-});
-
-beforeEach(async () => {
-  await new Order(testOrder).save();
-});
-
-afterEach(async () => {
-  await Order.deleteMany({});
-});
-
-describe('get orders', () => {
-  it('should return arr if query is {}', async () => {
-    const [orders] = await ordersrv.getAll();
-    expect(orders).toBeTruthy();
-    expect(Array.isArray(orders)).toBeTruthy();
-  });
-
-  it('should return arr if query is not empty', async () => {
-    const [orders] = await ordersrv.get({ maxPrice: 20 });
-    expect(orders).toBeTruthy();
-    expect(Array.isArray(orders)).toBeTruthy();
-  });
-});
-
-describe('get order by id', () => {
-  it('should return null if id is empty & 404 error', async () => {
-    const [order, error] = await ordersrv.getById(fakeId);
-    expect(order).toBeFalsy();
-    expect(error).toBeTruthy();
-    expect(error?.statusCode).toBe(404);
-  });
-
-  it('should return data if id is valid', async () => {
-    const [order] = await ordersrv.getById(`${realId}`);
-    expect(order).toBeTruthy();
-    expect(order?.postalCode).toBe(testOrder.postalCode);
-  });
-});
-
-describe('create order', () => {
-  it('should create order', async () => {
-    const [order] = await ordersrv.create({
-      postalCode: 6060,
-      address: 'In der Schranne 10',
-      user: {
-        id: realUserId
-      },
-      meals: [
+  describe('OrderService.__getAll', () => {
+    it('should return orders', async () => {
+      const mockResponse = [
         {
-          id: realMealId
+          _id: new Types.ObjectId(),
+          address: 'Rudolfstr. 7b',
+          postalCode: 6067,
+          user: {
+            id: new Types.ObjectId()
+          },
+          meals: [
+            {
+              id: new Types.ObjectId()
+            }
+          ]
+        },
+        {
+          _id: new Types.ObjectId(),
+          address: 'Rudolfstr. 7b',
+          postalCode: 6067,
+          user: {
+            id: new Types.ObjectId()
+          },
+          meals: [
+            {
+              id: new Types.ObjectId()
+            }
+          ]
+        },
+        {
+          _id: new Types.ObjectId(),
+          address: 'Rudolfstr. 7b',
+          postalCode: 6067,
+          user: {
+            id: new Types.ObjectId()
+          },
+          meals: [
+            {
+              id: new Types.ObjectId()
+            }
+          ]
         }
-      ]
-    } as unknown as IOrder);
-    expect(order).toBeTruthy();
-    expect(order?.address).toBe('In der Schranne 10');
-  });
-});
+      ] as unknown as IOrder[];
 
-describe('update order', () => {
-  it('should update user if id is valid', async () => {
-    const [order] = await ordersrv.update(`${realId}`, {
-      postalCode: 6020
+      mockedOrderRepo.findAll.mockResolvedValue(mockResponse);
+
+      const [orders, error] = await orderService.getAll();
+
+      expect(orders).toEqual(mockResponse);
+      expect(error).toBeUndefined();
+      expect(mockedOrderRepo.findAll).toHaveBeenCalledTimes(1);
+      expect(mockedOrderRepo.findAll).toHaveBeenCalledWith('', undefined);
     });
 
-    expect(order).toBeTruthy();
-    expect(order?.postalCode).toBe(6020);
+    it('should return 500', async () => {
+      const mockResponse = null;
+
+      mockedOrderRepo.findAll.mockRejectedValue(mockResponse);
+
+      const [orders, error] = await orderService.getAll();
+
+      expect(orders).toBeNull();
+      expect(error?.statusCode).toBe(500);
+      expect(mockedOrderRepo.findAll).toHaveBeenCalledTimes(1);
+      expect(mockedOrderRepo.findAll).toHaveBeenCalledWith('', undefined);
+    });
   });
 
-  it('should return 404 error if id is invalid', async () => {
-    const [order, error] = await ordersrv.update(fakeId, {});
-    expect(order).toBeFalsy();
-    expect(error).toBeTruthy();
-    expect(error?.statusCode).toBe(404);
-  });
+  describe('OrderService.__get', () => {
+    it('should return orders', async () => {
+      const query = { minRating: 7 };
+      const mockResponse = [
+        {
+          _id: new Types.ObjectId(),
+          address: 'Rudolfstr. 7b',
+          postalCode: 6067,
+          user: {
+            id: new Types.ObjectId()
+          },
+          meals: [
+            {
+              id: new Types.ObjectId()
+            }
+          ]
+        }
+      ] as unknown as IOrder[];
 
-  it('should update price when adding meals', async () => {
-    const [order] = await ordersrv.update(`${realId}`, {
-      meals: [realMealId, realMealId, realMealId, realMealId]
+      mockedOrderRepo.find.mockResolvedValue(mockResponse);
+
+      const [orders, error] = await orderService.get({
+        address: 'some street'
+      });
+
+      expect(orders).toEqual(mockResponse);
+      expect(error).toBeUndefined();
+      expect(mockedOrderRepo.find).toHaveBeenCalledTimes(1);
     });
 
-    expect(order).toBeTruthy();
-    expect(order?.totalPrice).toBe(32); // 4x8
+    it('should return 500', async () => {
+      const query = { address: 'some street' };
+      const mockResponse = null;
+
+      mockedOrderRepo.find.mockRejectedValue(mockResponse);
+
+      const [orders, error] = await orderService.get(query);
+
+      expect(orders).toBeNull();
+      expect(error?.statusCode).toBe(500);
+      expect(mockedOrderRepo.find).toHaveBeenCalledTimes(1);
+    });
   });
 
-  it('should update status when setting isDeliverd: true', async () => {
-    const [order] = await ordersrv.update(`${realId}`, {
-      isDelivered: true
+  describe('OrderService.__getById', () => {
+    it('should return order', async () => {
+      const orderId = new Types.ObjectId();
+      const mockResponse = {
+        _id: new Types.ObjectId(),
+        address: 'Rudolfstr. 7b',
+        postalCode: 6067,
+        user: {
+          id: new Types.ObjectId()
+        },
+        meals: [
+          {
+            id: new Types.ObjectId()
+          }
+        ]
+      } as unknown as IOrder;
+
+      mockedOrderRepo.findById.mockResolvedValue(mockResponse);
+
+      const [orders, error] = await orderService.getById(orderId.toString());
+
+      expect(orders).toEqual(mockResponse);
+      expect(error).toBeUndefined();
+      expect(mockedOrderRepo.findById).toHaveBeenCalledTimes(1);
+      expect(mockedOrderRepo.findById).toHaveBeenCalledWith(orderId, undefined);
     });
 
-    expect(order).toBeTruthy();
-    expect(order?.status).toBe('delivered');
-  });
-});
+    it('should return 500 error', async () => {
+      const orderId = new Types.ObjectId();
+      const mockOrder = null;
 
-describe('delete orders', () => {
-  it('should delete and return user if id is valid', async () => {
-    const [order] = await ordersrv.delete(`${realId}`);
-    expect(order).toBeTruthy();
-    expect(order?.user.id).toEqual(testOrder.user.id);
+      mockedOrderRepo.findById.mockRejectedValue(mockOrder);
+
+      const [order, error] = await orderService.getById(orderId.toString());
+
+      expect(order).toBeNull();
+      expect(error?.statusCode).toBe(500);
+      expect(mockedOrderRepo.findById).toHaveBeenCalledTimes(1);
+      expect(mockedOrderRepo.findById).toHaveBeenCalledWith(orderId, undefined);
+    });
   });
 
-  it('should return 404 error if invalid id', async () => {
-    const [orderedMeals, error] = await ordersrv.delete(fakeId);
-    expect(orderedMeals).toBeFalsy();
-    expect(error).toBeTruthy();
-    expect(error?.statusCode).toBe(404);
+  describe('OrderService.__create', () => {
+    it('should return created order', async () => {
+      const orderData = {
+        address: 'Rudolfstr. 7b',
+        postalCode: 6067,
+        user: {
+          id: new Types.ObjectId()
+        },
+        meals: [
+          {
+            id: new Types.ObjectId()
+          }
+        ]
+      } as unknown as IOrder;
+      const mockResponse = {
+        ...orderData,
+        _id: new Types.ObjectId(),
+        __v: 0
+      } as IOrder;
+
+      mockedOrderRepo.create.mockResolvedValue(mockResponse);
+
+      const [order, error] = await orderService.create(orderData);
+
+      expect(order).toEqual(mockResponse);
+      expect(error).toBeUndefined();
+      expect(mockedOrderRepo.create).toHaveBeenCalledTimes(1);
+      expect(mockedOrderRepo.create).toHaveBeenCalledWith(orderData);
+    });
+
+    it('should return 500', async () => {
+      const orderData = {
+        address: 'Rudolfstr. 7b',
+        postalCode: 6067,
+        user: {
+          id: new Types.ObjectId()
+        },
+        meals: [
+          {
+            id: new Types.ObjectId()
+          }
+        ]
+      } as unknown as IOrder;
+      const mockResponse = null;
+
+      mockedOrderRepo.create.mockRejectedValue(mockResponse);
+
+      const [order, error] = await orderService.create(orderData);
+
+      expect(order).toBeNull();
+      expect(error?.statusCode).toBe(500);
+      expect(mockedOrderRepo.create).toHaveBeenCalledTimes(1);
+      expect(mockedOrderRepo.create).toHaveBeenCalledWith(orderData);
+    });
+  });
+
+  describe('OrderService.__update', () => {
+    it('should return updated order', async () => {
+      const orderId = new Types.ObjectId();
+      const updateQuery = {
+        address: 'Fifth avenue 8'
+      };
+      const mockResponse = {
+        _id: new Types.ObjectId(),
+        address: 'Rudolfstr. 7b',
+        postalCode: 6067,
+        user: {
+          id: new Types.ObjectId()
+        },
+        meals: [
+          {
+            id: new Types.ObjectId()
+          }
+        ]
+      } as unknown as IOrder;
+
+      mockedOrderRepo.update.mockImplementation(() => {
+        mockResponse.address = updateQuery.address;
+        return Promise.resolve(mockResponse);
+      });
+
+      const [order, error] = await orderService.update(
+        orderId.toString(),
+        updateQuery
+      );
+
+      expect(order).toEqual(mockResponse);
+      expect(error).toBeUndefined();
+      expect(mockedOrderRepo.update).toHaveBeenCalledTimes(1);
+      expect(mockedOrderRepo.update).toHaveBeenCalledWith(orderId, updateQuery);
+    });
+
+    it('should return 404 error', async () => {
+      const orderId = new Types.ObjectId('123456789123456789123456');
+      const updateQuery = {
+        address: 'Fifth avenue 8'
+      };
+      const mockOrder = null;
+
+      mockedOrderRepo.update.mockResolvedValue(mockOrder);
+
+      const [order, error] = await orderService.update(
+        orderId.toString(),
+        updateQuery
+      );
+
+      expect(order).toBeNull();
+      expect(error?.statusCode).toBe(404);
+      expect(mockedOrderRepo.update).toHaveBeenCalledTimes(1);
+      expect(mockedOrderRepo.update).toHaveBeenCalledWith(orderId, updateQuery);
+    });
+
+    it('should return 500 error', async () => {
+      const orderId = new Types.ObjectId('123456789123456789123456');
+      const updateQuery = {
+        address: 'Fifth avenue 8'
+      };
+      const mockOrder = null;
+
+      mockedOrderRepo.update.mockRejectedValue(mockOrder);
+
+      const [order, error] = await orderService.update(
+        orderId.toString(),
+        updateQuery
+      );
+
+      expect(order).toBeNull();
+      expect(error?.statusCode).toBe(500);
+      expect(mockedOrderRepo.update).toHaveBeenCalledTimes(1);
+      expect(mockedOrderRepo.update).toHaveBeenCalledWith(orderId, updateQuery);
+    });
+  });
+
+  describe('OrderService.__delete', () => {
+    it('should return removed order', async () => {
+      const orderId = new Types.ObjectId();
+      const mockResponse = {
+        _id: new Types.ObjectId(),
+        address: 'Rudolfstr. 7b',
+        postalCode: 6067,
+        user: {
+          id: new Types.ObjectId()
+        },
+        meals: [
+          {
+            id: new Types.ObjectId()
+          }
+        ]
+      } as unknown as IOrder;
+
+      mockedOrderRepo.delete.mockResolvedValue(mockResponse);
+
+      const [order, error] = await orderService.delete(orderId.toString());
+
+      expect(order).toEqual(mockResponse);
+      expect(error).toBeUndefined();
+      expect(mockedOrderRepo.delete).toHaveBeenCalledTimes(1);
+      expect(mockedOrderRepo.delete).toHaveBeenCalledWith(orderId);
+    });
+
+    it('should return 404 error', async () => {
+      const orderId = new Types.ObjectId('123456789123456789123456');
+      const mockOrder = null;
+
+      mockedOrderRepo.delete.mockResolvedValue(mockOrder);
+
+      const [order, error] = await orderService.delete(orderId.toString());
+
+      expect(order).toBeNull();
+      expect(error?.statusCode).toBe(404);
+      expect(mockedOrderRepo.delete).toHaveBeenCalledTimes(1);
+      expect(mockedOrderRepo.delete).toHaveBeenCalledWith(orderId);
+    });
+
+    it('should return 500 error', async () => {
+      const orderId = new Types.ObjectId();
+      const mockOrder = null;
+
+      mockedOrderRepo.delete.mockRejectedValue(mockOrder);
+
+      const [order, error] = await orderService.delete(orderId.toString());
+
+      expect(order).toBeNull();
+      expect(error?.statusCode).toBe(500);
+      expect(mockedOrderRepo.delete).toHaveBeenCalledTimes(1);
+      expect(mockedOrderRepo.delete).toHaveBeenCalledWith(orderId);
+    });
   });
 });

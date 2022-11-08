@@ -1,11 +1,17 @@
-import { UpdateQuery } from 'mongoose';
+import { Types, UpdateQuery } from 'mongoose';
 import bcrypt from 'bcrypt';
 
 import { IUser } from '../interfaces/models';
 import { PromiseHandler } from '../interfaces/types';
 import HttpError from '../utils/HttpError';
-import { User } from '../models';
 import UserRepository from '../repositories/UserRepository';
+import Mailer from '../../../config/Mailer';
+import {
+  GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET,
+  GOOGLE_REFRESH_TOKEN
+} from '../../../config/constants';
+import { IHttpError } from '../interfaces';
 
 export default class UserService {
   constructor(private _repo: UserRepository) {}
@@ -84,21 +90,21 @@ export default class UserService {
   public async create(data: IUser): PromiseHandler<IUser> {
     const hashedPassword = await bcrypt.hash(data.password!, 10);
     const otp = Math.floor(Math.random() * 9000) + 1000;
-    const user = new User({
-      firstName: data.firstName,
-      lastName: data.lastName,
-      email: data.email,
-      password: hashedPassword,
-      provider: 'email',
-      isVerified: false,
-      isAdmin: false,
-      otp
-    });
-    user.providerId = user._id;
-
+    const id = new Types.ObjectId();
     try {
-      const newUser = await user.save();
-      return [newUser, undefined];
+      const user = await this._repo.create({
+        _id: id,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        password: hashedPassword,
+        provider: 'email',
+        providerId: id.toString(),
+        isVerified: false,
+        isAdmin: false,
+        otp
+      } as IUser);
+      return [user, undefined];
     } catch (err) {
       return [
         null,
@@ -164,5 +170,47 @@ export default class UserService {
         )
       ];
     }
+  }
+
+  public async sendVerificationMail(userId: string): PromiseHandler<boolean> {
+    if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET || !GOOGLE_REFRESH_TOKEN)
+      throw new Error(
+        'Either Client id, client secret or refresh token is null'
+      );
+
+    const mailer = new Mailer(
+      GOOGLE_CLIENT_ID,
+      GOOGLE_CLIENT_SECRET,
+      GOOGLE_REFRESH_TOKEN
+    );
+
+    try {
+      const [user, error] = await this.getById(userId);
+      if (!user) return [false, error];
+      mailer.sendVerification(user.email, user.otp!);
+    } catch (err: any) {
+      return [false, err[1] as IHttpError];
+    }
+
+    return [true, undefined];
+  }
+
+  public async verifiyUser(
+    userId: string,
+    otp: string
+  ): PromiseHandler<boolean> {
+    try {
+      const [user, error] = await this.getById(userId);
+      if (!user) return [false, error];
+
+      if (+otp! !== user.otp)
+        return [false, new HttpError('wrong code', 401, 'UNAUTHENTIICATED')];
+
+      await this.update(userId, { isVerified: true, otp: null });
+    } catch (err: any) {
+      return [false, err[1] as IHttpError];
+    }
+
+    return [true, undefined];
   }
 }
