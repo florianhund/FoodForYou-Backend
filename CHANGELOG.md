@@ -2,6 +2,18 @@
 
 All notable changes to this project are documented in this file following the [Keep a CHANGELOG](https://keepachangelog.com/en/1.0.0/) conventions.
 
+## [2.0.0-beta.1] - 2022-11-08
+
+### Changed
+
+- Structured all tests
+
+### Added
+
+- Added proper unit tests
+- Added coverage folder
+- Added husky
+
 ## [2.0.0-alpha.4] - 2022-11-02
 
 ### Added
