@@ -1,9 +1,14 @@
 import { ConnectOptions, Types } from 'mongoose';
+import nodemailer, { Transporter } from 'nodemailer';
 
 import Database from '../../src/config/Database';
 import { DATABASE_URL } from '../../src/config/constants';
 import { User } from '../../src/api/v2/models';
 import SuperTest from '../utils/SuperTest';
+import { IUser } from '../../src/api/v2/interfaces/models';
+
+jest.mock('nodemailer');
+const mockedNodemailer = jest.mocked(nodemailer);
 
 const db = new Database(DATABASE_URL, {
   useNewUrlParser: true
@@ -13,7 +18,7 @@ const superTest = new SuperTest('/api/v2/users');
 const fakeId = '123456789123456789123456';
 const realId = new Types.ObjectId();
 const realOtp = 4591;
-const user = {
+const userModel = {
   _id: realId,
   firstName: 'Florian',
   lastName: 'Hundegger',
@@ -25,6 +30,7 @@ const user = {
   isVerified: false,
   isAdmin: false
 };
+let user: IUser;
 
 beforeAll(() => {
   db.init();
@@ -35,7 +41,7 @@ afterAll(() => {
 });
 
 beforeEach(async () => {
-  await new User(user).save();
+  user = await new User(userModel).save();
 });
 
 afterEach(async () => {
@@ -204,5 +210,58 @@ describe('GET /users/:id/verify', () => {
     const response = await superTest.get(`/${realId}/verify`);
 
     expect(response.statusCode).toBe(400);
+  });
+});
+
+describe('GET /users/:id/send-verification', () => {
+  it('should return 204', async () => {
+    const mockedSendmailFn = jest.fn();
+    mockedNodemailer.createTransport.mockReturnValue({
+      sendMail: mockedSendmailFn
+    } as unknown as Transporter);
+
+    const response = await superTest.get(`/${realId}/send-verification`);
+
+    expect(response.statusCode).toBe(204);
+    expect(mockedNodemailer.createTransport).toHaveBeenCalledTimes(1);
+    expect(mockedSendmailFn).toHaveBeenCalledTimes(1);
+  });
+
+  it('should return 404', async () => {
+    const response = await superTest.get(`/${fakeId}/send-verification`);
+
+    expect(response.statusCode).toBe(404);
+  });
+});
+
+describe('POST /users/:id/verify', () => {
+  it('should return 204', async () => {
+    const response = await superTest.get(`/${realId}/verify?otp=${realOtp}`);
+
+    expect(response.statusCode).toBe(204);
+  });
+
+  it('should return 400 if otp not defined', async () => {
+    const response = await superTest.get(`/${realId}/verify`);
+
+    expect(response.statusCode).toBe(400);
+    expect(user.otp).toBe(realOtp);
+    expect(user.isVerified).toBe(false);
+  });
+
+  it('should return 404 if token not defined', async () => {
+    const response = await superTest.get(`/${fakeId}/verify?otp=${realOtp}`);
+
+    expect(response.statusCode).toBe(404);
+    expect(user.otp).toBe(realOtp);
+    expect(user.isVerified).toBe(false);
+  });
+
+  it('should return 404 if token not defined', async () => {
+    const response = await superTest.get(`/${realId}/verify?otp=3636`);
+
+    expect(response.statusCode).toBe(401);
+    expect(user.otp).toBe(realOtp);
+    expect(user.isVerified).toBe(false);
   });
 });

@@ -386,7 +386,110 @@ describe('UserController', () => {
     });
   });
 
-  describe('UserController.sendVerification', () => {});
+  describe('UserController.sendVerification', () => {
+    it('should return 204', async () => {
+      const userId = new Types.ObjectId();
+      const mockResponse: [boolean, undefined] = [true, undefined];
 
-  describe('UserController.verifyUser', () => {});
+      const mReq = getMockedRequest({ id: userId.toString() });
+      const mRes = getMockedResponse();
+      mockedUserService.sendVerificationMail.mockResolvedValue(mockResponse);
+
+      await userController.routes[5].handler(mReq, mRes);
+
+      expect(mRes.sendStatus).toHaveBeenCalledWith(204);
+      expect(mRes.sendStatus).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('UserController.verifyUser', () => {
+    it('should return 204', async () => {
+      const userId = new Types.ObjectId();
+      const mockResponse: [boolean, undefined] = [true, undefined];
+
+      const mReq = getMockedRequest(
+        { id: userId.toString() },
+        {},
+        { otp: 3636 }
+      );
+      const mRes = getMockedResponse();
+      mockedUserService.verifiyUser.mockResolvedValue(mockResponse);
+
+      await userController.routes[6].handler(mReq, mRes);
+
+      expect(mRes.sendStatus).toHaveBeenCalledWith(204);
+      expect(mRes.sendStatus).toHaveBeenCalledTimes(1);
+    });
+
+    it('should return 404 error', async () => {
+      const userId = new Types.ObjectId();
+      const mockError = new HttpError('User not found.', 404, 'NOT_FOUND');
+      const mockResponse: [boolean, IHttpError] = [false, mockError];
+
+      const mReq = getMockedRequest({ id: userId.toString() }, {});
+      const mRes = getMockedResponse();
+      mockedUserService.verifiyUser.mockResolvedValue(mockResponse);
+
+      await userController.routes[6].handler(mReq, mRes);
+
+      expect(mRes.status).toHaveBeenCalledWith(404);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({
+        message: mockError.message,
+        code: mockError.statusCode,
+        status: mockError.statusMessage
+      });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
+
+    it('should return 401 error', async () => {
+      const userId = new Types.ObjectId();
+      const mockError = new HttpError(
+        'Provided OTP iss wrong.',
+        401,
+        'UNAUTHROIZED'
+      );
+      const mockResponse: [boolean, IHttpError] = [false, mockError];
+
+      const mReq = getMockedRequest({ id: userId.toString() }, {});
+      const mRes = getMockedResponse();
+      mockedUserService.verifiyUser.mockResolvedValue(mockResponse);
+
+      await userController.routes[6].handler(mReq, mRes);
+
+      expect(mRes.status).toHaveBeenCalledWith(401);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({
+        message: mockError.message,
+        code: mockError.statusCode,
+        status: mockError.statusMessage
+      });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
+
+    it('should return 500 error', async () => {
+      const userId = new Types.ObjectId();
+      const mockError = new HttpError(
+        'Oops, something went wrong!',
+        500,
+        'INTERNAL_SERVER_ERROR'
+      );
+      const mockResponse: [boolean, IHttpError] = [false, mockError];
+
+      const mReq = getMockedRequest({ id: userId.toString() }, {});
+      const mRes = getMockedResponse();
+      mockedUserService.verifiyUser.mockResolvedValue(mockResponse);
+
+      await userController.routes[6].handler(mReq, mRes);
+
+      expect(mRes.status).toHaveBeenCalledWith(500);
+      expect(mRes.status).toHaveBeenCalledTimes(1);
+      expect(mRes.json).toHaveBeenCalledWith({
+        message: mockError.message,
+        code: mockError.statusCode,
+        status: mockError.statusMessage
+      });
+      expect(mRes.json).toHaveBeenCalledTimes(1);
+    });
+  });
 });
