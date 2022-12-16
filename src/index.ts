@@ -1,4 +1,5 @@
 import { ConnectOptions } from 'mongoose';
+import cors from 'cors';
 import express from 'express';
 import passport from 'passport';
 import session from 'express-session';
@@ -16,6 +17,7 @@ const database: Database = new Database(DATABASE_URL, {
 initializePassport(passport);
 
 const middleware = [
+  cors(),
   session({
     secret: COOKIE_KEY!,
     resave: false,
