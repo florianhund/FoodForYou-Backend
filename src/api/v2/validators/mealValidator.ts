@@ -91,7 +91,7 @@ const createSchema: Schema = {
     },
     custom: {
       options: async value => {
-        if (typeof value === 'string' || value instanceof String)
+        if (typeof value !== 'string')
           throw new Error('Image id has to be string');
         const imageService = new ImageService(cloudinary);
         const image = imageService.getImageDetails(value);
@@ -234,7 +234,7 @@ const updateSchema: Schema = {
     },
     custom: {
       options: async value => {
-        if (typeof value === 'string' || value instanceof String)
+        if (typeof value !== 'string')
           throw new Error('Image id has to be string');
         const imageService = new ImageService(cloudinary);
         const image = imageService.getImageDetails(value);

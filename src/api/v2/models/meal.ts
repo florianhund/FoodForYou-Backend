@@ -26,7 +26,8 @@ const meal = new Schema<IMeal>({
   images: [
     {
       mediaId: { type: String, default: 'prod/meals/defaults/default' },
-      href: String
+      href: String,
+      url: String
     }
   ],
   allergenics: [
@@ -49,11 +50,13 @@ meal.pre('save', async function (next) {
 
   this.restaurant.href = `/restaurants/${this.restaurant.id}`;
   this.images = await Promise.all(
-    this.images.map(async ({ mediaId }: { mediaId: string }) => {
-      const [id] = await imageSrv.changeFolder(mediaId, 'dev/meals');
-      if (!id) throw new Error();
-      return { mediaId: id, href: `/images/${id}` };
-    })
+    this.images.map(
+      async ({ mediaId, url }: { mediaId: string; url: string }) => {
+        const [id] = await imageSrv.changeFolder(mediaId, 'dev/meals');
+        if (!id) throw new Error();
+        return { mediaId: id, href: `/images/${id}`, url };
+      }
+    )
   );
 
   next();
@@ -68,11 +71,13 @@ meal.pre('findOneAndUpdate', async function (next) {
 
   if (update?.images && update?.images?.length > 0) {
     update.images = await Promise.all(
-      update.images.map(async ({ mediaId }: { mediaId: string }) => {
-        const [id] = await imageSrv.changeFolder(mediaId, 'dev/meals');
-        if (!id) throw new Error();
-        return { mediaId: id, href: `/images/${id}` };
-      })
+      update.images.map(
+        async ({ mediaId, url }: { mediaId: string; url: string }) => {
+          const [id] = await imageSrv.changeFolder(mediaId, 'dev/meals');
+          if (!id) throw new Error();
+          return { mediaId: id, href: `/images/${id}`, url };
+        }
+      )
     );
   }
 
