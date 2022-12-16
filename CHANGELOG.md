@@ -2,19 +2,79 @@
 
 All notable changes to this project are documented in this file following the [Keep a CHANGELOG](https://keepachangelog.com/en/1.0.0/) conventions.
 
+## [2.0.0] - 2022-12-17
+
+## [2.0.0-beta.1] - 2022-11-08
+
+### Changed
+
+- Structured all tests
+
+### Added
+
+- Added proper unit tests
+- Added coverage folder
+- Added husky
+
+## [2.0.0-alpha.4] - 2022-11-02
+
+### Added
+
+- Added husky
+- Added HttpError interface
+
+### Changed
+
+- Moved 3rd party related files into src/api/v2/lib folder
+
+### Fixed
+
+- Fixed serialization error when logging in
+
+## [2.0.0-alpha.3] - 2022-10-23
+
+### Added
+
+- Added image functionality. User can now upload images and append them to meals
+
+### Changed
+
+- Changed links to other documents in models
+
+## [2.0.0-alpha.2] - 2022-09-26
+
+### Added
+
+- Added restaurant entity
+
+### Changed
+
+- Required property restaurant in meal model
+
+## [2.0.0-alpha.1] - 2022-09-21
+
+### Added
+
+- Added meal rating and calories
+
+### Changed
+
+- Only specific values can be used as meal tags
+- Renamed a few capitalized files
+- Use ~ in package.json
+- Use vegan and vegetarian tags instead of isVegan and isVegetarian props in meal
+
 ## [1.0.2] - 2022-09-18
 
 ### Fixed
 
 - Fixed additional id in user model
-([7be54bd](https://github.com/florianhund/FoodForYou-Backend/commit/7be54bd))
 
 ## [1.0.1] - 2022-09-09
 
 ### Fixed
 
 - Fixed crashing app when sorting database
-([d7aff49ff3123a6c80b682d2cb3560a8df0b2375](https://github.com/florianhund/FoodForYou-Backend/commits/d7aff49ff3123a6c80b682d2cb3560a8df0b2375))
 
 ## [1.0.0] - 2022-08-21
 
@@ -40,7 +100,7 @@ All notable changes to this project are documented in this file following the [K
 ### Changed
 
 - Changed fail responses
-- Implemented DIJ 
+- Implemented DIJ
 
 ### Security
 

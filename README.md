@@ -7,15 +7,18 @@
 
 ### Introduction
 
-FoodForYou API is an open source **food-delivery system API** which allows users to find and create meals, create orders and includes a full user login system.
+FoodForYou is an open source **food-delivery system API** which allows users to find and create meals, create orders and includes a full user login system.
 <br>
+
+### Related Repositories
+
+- [FoodForYou Frontend](https://github.com/florianhund/FoodForYou-Frontend) - React Native App. This app runs on top of this backend API
 
 ### Project Support Features
 
 - find / create / update / delete meals
 - find / create / update / delete orders
 - full user authentication system
-- admin functionality (not implementet yet)
 - payment functionality (not implementet yet)
 
 ### Prerequisites
@@ -24,13 +27,13 @@ You need to have **NodeJS** (v14.17.6 or higher) installed on your system in ord
 
 ### Installation Guide
 
-- clone this repository [here](https://github.com/florianhund/FoodForYou)
+- clone this repository [here](https://github.com/florianhund/FoodForYou-Backend)
 - navigate into the repository
 - install all dependencies
 
 ```bash
-git clone https://github.com/florianhund/FoodForYou
-cd FoodForYou
+git clone https://github.com/florianhund/FoodForYou-Backend
+cd FoodForYou-Backend
 npm i
 ```
 

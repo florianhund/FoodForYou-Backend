@@ -6,14 +6,14 @@ import session from 'express-session';
 import { PORT, DATABASE_URL, COOKIE_KEY } from './config/constants';
 import Database from './config/Database';
 import Server from './Server';
-import initialize from './config/passport';
+import { initializePassport } from './api/v2/lib';
 
 const server: Server = Server.instantiate(PORT);
 const database: Database = new Database(DATABASE_URL, {
   useNewUrlParser: true
 } as ConnectOptions);
 
-initialize(passport);
+initializePassport(passport);
 
 const middleware = [
   session({

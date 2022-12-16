@@ -79,13 +79,22 @@ export default {
           description: 'true if meal is vegan'
         },
         {
-          name: 'fields',
+          name: 'min_rating',
           in: 'query',
           schema: {
-            type: 'string',
-            example: 'name,price'
+            type: 'number',
+            example: '6'
           },
-          description: 'get only specific fields of meals'
+          description: 'show meals with given rating or higher'
+        },
+        {
+          name: 'max_calories',
+          in: 'query',
+          schema: {
+            type: 'number',
+            example: '400'
+          },
+          description: 'show meals with 400 calories or lower'
         },
         {
           name: 'tags',
@@ -95,16 +104,6 @@ export default {
             example: 'steak, tasty'
           },
           description: 'search meals by tags one or more tags'
-        },
-        {
-          name: 'sort_by',
-          in: 'query',
-          schema: {
-            type: 'string',
-            example: '-name,price'
-          },
-          description:
-            'specify order of meals by setting fields to order. add - before field for desc order'
         }
       ],
       responses: {
@@ -312,6 +311,19 @@ export default {
                 type: 'boolean',
                 description: 'true if meal is vegan',
                 example: 'false'
+              },
+              rating: {
+                type: 'number',
+                description: 'Rating of meal, must be int',
+                min: 0,
+                max: 10,
+                example: '8'
+              },
+              calories: {
+                type: 'number',
+                description: 'Calories of meal',
+                min: 0,
+                example: '330'
               },
               description: {
                 type: 'string',

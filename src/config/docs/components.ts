@@ -1,3 +1,5 @@
+import { MealTag } from '../../api/v2/interfaces/types';
+
 export default {
   components: {
     schemas: {
@@ -8,7 +10,14 @@ export default {
       },
       Meal: {
         type: 'object',
-        required: ['name, price', 'isVegetarian', 'isVegan'],
+        required: [
+          'name',
+          'price',
+          'isVegetarian',
+          'isVegan',
+          'rating',
+          'calories'
+        ],
         properties: {
           _id: {
             type: 'string',
@@ -25,20 +34,53 @@ export default {
           },
           price: {
             type: 'number',
-            description: 'Price of Meal',
+            description: 'Price of meal',
             min: 0,
             max: 50,
             example: '8.5'
           },
           isVegetarian: {
             type: 'boolean',
-            description: 'true if meal is vegetarian',
+            description: 'true if vegetarian tag',
             example: 'false'
           },
           isVegan: {
             type: 'boolean',
-            description: 'true if meal is vegan',
+            description: 'true if vegan tag',
             example: 'false'
+          },
+          rating: {
+            type: 'number',
+            description: 'Rating of meal, must be int',
+            min: 0,
+            max: 10,
+            example: '8'
+          },
+          calories: {
+            type: 'number',
+            description: 'Calories of meal',
+            min: 0,
+            example: '330'
+          },
+          restaurant: {
+            type: 'object',
+            properties: {
+              ref: {
+                type: 'string',
+                description: 'model that id refers to',
+                example: 'Restaurant'
+              },
+              href: {
+                type: 'string',
+                description: 'link to model',
+                example: '/restaurants/6293cd8bec9db4c3cbb85155'
+              },
+              id: {
+                type: 'string',
+                description: "Restaurant's id",
+                example: '6293cd8bec9db4c3cbb85155'
+              }
+            }
           },
           description: {
             type: 'string',
@@ -75,15 +117,14 @@ export default {
             type: 'array',
             items: {
               type: 'string',
-              minLength: 1,
-              maxLength: 15
+              enum: Object.values(MealTag)
             },
             description: 'tags',
-            example: ['steak, tasty, good']
+            example: ['Italian', 'Fast Food']
           },
           __v: {
             type: 'number',
-            description: 'version of Meal',
+            description: 'version',
             example: 0
           }
         }
@@ -93,13 +134,13 @@ export default {
         properties: {
           _id: {
             type: 'string',
-            description: 'Id of Meal',
+            description: 'Id',
             length: 24,
             example: '6253f6610d5ef0a5f7cbde76'
           },
           __v: {
             type: 'number',
-            description: 'version of Meal',
+            description: 'version',
             example: 0
           },
           firstName: {
@@ -141,18 +182,54 @@ export default {
           }
         }
       },
-      Order: {
+      Restaurant: {
         type: 'object',
         properties: {
           _id: {
             type: 'string',
-            description: 'Id of Meal',
+            description: 'Id',
             length: 24,
             example: '6253f6610d5ef0a5f7cbde76'
           },
           __v: {
             type: 'number',
-            description: 'version of Meal',
+            description: 'version',
+            example: 0
+          },
+          name: {
+            type: 'string',
+            description: 'Restaurant name',
+            example: 'Il Mondo'
+          },
+          rating: {
+            type: 'number',
+            description: 'Rating between 0 and 10',
+            example: '7'
+          },
+          address: {
+            type: 'string',
+            description: 'Address of restaurant',
+            example: 'teststr. 13'
+          },
+          postalCode: {
+            type: 'number',
+            description: 'Postal code of restaurant',
+            example: '6060'
+          }
+        }
+      },
+      Order: {
+        type: 'object',
+        properties: {
+          _id: {
+            type: 'string',
+            description: 'Id',
+            length: 24,
+            example: '6253f6610d5ef0a5f7cbde76'
+          },
+          __v: {
+            type: 'number',
+            description: 'version',
             example: 0
           },
           orderTime: {
@@ -197,15 +274,47 @@ export default {
             example: '17.3',
             description: 'total price'
           },
-          userId: {
-            type: 'string',
-            example: '6293cd8bec9db4c3cbb85155',
-            description: 'user id'
+          user: {
+            type: 'object',
+            properties: {
+              ref: {
+                type: 'string',
+                description: 'model that id refers to',
+                example: 'User'
+              },
+              href: {
+                type: 'string',
+                description: 'link to model',
+                example: '/users/6293cd8bec9db4c3cbb85155'
+              },
+              id: {
+                type: 'string',
+                description: "User's id",
+                example: '6293cd8bec9db4c3cbb85155'
+              }
+            }
           },
           meals: {
             type: 'array',
             items: {
-              type: 'string'
+              type: 'object',
+              properties: {
+                ref: {
+                  type: 'string',
+                  description: 'model that id refers to',
+                  example: 'Meal'
+                },
+                href: {
+                  type: 'string',
+                  description: 'link to model',
+                  example: '/meals/6293cd8bec9db4c3cbb85155'
+                },
+                id: {
+                  type: 'string',
+                  description: "Meal's id",
+                  example: '6293cd8bec9db4c3cbb85155'
+                }
+              }
             },
             example: ['6293cd8bec9db4c3cbb85155'],
             description: 'ids of ordered meals'

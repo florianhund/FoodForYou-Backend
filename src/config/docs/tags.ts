@@ -7,10 +7,16 @@ export default {
       name: 'User Endpoints'
     },
     {
+      name: 'Restaurant Endpoints'
+    },
+    {
       name: 'Order Endpoints'
     },
     {
       name: 'Auth Endpoints'
+    },
+    {
+      name: 'Image Endpoints'
     }
   ]
 };
