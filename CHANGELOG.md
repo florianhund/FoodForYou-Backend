@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented in this file following the [Keep a CHANGELOG](https://keepachangelog.com/en/1.0.0/) conventions.
 
+## [2.0.1] - 2022-12-17
+
+### Security 
+
+- Updated 'qs' from 6.9.3 to 6.9.7
+- Updated 'formidable' from 2.0.1 to 2.1.1
+
 ## [2.0.0] - 2022-12-17
 
 ## [2.0.0-beta.1] - 2022-11-08
