@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { IHttpError } from '..';
 
-export enum httpMethods {
+export enum HttpMethods {
   GET = 'get',
   POST = 'post',
   PUT = 'put',
@@ -55,7 +55,7 @@ export enum MealTag {
   ITALIAN = 'Italian'
 }
 
-export type middleware = (
+export type Middleware = (
   req: Request,
   res: Response,
   next: NextFunction

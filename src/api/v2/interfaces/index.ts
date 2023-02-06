@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { Types, UpdateQuery, ObjectId } from 'mongoose';
 
-import { httpMethods, middleware } from './types';
+import { HttpMethods, Middleware } from './types';
 
 export interface ILog {
   message: any;
@@ -11,13 +11,13 @@ export interface ILog {
 
 export interface IRoute {
   path: string;
-  method: httpMethods;
+  method: HttpMethods;
   handler: (
     req: Request,
     res: Response
   ) => Response | void | Promise<Response | void>;
-  validator?: middleware;
-  localMiddleware?: middleware[];
+  validator?: Middleware;
+  localMiddleware?: Middleware[];
 }
 
 export interface IRead<T> {

@@ -8,23 +8,23 @@ export default abstract class HttpController {
 
   public abstract routes: IRoute[];
 
-  private router = Router();
+  private _router = Router();
 
   public setRoutes() {
     this.routes.forEach(route => {
       if (route.localMiddleware) {
         route.localMiddleware.forEach(mw => {
-          this.router.use(route.path, mw);
+          this._router.use(route.path, mw);
         });
       }
-      this.router[route.method](
+      this._router[route.method](
         route.path,
         route.validator ||
           ((req: Request, res: Response, next: NextFunction) => next()),
         route.handler
       );
     });
-    return this.router;
+    return this._router;
   }
 
   protected sendSuccess(res: Response, data: any, status?: number): Response {

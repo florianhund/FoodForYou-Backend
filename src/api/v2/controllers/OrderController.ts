@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { checkSchema } from 'express-validator';
 import { IRoute, OrderQuery } from '../interfaces';
-import { httpMethods } from '../interfaces/types';
+import { HttpMethods } from '../interfaces/types';
 import { validate } from '../middlewares';
 import OrderService from '../services/OrderService';
 import { hasAllNullishValues } from '../utils';
@@ -14,25 +14,25 @@ export default class OrderController extends HttpController {
   routes: IRoute[] = [
     {
       path: '/',
-      method: httpMethods.GET,
+      method: HttpMethods.GET,
       handler: this.getOrders,
       validator: validate(checkSchema(orderSchema.get))
     },
     {
       path: '/',
-      method: httpMethods.POST,
+      method: HttpMethods.POST,
       handler: this.createOrder,
       validator: validate(checkSchema(orderSchema.create))
     },
     {
       path: '/:id',
-      method: httpMethods.GET,
+      method: HttpMethods.GET,
       handler: this.getOrderById,
       validator: validate(checkSchema(orderSchema.id))
     },
     {
       path: '/:id',
-      method: httpMethods.PATCH,
+      method: HttpMethods.PATCH,
       handler: this.updateOrder,
       validator: validate(
         checkSchema({ ...orderSchema.update, ...orderSchema.id })
@@ -40,7 +40,7 @@ export default class OrderController extends HttpController {
     },
     {
       path: '/:id',
-      method: httpMethods.DELETE,
+      method: HttpMethods.DELETE,
       handler: this.deleteOrder,
       validator: validate(checkSchema(orderSchema.id))
     }

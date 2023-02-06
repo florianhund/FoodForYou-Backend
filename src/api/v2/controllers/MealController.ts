@@ -3,7 +3,7 @@ import { checkSchema } from 'express-validator';
 
 import HttpController from './base/HttpController';
 import { hasAllNullishValues } from '../utils';
-import { httpMethods } from '../interfaces/types';
+import { HttpMethods } from '../interfaces/types';
 import { validate } from '../middlewares';
 import { mealSchema } from '../validators';
 import { IRoute, MealQuery } from '../interfaces';
@@ -16,25 +16,25 @@ export default class MealController extends HttpController {
   routes: IRoute[] = [
     {
       path: '/',
-      method: httpMethods.GET,
+      method: HttpMethods.GET,
       handler: this.getMeals,
       validator: validate(checkSchema(mealSchema.get))
     },
     {
       path: '/',
-      method: httpMethods.POST,
+      method: HttpMethods.POST,
       handler: this.createMeal,
       validator: validate(checkSchema(mealSchema.create))
     },
     {
       path: '/:id',
-      method: httpMethods.GET,
+      method: HttpMethods.GET,
       handler: this.getMealById,
       validator: validate(checkSchema(mealSchema.id))
     },
     {
       path: '/:id',
-      method: httpMethods.PATCH,
+      method: HttpMethods.PATCH,
       handler: this.updateMeal,
       validator: validate(
         checkSchema({ ...mealSchema.id, ...mealSchema.update })
@@ -42,7 +42,7 @@ export default class MealController extends HttpController {
     },
     {
       path: '/:id',
-      method: httpMethods.DELETE,
+      method: HttpMethods.DELETE,
       handler: this.deleteMeal,
       validator: validate(checkSchema(mealSchema.id))
     }

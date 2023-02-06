@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 
 import { IRoute } from '../interfaces';
-import { httpMethods } from '../interfaces/types';
+import { HttpMethods } from '../interfaces/types';
 import HttpController from './base/HttpController';
 import ImageService from '../services/ImageService';
 import { uploadImage } from '../middlewares';
@@ -12,18 +12,18 @@ export default class ImageController extends HttpController {
   routes: IRoute[] = [
     {
       path: '/',
-      method: httpMethods.GET,
+      method: HttpMethods.GET,
       handler: this.getImages
     },
     {
       path: '/',
-      method: httpMethods.POST,
+      method: HttpMethods.POST,
       handler: this.uploadImage,
       localMiddleware: [uploadImage.single('img')]
     },
     {
       path: '/:id(*)',
-      method: httpMethods.GET,
+      method: HttpMethods.GET,
       handler: this.getImageDetails
     }
   ];

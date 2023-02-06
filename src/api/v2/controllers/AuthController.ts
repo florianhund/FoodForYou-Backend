@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import passport from 'passport';
 
 import { IRoute } from '../interfaces';
-import { httpMethods } from '../interfaces/types';
+import { HttpMethods } from '../interfaces/types';
 import { checkUser } from '../middlewares';
 import HttpController from './base/HttpController';
 
@@ -13,7 +13,7 @@ export default class AuthController extends HttpController {
   routes: IRoute[] = [
     {
       path: '/google',
-      method: httpMethods.GET,
+      method: HttpMethods.GET,
       handler: (req: Request, res: Response) => {},
       localMiddleware: [
         checkUser.isNotAuthenticated,
@@ -24,12 +24,12 @@ export default class AuthController extends HttpController {
     },
     {
       path: '/google/redirect',
-      method: httpMethods.GET,
+      method: HttpMethods.GET,
       handler: this.handleGoogleLogin
     },
     {
       path: '/facebook',
-      method: httpMethods.GET,
+      method: HttpMethods.GET,
       handler: (req: Request, res: Response) => {},
       localMiddleware: [
         checkUser.isNotAuthenticated,
@@ -40,12 +40,12 @@ export default class AuthController extends HttpController {
     },
     {
       path: '/facebook/redirect',
-      method: httpMethods.GET,
+      method: HttpMethods.GET,
       handler: this.handleFacebookLogin
     },
     {
       path: '/login',
-      method: httpMethods.POST,
+      method: HttpMethods.POST,
       handler: (req: Request, res: Response) => {},
       localMiddleware: [
         checkUser.isNotAuthenticated,
@@ -57,13 +57,13 @@ export default class AuthController extends HttpController {
     },
     {
       path: '/login/failed',
-      method: httpMethods.GET,
+      method: HttpMethods.GET,
       localMiddleware: [checkUser.isNotAuthenticated],
       handler: this.failureCallback
     },
     {
       path: '/logout',
-      method: httpMethods.DELETE,
+      method: HttpMethods.DELETE,
       handler: this.handleLogout,
       localMiddleware: [checkUser.isAuthenticated]
     }

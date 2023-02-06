@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { checkSchema } from 'express-validator';
 
 import HttpController from './base/HttpController';
-import { httpMethods } from '../interfaces/types';
+import { HttpMethods } from '../interfaces/types';
 import { UserQuery, IRoute } from '../interfaces';
 import { userSchema } from '../validators';
 import { checkUser, validate } from '../middlewares';
@@ -16,24 +16,24 @@ export default class UserController extends HttpController {
   routes: IRoute[] = [
     {
       path: '/',
-      method: httpMethods.GET,
+      method: HttpMethods.GET,
       handler: this.getUsers
     },
     {
       path: '/',
-      method: httpMethods.POST,
+      method: HttpMethods.POST,
       handler: this.createUser,
       validator: validate(checkSchema(userSchema.create))
     },
     {
       path: '/:id',
-      method: httpMethods.GET,
+      method: HttpMethods.GET,
       handler: this.getUserById,
       validator: validate(checkSchema(userSchema.id))
     },
     {
       path: '/:id',
-      method: httpMethods.PATCH,
+      method: HttpMethods.PATCH,
       handler: this.updateUser,
       validator: validate(
         checkSchema({ ...userSchema.id, ...userSchema.update })
@@ -41,19 +41,19 @@ export default class UserController extends HttpController {
     },
     {
       path: '/:id',
-      method: httpMethods.DELETE,
+      method: HttpMethods.DELETE,
       handler: this.deleteUser,
       validator: validate(checkSchema(userSchema.id))
     },
     {
       path: '/:id/send-verification',
-      method: httpMethods.GET,
+      method: HttpMethods.GET,
       localMiddleware: [checkUser.isNotVerified],
       handler: this.sendVerification
     },
     {
       path: '/:id/verify',
-      method: httpMethods.GET,
+      method: HttpMethods.GET,
       localMiddleware: [checkUser.isNotVerified],
       handler: this.verifyUser,
       validator: validate(

@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { checkSchema } from 'express-validator';
 
 import { IRoute, RestaurantQuery } from '../interfaces';
-import { httpMethods } from '../interfaces/types';
+import { HttpMethods } from '../interfaces/types';
 import { validate } from '../middlewares';
 import { restaurantSchema } from '../validators';
 import RestaurantService from '../services/RestaurantService';
@@ -15,25 +15,25 @@ export default class RestaurantController extends HttpController {
   routes: IRoute[] = [
     {
       path: '/',
-      method: httpMethods.GET,
+      method: HttpMethods.GET,
       handler: this.getRestaurants,
       validator: validate(checkSchema(restaurantSchema.get))
     },
     {
       path: '/',
-      method: httpMethods.POST,
+      method: HttpMethods.POST,
       handler: this.createRestaurant,
       validator: validate(checkSchema(restaurantSchema.create))
     },
     {
       path: '/:id',
-      method: httpMethods.GET,
+      method: HttpMethods.GET,
       handler: this.getRestaurantById,
       validator: validate(checkSchema(restaurantSchema.id))
     },
     {
       path: '/:id',
-      method: httpMethods.PATCH,
+      method: HttpMethods.PATCH,
       handler: this.updateRestaurant,
       validator: validate(
         checkSchema({ ...restaurantSchema.id, ...restaurantSchema.update })
@@ -41,7 +41,7 @@ export default class RestaurantController extends HttpController {
     },
     {
       path: '/:id',
-      method: httpMethods.DELETE,
+      method: HttpMethods.DELETE,
       handler: this.deleteRestaurant,
       validator: validate(checkSchema(restaurantSchema.id))
     }
