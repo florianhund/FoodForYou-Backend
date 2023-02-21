@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented in this file following the [Keep a CHANGELOG](https://keepachangelog.com/en/1.0.0/) conventions.
 
+## [2.0.3] - 2023-02-21
+
+### Security
+
+- Updated 'cookiejar' to v2.1.4
+
 ## [2.0.2] - 2023-01-09
 
 ### Security
