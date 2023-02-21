@@ -51,6 +51,7 @@ export default class Server {
   public loadControllers(): Server {
     this._app.use('/api/v2', router);
     this._app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(docs));
+    this._app.get('/', (req: any, res: any) => res.sendStatus(200));
     this._app.use('*', defaultHandler);
     return this;
   }
