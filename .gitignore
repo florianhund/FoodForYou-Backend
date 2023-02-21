@@ -5,3 +5,4 @@ requests.http
 .idea
 coverage/*
 !coverage/lcov.info
+FoodForYou.code-workspace
