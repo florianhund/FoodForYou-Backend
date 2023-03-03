@@ -99,6 +99,6 @@ export default class AuthController extends HttpController {
   }
 
   private successCallback(req: Request, res: Response) {
-    super.sendSuccess(res, {});
+    super.sendSuccess(res, {}, 204);
   }
 }
