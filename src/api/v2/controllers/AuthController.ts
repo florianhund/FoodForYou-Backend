@@ -51,7 +51,7 @@ export default class AuthController extends HttpController {
         checkUser.isNotAuthenticated,
         passport.authenticate('local', {
           failureRedirect: '/api/v2/auth/login/failed',
-          successRedirect: '/'
+          successRedirect: '/api/v2/auth/login/success'
         })
       ]
     },
@@ -60,6 +60,11 @@ export default class AuthController extends HttpController {
       method: HttpMethods.GET,
       localMiddleware: [checkUser.isNotAuthenticated],
       handler: this.failureCallback
+    },
+    {
+      path: '/login/success',
+      method: HttpMethods.GET,
+      handler: this.successCallback
     },
     {
       path: '/logout',
@@ -91,5 +96,9 @@ export default class AuthController extends HttpController {
 
   private failureCallback(req: Request, res: Response) {
     res.status(401).json({ message: 'login failed' });
+  }
+
+  private successCallback(req: Request, res: Response) {
+    super.sendSuccess(res, {}, 204);
   }
 }

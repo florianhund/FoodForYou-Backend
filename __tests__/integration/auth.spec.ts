@@ -49,7 +49,7 @@ describe('POST /auth/login', () => {
       password: 'SevretPassword_2'
     });
 
-    expect(response.headers.location).toBe('/');
+    expect(response.headers.location).toBe('/api/v2/auth/login/success');
     expect(response.statusCode).toBe(302);
   });
 
@@ -105,7 +105,7 @@ describe('DELETE /auth/logout', () => {
 
     const logoutResponse = await superTest.delete('/logout');
 
-    expect(loginResponse.headers.location).toBe('/');
+    expect(loginResponse.headers.location).toBe('/api/v2/auth/login/success');
     expect(logoutResponse.statusCode).toBe(204);
   });
 
