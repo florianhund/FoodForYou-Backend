@@ -2,6 +2,23 @@
 
 All notable changes to this project are documented in this file following the [Keep a CHANGELOG](https://keepachangelog.com/en/1.0.0/) conventions.
 
+## [2.1.0] - 2023-03-06
+
+### Added
+
+- Added script to automatically bump version
+
+### Changed
+
+- Set isolatedModules to true in jest.config to improve perf
+- Renamed httpMethods to HttpMethods
+- Updated Year in license
+- Formatted README.md
+
+### Fixed
+
+- Fixed auth redirect error
+
 ## [2.0.3] - 2023-02-21
 
 ### Security
