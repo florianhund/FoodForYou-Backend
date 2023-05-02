@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented in this file following the [Keep a CHANGELOG](https://keepachangelog.com/en/1.0.0/) conventions.
 
+## [2.1.1] - 2023-05-2
+
+### Security
+
+- Updated 'vm2' to v3.9.17
+
 ## [2.1.0] - 2023-03-06
 
 ### Added
