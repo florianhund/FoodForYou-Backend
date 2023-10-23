@@ -2,6 +2,14 @@
 
 All notable changes to this project are documented in this file following the [Keep a CHANGELOG](https://keepachangelog.com/en/1.0.0/) conventions.
 
+## [2.1.2] - 2023-10-23
+
+### Security
+
+- Updated 'cloudinary' to v1.41.0
+- Updated 'mongoose' to v6.12.1
+- Fixed several other security issues
+
 ## [2.1.1] - 2023-05-2
 
 ### Security
